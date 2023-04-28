@@ -1,0 +1,135 @@
+ScreenManager:
+    WelcomeScreen:
+    LoginScreen:
+
+
+<WelcomeScreen>
+    name:"welcome"
+    MDFloatLayout:
+        canvas.before:
+            Color:
+                rgba: (237/255, 231/255, 225/255,1)
+            Rectangle:
+                pos:self.pos
+                size:self.size
+
+        MDLabel:
+            text:"MAJI MAZURI"
+            theme_text_color:"Custom"
+            text_color: 21/255,39/255,112/255,1
+            pos_hint:{'center_x':0.5, 'center_y':0.7}
+            halign:"center"
+            font_size:"60sp"
+            font_style:"H4"
+        
+        MDLabel:
+            text:"welcome"
+            theme_text_color:"Custom"
+            text_color: 21/255,39/255,112/255,1
+            pos_hint:{'center_x':0.5, 'center_y':0.6}
+            halign:"center"
+            font_style:"H6"
+            font_size:"35sp"
+            
+        MDRaisedButton:
+            size_hint: .3,.1
+            text:"GET STARTED"
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+            pos_hint:{'center_x':0.5, 'center_y':0.35}
+            on_press:
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'login'
+
+
+<LoginScreen>
+    name:"login"
+    MDFloatLayout:
+        
+        MDLabel:
+            text:"LOGIN"
+            font_style:"H3"
+            halign:"center"
+            pos_hint:{'center_y':0.85}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+        MDTextField:
+            id: email
+            hint_text: 'Enter Your Email'
+            icon_right:"account"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .65}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+
+        MDTextField:
+            id: pswd
+            hint_text: 'Password'
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .5, "center_y": .4}
+            spacing:"5dp"
+
+            MDCheckbox:
+                id:cb
+                size_hint:None,None
+                height:"30dp"
+                width: "30dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_press:
+                    pswd.password=False if pswd.password==True else True
+                    pswd.icon_right="eye" if pswd.icon_right=="eye-off" else "eye-off"
+
+
+            MDLabel:
+                text:"[ref=Show Password]Show Password[/ref]"
+                markup:True
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_ref_press:
+                    cb.activate=False if cb.activate==True else True
+                    pswd.password=False if pswd.password==True else True
+                    pswd.icon_right="eye" if pswd.icon_right=="eye-off" else "eye-off"
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .5, "center_y": .3}
+            spacing:"15dp"
+
+            MDRaisedButton:
+                text:"Sign In"
+                size_hint_x: 1
+                font_size:"22dp"
+            MDRaisedButton:
+                text:"Sign Up"
+                size_hint_x: 1
+                font_size:"22dp"
+                
+
+
+
+
+
+       
+            
+
+
+
+        
+
+
+
+    
+            
+
+            
