@@ -12,11 +12,14 @@ class WelcomeScreen(Screen):
     pass
 class LoginScreen(Screen): 
     pass
+class SignupScreen(Screen):
+    pass
 
 
 sm=ScreenManager()
 sm.add_widget(WelcomeScreen(name="welcome"))
 sm.add_widget(LoginScreen(name="login"))
+sm.add_widget(SignupScreen(name="signup"))
 
 class MyApp(MDApp):
     def __init__(self, **kwargs):

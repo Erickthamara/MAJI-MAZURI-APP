@@ -1,6 +1,7 @@
 ScreenManager:
     WelcomeScreen:
     LoginScreen:
+    SignupScreen:
 
 
 <WelcomeScreen>
@@ -114,6 +115,58 @@ ScreenManager:
                 text:"Sign Up"
                 size_hint_x: 1
                 font_size:"22dp"
+                on_press:
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'signup'
+
+
+
+<SignupScreen>
+    name:"signup"
+    MDFloatLayout:
+        MDLabel:
+            text:"SIGN Up"
+            font_style:"H3"
+            halign:"center"
+            pos_hint:{'center_y':0.85}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+        MDTextField:
+            id: email
+            hint_text: 'Enter Your Email'
+            icon_right:"account"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .65}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+
+        MDTextField:
+            id: pswd
+            hint_text: 'Password'
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+
+        MDTextField:
+            id: c_pswd
+            hint_text: 'Confirm Password'
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .35}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+
+        
+
+
+
                 
 
 
