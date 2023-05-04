@@ -134,7 +134,6 @@ class MyApp(MDApp):
         self.theme_cls.primary_palette="Blue"
         self.theme_cls.primary_hue='700'
         
-    
       
     def build(self):
         return Builder.load_file("style.kv")
