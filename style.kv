@@ -134,6 +134,9 @@ ScreenManager:
                 text:"Sign In"
                 size_hint_x: 1
                 font_size:"18dp"
+                on_press:root.sign_in()
+                
+                disabled:False
             MDRaisedButton:
                 id: signup_button
                 text:"Sign Up"

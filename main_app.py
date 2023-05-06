@@ -11,8 +11,27 @@ Window.size=(350,600)
 class WelcomeScreen(Screen): 
     pass
 
+class Database():
 
-class LoginScreen(Screen): 
+   connection = None
+   cursor = None
+
+   def __init__(self):
+      if Database.connection is None:
+         try:
+            Database.connection = mysql.connector.connect(host="localhost",port=3307, user="root", password="erick1", database="password1")
+            Database.cursor = Database.connection.cursor()
+         except Exception as error:
+            print(f"Error: Connection not established {error}")
+         else:
+            print("Connection established")
+
+      self.connection = Database.connection
+      self.cursor = Database.cursor
+    
+
+
+class LoginScreen(Screen,Database): 
     #This are all the methods used in the Login screen backend
     def validate_email(self):
         #Here we grab the data inputed using the .strip() function
@@ -41,8 +60,45 @@ class LoginScreen(Screen):
             self.ids.pswd1_error.text=""
             self.ids.signin_button.disabled=False
 
+    def sign_in(self):
+        password1=self.ids.pswd1.text.strip()
+        email=self.ids.email_login.text.strip()
+       
+        if not email:
+            self.ids.signin_button.disabled=True
+            self.ids.email_login_error.text="Email is Required"
+       
+        elif not password1 :
+            self.ids.signin_button.disabled=True
+            self.ids.pswd1_error.text="Password is Required"
+        else:
+            
+            self.ids.signin_button.disabled=False
+        
+        self.cursor.execute("SELECT * FROM word;")
+        email_list=[]
+        for x in self.cursor:
+            email_list.append(x[0])
+        if email in email_list:
+            self.cursor.execute(f"SELECT pswd FROM word WHERE email='{email}';")
+            for j in self.cursor:
+                if password1==j[0]:
+                    print("SUCCSSFULLY LOGGED IN")
+                else:
+                    print("INCORRECT PASSWORD")
+        else:
+            print("INCORRECT EMAIL")
 
-class SignupScreen(Screen):
+
+        
+    # def next_page(self):
+    #     print("New Page")
+
+        
+            
+
+
+class SignupScreen(Screen,Database):
      #This are all the methods used in the signup screen backend
      def validate_email2(self):
         #Here we grab the data inputed using the .strip() function
@@ -54,6 +110,8 @@ class SignupScreen(Screen):
             self.ids.email_signup_error.text="Invalid Email"
         else:
             self.ids.email_signup_error.text=""
+
+        
 
      def validate_phone_no(self):
         #Here we grab the data inputed using the .strip() function
@@ -115,6 +173,8 @@ class SignupScreen(Screen):
              self.ids.checkbox_error.text="Select Customer or Seller"
          else:
              self.ids.checkbox_error.text=""
+
+         
 
          if self.ids.checkbox2.active:
              print("You chose Customer!")
