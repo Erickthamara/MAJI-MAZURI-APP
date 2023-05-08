@@ -152,6 +152,14 @@ ScreenManager:
 <SignupScreen>
     name:"signup"
     MDFloatLayout:
+        MDIconButton:
+            icon: 'arrow-left-circle'
+            user_font_size: '80sp'
+            pos_hint: {"center_x": .1, "center_y": .88}
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'login'
+            
         MDLabel:
             text:"SIGN UP"
             font_style:"H3"
@@ -275,8 +283,9 @@ ScreenManager:
             spacing:"5dp"
 
             MDCheckbox:
-                group:"mygroup"
+                group:"checkbox_group"
                 id:checkbox2
+                on_active:root.checkbox_checked()
                 size_hint:None,None
                 height:"30dp"
                 width: "30dp"
@@ -289,8 +298,9 @@ ScreenManager:
                 pos_hint: {"center_x": .5, "center_y": .5}
 
             MDCheckbox:
-                group:"mygroup"
+                group:"checkbox_group"
                 id:checkbox3
+                on_active:root.checkbox_checked()
                 size_hint:None,None
                 height:"30dp"
                 width: "30dp"
@@ -308,9 +318,10 @@ ScreenManager:
             theme_text_color: 'Error'
             text: ''
 
-  
         MDRaisedButton:
             size_hint: .5,.01
+            id:submit_button2
+            disabled:False
             text:"SUBMIT"
             theme_text_color:"Custom"
             text_color: 0,0,0,1
