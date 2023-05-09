@@ -19,12 +19,12 @@ class Database():
    def __init__(self):
       if Database.connection is None:
          try:
-            Database.connection = mysql.connector.connect(host="localhost",port=3307, user="root", password="erick1", database="password1")
+            Database.connection = mysql.connector.connect(host="localhost",port=3307, user="root", password="erick1", database="maji_mazuri")
             Database.cursor = Database.connection.cursor()
          except Exception as error:
             print(f"Error: Connection not established {error}")
          else:
-            print("Connection established")
+            pass
 
       self.connection = Database.connection
       self.cursor = Database.cursor
@@ -74,19 +74,37 @@ class LoginScreen(Screen,Database):
         else:   
             self.ids.signin_button.disabled=False
         
-        self.cursor.execute("SELECT * FROM word;")
-        email_list=[]
-        for x in self.cursor:
-            email_list.append(x[0])
-        if email in email_list:
-            self.cursor.execute(f"SELECT pswd FROM word WHERE email='{email}';")
+        self.cursor.execute("SELECT customer_email FROM maji_mazuri.customer;")
+        email_customer=self.cursor.fetchall()
+        email_customer_list=[]
+        
+        for x in email_customer:
+            email_customer_list.append(x[0])
+        print(email_customer_list)
+
+        self.cursor.execute("SELECT seller_email FROM maji_mazuri.seller;")
+        email_seller=self.cursor.fetchall()
+        email_seller_list=[]
+        for x in email_seller:
+            email_seller_list.append(x[0])
+        print(email_seller_list)
+        
+        if email in email_customer_list:
+            self.cursor.execute(f"SELECT customer_pswd FROM maji_mazuri.customer WHERE customer_email='{email}';")
             for j in self.cursor:
                 if password1==j[0]:
                     print("SUCCSSFULLY LOGGED IN")
                 else:
-                    print("INCORRECT PASSWORD")
-        else:
-            print("INCORRECT EMAIL")
+                    self.ids.pswd1_error.text="Incorrect Password"
+        elif email in email_seller_list:
+            self.cursor.execute(f"SELECT seller_pswd FROM maji_mazuri.seller WHERE seller_email='{email}';")
+            for j in self.cursor:
+                if password1==j[0]:
+                    print("SUCCSSFULLY LOGGED IN")
+                else:
+                    self.ids.pswd1_error.text="Incorrect Password"
+
+        
      
     # def next_page(self):
     #     print("New Page")
@@ -118,6 +136,9 @@ class SignupScreen(Screen,Database):
             self.ids.phone_no_error.text="Phone Number Required"
             self.ids.submit_button2.disabled=True
         elif self.ids.phone_no.text.isdigit()==False  :
+            self.ids.phone_no_error.text="Invalid Phone Number"
+            self.ids.submit_button2.disabled=True
+        elif len(self.ids.phone_no.text)<10:
             self.ids.phone_no_error.text="Invalid Phone Number"
             self.ids.submit_button2.disabled=True
         else:
@@ -227,9 +248,23 @@ class SignupScreen(Screen,Database):
              
         
          if self.ids.checkbox2.active:
-            print("Customer Selected")
+            exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
+            value=(email,phone_no,first_name,last_name,password2,password3)
+            self.cursor.execute(exexute1,value)
+            self.connection.commit()
+            self.cursor.execute("SELECT * FROM maji_mazuri.customer;")
+            for x in self.cursor:
+                print(x)
+            self.cursor.close()
          elif self.ids.checkbox3.active:
-            print("Seller Selected")
+            exexute1="INSERT INTO maji_mazuri.seller(seller_email ,seller_phone_number ,seller_first_name ,seller_last_name ,seller_pswd ,seller_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
+            value=(email,phone_no,first_name,last_name,password2,password3)
+            self.cursor.execute(exexute1,value)
+            self.connection.commit()
+            self.cursor.execute("SELECT * FROM maji_mazuri.seller;")
+            for x in self.cursor:
+                print(x)
+            self.cursor.close()
 
            
 

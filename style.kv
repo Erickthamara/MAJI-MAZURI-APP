@@ -327,7 +327,9 @@ ScreenManager:
             text_color: 0,0,0,1
             pos_hint:{'center_x':0.5, 'center_y':0.1}
             on_press:root.checkbox_validate()
-            
+            on_release:
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'login'
                                
 
 
