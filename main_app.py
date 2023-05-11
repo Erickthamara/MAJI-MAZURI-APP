@@ -6,6 +6,10 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen,ScreenManager
 from kivy.core.text import LabelBase
 from kivy.core.window import Window
+from kivymd.uix.datatables import MDDataTable
+from kivy.metrics import dp
+from kivy.clock import Clock
+
 Window.size=(350,600)
 
 class WelcomeScreen(Screen): 
@@ -32,14 +36,20 @@ class Database():
 
 
 class LoginScreen(Screen,Database): 
+
+    
+        
+
     #This are all the methods used in the Login screen backend
+
     def validate_email(self):
         #Here we grab the data inputed using the .strip() function
         email=self.ids.email_login.text.strip()
         
-        if not email:
+        if self.ids.email_login.text=="":
             self.ids.email_login_error.text="Email is Required"
             self.ids.signin_button.disabled=True
+            
         elif '@' not in email or '.' not in email:
             self.ids.email_login_error.text="Invalid Email"
             self.ids.signin_button.disabled=True
@@ -80,20 +90,21 @@ class LoginScreen(Screen,Database):
         
         for x in email_customer:
             email_customer_list.append(x[0])
-        print(email_customer_list)
+        
 
         self.cursor.execute("SELECT seller_email FROM maji_mazuri.seller;")
         email_seller=self.cursor.fetchall()
         email_seller_list=[]
         for x in email_seller:
             email_seller_list.append(x[0])
-        print(email_seller_list)
+    
         
         if email in email_customer_list:
             self.cursor.execute(f"SELECT customer_pswd FROM maji_mazuri.customer WHERE customer_email='{email}';")
             for j in self.cursor:
                 if password1==j[0]:
                     print("SUCCSSFULLY LOGGED IN")
+                    return True
                 else:
                     self.ids.pswd1_error.text="Incorrect Password"
         elif email in email_seller_list:
@@ -101,8 +112,17 @@ class LoginScreen(Screen,Database):
             for j in self.cursor:
                 if password1==j[0]:
                     print("SUCCSSFULLY LOGGED IN")
+                    return True
                 else:
                     self.ids.pswd1_error.text="Incorrect Password"
+        else:
+            return False
+        
+    def change_screen1(self):
+            self.manager.current = 'sales'
+            self.manager.transition.direction = 'left'
+    
+
 
         
      
@@ -246,6 +266,7 @@ class SignupScreen(Screen,Database):
          else:
              self.ids.submit_button2.disabled=False
              
+             
         
          if self.ids.checkbox2.active:
             exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
@@ -255,7 +276,8 @@ class SignupScreen(Screen,Database):
             self.cursor.execute("SELECT * FROM maji_mazuri.customer;")
             for x in self.cursor:
                 print(x)
-            self.cursor.close()
+            
+            return True
          elif self.ids.checkbox3.active:
             exexute1="INSERT INTO maji_mazuri.seller(seller_email ,seller_phone_number ,seller_first_name ,seller_last_name ,seller_pswd ,seller_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
             value=(email,phone_no,first_name,last_name,password2,password3)
@@ -264,15 +286,73 @@ class SignupScreen(Screen,Database):
             self.cursor.execute("SELECT * FROM maji_mazuri.seller;")
             for x in self.cursor:
                 print(x)
-            self.cursor.close()
+            
+            return True
+         else:
+             return False
 
+
+     def change_screen2(self):
+            self.manager.current = 'login'
+            self.manager.transition.direction = 'right'
+
+
+class SalesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(SalesScreen, self).__init__(**kwargs)
+       
+
+    
+       
+
+    def on_enter(self):
+          mytable=MDDataTable(
+                size_hint=(.9,.7),
+                pos_hint= {'center_x':0.5, 'center_y':0.8},
+                check=True,
+                use_pagination=True,
+                pagination_menu_height="240dp",
+
+                column_data=[
+                    ("First Name",dp(30)),
+                    ("Email",dp(30)),
+                    ("Phone Number",dp(30)),
+                    ("Address",dp(30))
+                ],
+                row_data=[
+                    ("Erick","Kinyanji","07893232","312-Gatundu"),
+                    ("John","Musyoka","071234567","45-Nairobi"),
+                    ("John","john345@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick887@gmail","071932989323","412-Gatundu"),
+                    ("John","john344545@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick44@gmail","071932989323","412-Gatundu"),
+                    ("John","john13454@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick577@gmail","071932989323","412-Gatundu"),
+                    ("John","john67@gmail","07193434323","410-Kisumu"),
+                    ("Erick","Kinyanji","07893232","312-Gatundu"),
+                    ("John","Musyoka","071234567","45-Nairobi"),
+                    ("John","john345@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick887@gmail","071932989323","412-Gatundu"),
+                    ("John","john344545@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick44@gmail","071932989323","412-Gatundu"),
+                    ("John","john13454@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick577@gmail","071932989323","412-Gatundu"),
+                    ("John","john67@gmail","07193434323","410-Kisumu"),
+                    ("Erick","erick11@gmail","071932989323","412-Gatundu")
+
+                ]
+
+
+            )
+          float_layout=self.ids.my_float_layout
            
+          float_layout.add_widget(mytable)
 
-#Creation of every screen of the MAJI MAZURI APP
-sm=ScreenManager()
-sm.add_widget(WelcomeScreen(name="welcome"))
-sm.add_widget(LoginScreen(name="login"))
-sm.add_widget(SignupScreen(name="signup"))
+
+
+    
+
+
 
 class MyApp(MDApp):
     def __init__(self, **kwargs):
@@ -283,6 +363,13 @@ class MyApp(MDApp):
         
       
     def build(self):
+        #Creation of every screen of the MAJI MAZURI APP
+        sm=ScreenManager()
+        sm.add_widget(WelcomeScreen(name="welcome"))
+        sm.add_widget(LoginScreen(name="login"))
+        sm.add_widget(SignupScreen(name="signup"))
+        sm.add_widget(SalesScreen(name="sales"))
+        #Loading up every screen
         return Builder.load_file("style.kv")
     
 if __name__=="__main__":

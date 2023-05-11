@@ -2,6 +2,7 @@ ScreenManager:
     WelcomeScreen:
     LoginScreen:
     SignupScreen:
+    SalesScreen:
 
 
 <WelcomeScreen>
@@ -134,8 +135,8 @@ ScreenManager:
                 text:"Sign In"
                 size_hint_x: 1
                 font_size:"18dp"
-                on_press:root.sign_in()
-                
+                on_press:
+                    if root.sign_in():root.change_screen1()
                 disabled:False
             MDRaisedButton:
                 id: signup_button
@@ -326,26 +327,32 @@ ScreenManager:
             theme_text_color:"Custom"
             text_color: 0,0,0,1
             pos_hint:{'center_x':0.5, 'center_y':0.1}
-            on_press:root.checkbox_validate()
-            on_release:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'login'
-                               
+            on_press:if root.checkbox_validate():root.change_screen2()
+           
 
 
 
-
-
-       
-            
-
-
-
-        
-
-
-
+<SalesScreen>
+    name:"sales"
     
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "MDTopAppBar"
+            right_action_items: [["dots-vertical", lambda x: app.callback()]]
+       
+        MDBottomAppBar:
+
+            MDTopAppBar:
+                title: "Title"
+                icon: "git"
+                type: "bottom"
+                left_action_items: [["menu", lambda x: x]]       
+        MDFloatLayout:
+            id:my_float_layout
             
+
+
 
             
