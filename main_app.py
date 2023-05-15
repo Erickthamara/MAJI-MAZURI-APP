@@ -340,16 +340,14 @@ class SalesScreen(Screen,Database):
        if self.instance_table is not None and self.current_row is not None:
 
         for row in self.selected_rows:
-            print(row)
-        
-
-    def myself(self):
-        print("Hello")
-        
-
-    
-    
-    
+            delete_query = f"DELETE FROM maji_mazuri.customer WHERE customer_id = {row[0]}"
+            self.cursor.execute(delete_query)
+            self.connection.commit()
+            self.update_datatable()
+            
+    def update_datatable(self):
+        return self.on_enter()
+                
     def delete_row(self):
         row_index = self.on_check_press.current_row
         delete_query = f"DELETE FROM maji_mazuri.custome  WHERE id = {row_index}"
