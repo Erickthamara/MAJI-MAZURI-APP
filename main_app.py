@@ -37,9 +37,6 @@ class Database():
 
 class LoginScreen(Screen,Database): 
 
-    
-        
-
     #This are all the methods used in the Login screen backend
 
     def validate_email(self):
@@ -121,11 +118,7 @@ class LoginScreen(Screen,Database):
     def change_screen1(self):
             self.manager.current = 'sales'
             self.manager.transition.direction = 'left'
-    
-
-
-        
-     
+      
     # def next_page(self):
     #     print("New Page")
 
@@ -297,56 +290,75 @@ class SignupScreen(Screen,Database):
             self.manager.transition.direction = 'right'
 
 
-class SalesScreen(Screen):
+class SalesScreen(Screen,Database):
     def __init__(self, **kwargs):
         super(SalesScreen, self).__init__(**kwargs)
-       
+        self.instance_table = None  # Initialize instance_table variable
+        self.current_row = None  # Initialize current_row variable
+        self.selected_rows=[]
 
-    
        
 
     def on_enter(self):
-          mytable=MDDataTable(
-                size_hint=(.9,.7),
-                pos_hint= {'center_x':0.5, 'center_y':0.8},
-                check=True,
-                use_pagination=True,
-                pagination_menu_height="240dp",
+        headers=["cutomer_id","email","phone_no","first_name","last_name","password2","password3"]
+        self.cursor.execute("SELECT * FROM maji_mazuri.customer")
+        myresult = self.cursor.fetchall()
+        rows = [] 
+        for row in myresult:
+            rows.append(row)
+ 
+        self.mytable=MDDataTable(
+            size_hint=(.9,.7),
+            pos_hint= {'center_x':0.5, 'center_y':0.6},
+            check=True,
+            use_pagination=True,
+            pagination_menu_height="240dp",
 
-                column_data=[
-                    ("First Name",dp(30)),
-                    ("Email",dp(30)),
-                    ("Phone Number",dp(30)),
-                    ("Address",dp(30))
-                ],
-                row_data=[
-                    ("Erick","Kinyanji","07893232","312-Gatundu"),
-                    ("John","Musyoka","071234567","45-Nairobi"),
-                    ("John","john345@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick887@gmail","071932989323","412-Gatundu"),
-                    ("John","john344545@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick44@gmail","071932989323","412-Gatundu"),
-                    ("John","john13454@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick577@gmail","071932989323","412-Gatundu"),
-                    ("John","john67@gmail","07193434323","410-Kisumu"),
-                    ("Erick","Kinyanji","07893232","312-Gatundu"),
-                    ("John","Musyoka","071234567","45-Nairobi"),
-                    ("John","john345@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick887@gmail","071932989323","412-Gatundu"),
-                    ("John","john344545@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick44@gmail","071932989323","412-Gatundu"),
-                    ("John","john13454@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick577@gmail","071932989323","412-Gatundu"),
-                    ("John","john67@gmail","07193434323","410-Kisumu"),
-                    ("Erick","erick11@gmail","071932989323","412-Gatundu")
-
-                ]
+            column_data=[(header, dp(30)) for header in headers],
+            row_data=rows
 
 
-            )
-          float_layout=self.ids.my_float_layout
-           
-          float_layout.add_widget(mytable)
+        )
+        
+        float_layout=self.ids.my_float_layout
+        self.mytable.bind(on_check_press=self.on_check_press)
+
+        float_layout.add_widget(self.mytable)
+
+    def on_check_press(self, instance_table, current_row):
+        '''Called when the check box in the table row is checked.'''
+        self.instance_table=instance_table
+        self.current_row=current_row
+        if current_row in self.selected_rows:
+            self.selected_rows.remove(current_row)  # Deselect the row if already selected
+        else:
+            self.selected_rows.append(current_row)  # Select the ro
+        
+        
+    
+    def delete_selected_rows(self, *args):
+       if self.instance_table is not None and self.current_row is not None:
+
+        for row in self.selected_rows:
+            print(row)
+        
+
+    def myself(self):
+        print("Hello")
+        
+
+    
+    
+    
+    def delete_row(self):
+        row_index = self.on_check_press.current_row
+        delete_query = f"DELETE FROM maji_mazuri.custome  WHERE id = {row_index}"
+        self.cursor.execute(delete_query)
+        self.connection.commit()
+
+        # Update the DataTable view
+        self.parent.parent.parent.update_datatable()
+
 
 
 

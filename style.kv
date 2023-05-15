@@ -118,10 +118,7 @@ ScreenManager:
                 text:"[ref=Show Password]Show Password[/ref]"
                 markup:True
                 pos_hint: {"center_x": .5, "center_y": .5}
-                on_ref_press:
-                    cb.activate=False if cb.activate==True else True
-                    pswd1.password=False if pswd1.password==True else True
-                    pswd1.icon_right="eye" if pswd1.icon_right=="eye-off" else "eye-off"
+                
 
         BoxLayout:
             size_hint:.85,None
@@ -341,7 +338,22 @@ ScreenManager:
         MDTopAppBar:
             title: "MDTopAppBar"
             right_action_items: [["dots-vertical", lambda x: app.callback()]]
-       
+        
+        MDFloatLayout:
+            id:my_float_layout
+            MDRaisedButton:
+                size_hint: .5,.01
+                id:delete_row
+                disabled:False
+                text:"SUBMIT"
+                theme_text_color:"Custom"
+                text_color: 0,0,0,1
+                pos_hint:{'center_x':0.5, 'center_y':0.2}
+                on_press: root.delete_selected_rows()
+                
+
+
+
         MDBottomAppBar:
 
             MDTopAppBar:
@@ -349,8 +361,7 @@ ScreenManager:
                 icon: "git"
                 type: "bottom"
                 left_action_items: [["menu", lambda x: x]]       
-        MDFloatLayout:
-            id:my_float_layout
+  
             
 
 
