@@ -42,7 +42,7 @@ ScreenManager:
             pos_hint:{'center_x':0.5, 'center_y':0.35}
             on_press:
                 root.manager.transition.direction = 'left'
-                root.manager.current = 'login'
+                root.manager.current = 'customers'
 
 
 <LoginScreen>
@@ -333,7 +333,7 @@ ScreenManager:
 <CustomerScreen>
     name:"customers"
     
-    MDBoxLayout:
+    BoxLayout:
         orientation: "vertical"
 
         MDTopAppBar:
@@ -349,19 +349,45 @@ ScreenManager:
                 text:"Delete Row"
                 theme_text_color:"Custom"
                 text_color: 0,0,0,1
-                pos_hint:{'center_x':0.5, 'center_y':0.2}
+                pos_hint:{'center_x':0.5, 'center_y':0.15}
                 on_press: root.delete_selected_rows()
+        
+        BoxLayout:
+            size_hint:1,None
+            height:"1dp"
+            pos_hint: {"center_x": .5, "center_y": .0}
+            spacing:"20dp"
+            height: dp(56) + self.spacing * (len(self.children) - 1)
+           
+
+
+            MDBottomNavigation:
+                panel_color: .2, .2, .2, 1
                 
+                MDBottomNavigationItem:
+                    name: 'screen 1'
+                    text: 'Python'
+                    icon: 'language-python'
+                    icon_size: "36dp"
 
+                    
 
+                MDBottomNavigationItem:
+                    name: 'screen 2'
+                    text: 'C++'
+                    icon: 'language-cpp'
+                    icon_size: "36dp"
 
-        MDBottomAppBar:
+                    
 
-            MDTopAppBar:
-                title: "Title"
-                icon: "git"
-                type: "bottom"
-                left_action_items: [["menu", lambda x: x]] 
+                MDBottomNavigationItem:
+                    name: 'screen 3'
+                    text: 'JS'
+                    icon: 'language-javascript'
+                    icon_size: "36dp"
+
+                    
+            
 
 
 
