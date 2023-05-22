@@ -2,7 +2,8 @@ ScreenManager:
     WelcomeScreen:
     LoginScreen:
     SignupScreen:
-    SalesScreen:
+    CustomerScreen:
+    ShoppingScreen:
 
 
 <WelcomeScreen>
@@ -132,8 +133,7 @@ ScreenManager:
                 text:"Sign In"
                 size_hint_x: 1
                 font_size:"18dp"
-                on_press:
-                    if root.sign_in():root.change_screen1()
+                on_press:root.sign_in()
                 disabled:False
             MDRaisedButton:
                 id: signup_button
@@ -150,6 +150,7 @@ ScreenManager:
 <SignupScreen>
     name:"signup"
     MDFloatLayout:
+        id:my_layout3
         MDIconButton:
             icon: 'arrow-left-circle'
             user_font_size: '80sp'
@@ -324,13 +325,13 @@ ScreenManager:
             theme_text_color:"Custom"
             text_color: 0,0,0,1
             pos_hint:{'center_x':0.5, 'center_y':0.1}
-            on_press:if root.checkbox_validate():root.change_screen2()
+            on_press:if root.signup_validate():root.change_screen2()
            
 
 
 
-<SalesScreen>
-    name:"sales"
+<CustomerScreen>
+    name:"customers"
     
     MDBoxLayout:
         orientation: "vertical"
@@ -360,7 +361,16 @@ ScreenManager:
                 title: "Title"
                 icon: "git"
                 type: "bottom"
-                left_action_items: [["menu", lambda x: x]]       
+                left_action_items: [["menu", lambda x: x]] 
+
+
+
+<ShoppingScreen>
+    name:"shop"     
+    MDFloatLayout:
+        MDLabel:
+            text:"Hello world" 
+            halign:"center"
   
             
 
