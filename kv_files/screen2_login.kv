@@ -1,0 +1,105 @@
+ScreenManager:
+    LoginScreen:
+    
+
+<LoginScreen>
+    name:"login"
+    MDFloatLayout:
+        
+        MDLabel:
+            text:"LOGIN"
+            font_style:"H3"
+            halign:"center"
+            pos_hint:{'center_y':0.85}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+
+        MDTextField:
+            id: email_login
+            hint_text: 'Enter Your Email'
+            icon_right:"account"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .65}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+            on_text: root.validate_email()
+
+        MDLabel:
+            id: email_login_error
+            halign: 'center'
+            pos_hint:{'center_y':0.6}
+            theme_text_color: 'Error'
+            text: ''
+
+        MDTextField:
+            id: pswd1
+            hint_text: 'Password'
+            helper_text: "Minimum of 4 characters"
+            helper_text_mode: "on_focus"
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+            on_text: root.validate_password1()
+            
+
+
+        MDLabel:
+            id: pswd1_error
+            halign: 'center'
+            pos_hint:{'center_y':0.42}
+            theme_text_color: 'Error'
+            text: ''
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .5, "center_y": .35}
+            spacing:"5dp"
+
+            MDCheckbox:
+                id:cb
+                size_hint:None,None
+                height:"30dp"
+                width: "30dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_press:
+                    pswd1.password=False if pswd1.password==True else True
+                    pswd1.icon_right="eye" if pswd1.icon_right=="eye-off" else "eye-off"
+
+
+            MDLabel:
+                text:"[ref=Show Password]Show Password[/ref]"
+                markup:True
+                pos_hint: {"center_x": .5, "center_y": .5}
+                
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .45, "center_y": .2}
+            spacing:"15dp"
+
+            MDRaisedButton:
+                id:signin_button
+                disabled:False
+                text:"Sign In"
+                size_hint_x: 1
+                font_size:"18dp"
+                on_press:root.sign_in()
+                disabled:False
+            MDRaisedButton:
+                id: signup_button
+                text:"Sign Up"
+                disabled:False
+                size_hint_x: 1
+                font_size:"18dp"
+                on_press:
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'signup'
+
+

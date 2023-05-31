@@ -1,337 +1,17 @@
 ScreenManager:
-    WelcomeScreen:
-    LoginScreen:
-    SignupScreen:
-    CustomerScreen:
-    ShoppingScreen:
+    MyScreen:
+    OrderScreen:
+    CatalogueScreen:
+    SalesScreen:
+    
+
+<MyScreen>
+    name:"test"
 
 
-<WelcomeScreen>
-    name:"welcome"
-    MDFloatLayout:
-        canvas.before:
-            Color:
-                rgba: (237/255, 231/255, 225/255,1)
-            Rectangle:
-                pos:self.pos
-                size:self.size
+<OrderScreen>
+    name:"orders"
 
-        MDLabel:
-            text:"MAJI MAZURI"
-            theme_text_color:"Custom"
-            text_color: 21/255,39/255,112/255,1
-            pos_hint:{'center_x':0.5, 'center_y':0.7}
-            halign:"center"
-            font_size:"60sp"
-            font_style:"H4"
-        
-        MDLabel:
-            text:"welcome"
-            theme_text_color:"Custom"
-            text_color: 21/255,39/255,112/255,1
-            pos_hint:{'center_x':0.5, 'center_y':0.6}
-            halign:"center"
-            font_style:"H6"
-            font_size:"35sp"
-            
-        MDRaisedButton:
-            size_hint: .3,.1
-            text:"GET STARTED"
-            theme_text_color:"Custom"
-            text_color: 0,0,0,1
-            pos_hint:{'center_x':0.5, 'center_y':0.35}
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'customers'
-
-
-<LoginScreen>
-    name:"login"
-    MDFloatLayout:
-        
-        MDLabel:
-            text:"LOGIN"
-            font_style:"H3"
-            halign:"center"
-            pos_hint:{'center_y':0.85}
-            theme_text_color:"Custom"
-            text_color: 0,0,0,1
-
-        MDTextField:
-            id: email_login
-            hint_text: 'Enter Your Email'
-            icon_right:"account"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .65}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text: root.validate_email()
-
-        MDLabel:
-            id: email_login_error
-            halign: 'center'
-            pos_hint:{'center_y':0.6}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDTextField:
-            id: pswd1
-            hint_text: 'Password'
-            helper_text: "Minimum of 4 characters"
-            helper_text_mode: "on_focus"
-            password:True
-            icon_right:"eye-off"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .5}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text: root.validate_password1()
-            
-
-
-        MDLabel:
-            id: pswd1_error
-            halign: 'center'
-            pos_hint:{'center_y':0.42}
-            theme_text_color: 'Error'
-            text: ''
-
-        BoxLayout:
-            size_hint:.85,None
-            height:"30dp"
-            pos_hint: {"center_x": .5, "center_y": .35}
-            spacing:"5dp"
-
-            MDCheckbox:
-                id:cb
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                on_press:
-                    pswd1.password=False if pswd1.password==True else True
-                    pswd1.icon_right="eye" if pswd1.icon_right=="eye-off" else "eye-off"
-
-
-            MDLabel:
-                text:"[ref=Show Password]Show Password[/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
-                
-
-        BoxLayout:
-            size_hint:.85,None
-            height:"30dp"
-            pos_hint: {"center_x": .45, "center_y": .2}
-            spacing:"15dp"
-
-            MDRaisedButton:
-                id:signin_button
-                disabled:False
-                text:"Sign In"
-                size_hint_x: 1
-                font_size:"18dp"
-                on_press:root.sign_in()
-                disabled:False
-            MDRaisedButton:
-                id: signup_button
-                text:"Sign Up"
-                disabled:False
-                size_hint_x: 1
-                font_size:"18dp"
-                on_press:
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'signup'
-
-
-
-<SignupScreen>
-    name:"signup"
-    MDFloatLayout:
-        id:my_layout3
-        MDIconButton:
-            icon: 'arrow-left-circle'
-            user_font_size: '80sp'
-            pos_hint: {"center_x": .1, "center_y": .88}
-            on_press: 
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'login'
-            
-        MDLabel:
-            text:"SIGN UP"
-            font_style:"H3"
-            halign:"center"
-            pos_hint:{'center_y':0.92}
-            theme_text_color:"Custom"
-            text_color: 0,0,0,1
-        
-        MDTextField:
-            id: email_signup
-            hint_text: 'Enter your email'
-            icon_right:"email"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .8}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_email2()
-        MDLabel:
-            id: email_signup_error
-            halign: 'center'
-            pos_hint:{'center_y':0.75}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDTextField:
-            id: phone_no
-            hint_text: 'Phone Number'
-            icon_right:"cellphone-check"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .7}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_phone_no()
-        MDLabel:
-            id: phone_no_error
-            halign: 'center'
-            pos_hint:{'center_y':0.65}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDTextField:
-            id: first_name
-            hint_text: 'First Name'
-            icon_right:"account"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .6}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_first_name()
-        MDLabel:
-            id: first_name_error
-            halign: 'center'
-            pos_hint:{'center_y':0.55}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDTextField:
-            id: last_name
-            hint_text: 'Last Name'
-            icon_right:"account"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .5}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_last_name()
-        MDLabel:
-            id: last_name_error
-            halign: 'center'
-            pos_hint:{'center_y':0.45}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDTextField:
-            id: pswd_signup
-            hint_text: "Password"
-            helper_text: "Minimum of 4 characters"
-            helper_text_mode: "on_focus"
-            password:True
-            icon_right:"eye-off"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .4}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_password2()
-        MDLabel:
-            id: pswd_signup_error
-            halign: 'center'
-            pos_hint:{'center_y':0.35}
-            theme_text_color: 'Error'
-            text: ''
-        
-        MDTextField:
-            id: pswd_confirm
-            hint_text: "Confirm Password"
-            helper_text: "Minimum of 4 characters"
-            helper_text_mode: "on_focus"
-            password:True
-            icon_right:"eye-off"
-            font_size:"16dp"
-            size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .3}
-            on_text:self.text=self.text.replace(" ","")
-            write_tab:False
-            on_text:root.validate_password3()
-        MDLabel:
-            id: pswd_confirm_error
-            halign: 'center'
-            pos_hint:{'center_y':0.25}
-            theme_text_color: 'Error'
-            text: ''
-
-        BoxLayout:
-            size_hint:.85,None
-            height:"30dp"
-            pos_hint: {"center_x": .5, "center_y": .2}
-            spacing:"5dp"
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox2
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                
-
-            MDLabel:
-                text:"[ref=Show Password]Customer[/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox3
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-               
-            MDLabel:
-                text:"[ref=Show Password]Seller [/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
-        MDLabel:
-            id: checkbox_error
-            halign: 'center'
-            pos_hint:{'center_y':0.161}
-            theme_text_color: 'Error'
-            text: ''
-
-        MDRaisedButton:
-            size_hint: .5,.01
-            id:submit_button2
-            disabled:False
-            text:"SUBMIT"
-            theme_text_color:"Custom"
-            text_color: 0,0,0,1
-            pos_hint:{'center_x':0.5, 'center_y':0.1}
-            on_press:if root.signup_validate():root.change_screen2()
-           
-
-
-
-<CustomerScreen>
-    name:"customers"
     
     BoxLayout:
         orientation: "vertical"
@@ -359,47 +39,56 @@ ScreenManager:
             spacing:"20dp"
             height: dp(56) + self.spacing * (len(self.children) - 1)
            
+        
 
+        MDBottomNavigation:
+            panel_color: 184/255, 190/255, 195/255,1
+                    
 
-            MDBottomNavigation:
-                panel_color: .2, .2, .2, 1
+            MDBottomNavigationItem:
+                name: 'catalogue'
+                text: 'Catalogue'
+                icon: 'order-bool-descending-variant'
+                icon_size: "36dp"
+
+                MDLabel:
+                    text:"1111"
+                    halign: "center"
+                    
+
                 
-                MDBottomNavigationItem:
-                    name: 'screen 1'
-                    text: 'Python'
-                    icon: 'language-python'
-                    icon_size: "36dp"
-
-                    
-
-                MDBottomNavigationItem:
-                    name: 'screen 2'
-                    text: 'C++'
-                    icon: 'language-cpp'
-                    icon_size: "36dp"
-
-                    
-
-                MDBottomNavigationItem:
-                    name: 'screen 3'
-                    text: 'JS'
-                    icon: 'language-javascript'
-                    icon_size: "36dp"
-
-                    
             
+            MDBottomNavigationItem:
+                name: 'orders'
+                text: 'Orders'
+                icon: 'store-check'
+                    
+                MDLabel:
+                    text: 'I programming of C++'
+                    halign: 'center'
+                        
+                
+            MDBottomNavigationItem:
+                name: 'sales'
+                text: 'Sales'
+                icon: 'cash-check'
+                icon_size: "36dp"
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    MDLabel:
+                        text: '333'
+                        halign: 'center'
+
+                
+                    
+                        
 
 
+<CatalogueScreen>
+    name:"catalogue"     
+   
 
-<ShoppingScreen>
-    name:"shop"     
-    MDFloatLayout:
-        MDLabel:
-            text:"Hello world" 
-            halign:"center"
-  
-            
-
-
-
-            
+<SalesScreen>
+    name:"sales"     
+    

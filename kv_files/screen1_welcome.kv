@@ -1,0 +1,42 @@
+ScreenManager:
+    WelcomeScreen:
+
+
+<WelcomeScreen>
+    name:"welcome"
+    MDFloatLayout:
+        canvas.before:
+            Color:
+                rgba: (237/255, 231/255, 225/255,1)
+            Rectangle:
+                pos:self.pos
+                size:self.size
+
+        MDLabel:
+            text:"MAJI MAZURI"
+            theme_text_color:"Custom"
+            text_color: 21/255,39/255,112/255,1
+            pos_hint:{'center_x':0.5, 'center_y':0.7}
+            halign:"center"
+            font_size:"60sp"
+            font_style:"H4"
+        
+        MDLabel:
+            text:"welcome"
+            theme_text_color:"Custom"
+            text_color: 21/255,39/255,112/255,1
+            pos_hint:{'center_x':0.5, 'center_y':0.6}
+            halign:"center"
+            font_style:"H6"
+            font_size:"35sp"
+            
+        MDRaisedButton:
+            size_hint: .3,.1
+            text:"GET STARTED"
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+            pos_hint:{'center_x':0.5, 'center_y':0.35}
+            on_press:
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'orders'
+
