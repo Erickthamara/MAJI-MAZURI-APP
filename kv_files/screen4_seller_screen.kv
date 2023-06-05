@@ -1,0 +1,136 @@
+ScreenManager:
+    MyScreen:
+    SellerScreen:
+   
+    
+
+<MyScreen>
+    name:"test"
+
+
+<SellerScreen>
+    name:"orders"
+
+    
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "MDTopAppBar"
+            right_action_items: [["dots-vertical", lambda x: app.callback()]]
+        
+
+        MDBottomNavigation:
+            panel_color: 184/255, 190/255, 195/255,1
+                    
+
+            MDBottomNavigationItem:
+                name: 'catalogue'
+                text: 'Catalogue'
+                icon: 'order-bool-descending-variant'
+                icon_size: "36dp"
+                
+                MDFloatLayout:
+                    id:catalogue_layout
+                    MDLabel:
+                        text:"STORE CATALOGUE"
+                        theme_text_color:"Custom"
+                        text_color: 21/255,39/255,112/255,1
+                        pos_hint:{ 'center_y':0.95}
+                        halign:"center"
+                        font_size:"45sp"
+                        font_style:"H4"
+
+                    MDLabel:
+                        text:"Update Data"
+                        theme_text_color:"Custom"
+                        text_color: 21/255,39/255,112/255,1
+                        pos_hint:{ 'center_y':0.33}
+                        halign:"center"
+                        font_size:"30sp"
+                        font_style:"H5"
+
+                    BoxLayout:
+                        size_hint:.85,None
+                        height:"30dp"
+                        pos_hint: {"center_x": .45, "center_y": .24}
+                        spacing:"5dp"
+
+                        MDTextField:
+                            id:field
+                            mode:"fill"
+                            fill_color: 0, 1, 0, 1
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            size_hint_x: 1
+                            width: "160dp"
+                            hint_text: "Select Quantity or Price"
+                            color_mode:"accent"
+                            on_focus: if self.focus: root.dropdown()
+                            
+                    BoxLayout:
+                        size_hint:.85,None
+                        height:"10dp"
+                        pos_hint: {"center_x": .45, "center_y": .1}
+                        spacing:"5dp"
+
+                        MDTextField:
+                            id: catalogue_text
+                            mode:"fill"
+                            fill_color: 0, 1, 0, 1
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            size_hint_x: 1
+                            width: "160dp"
+                            hint_text: "Select Item"
+                            color_mode:"accent"
+                            on_focus: 
+                            
+                        MDRaisedButton:
+                            id:update_catalogue
+                            disabled:False
+                            text:"Submit"
+                            size_hint_x: 1
+                            pos_hint: {"center_x": .5, "center_y": .1}
+                            font_size:"18dp"
+                            disabled:False
+                            on_press:
+                            
+
+                
+                    
+                    
+            MDBottomNavigationItem:
+                name: 'orders'
+                text: 'Orders'
+                icon: 'store-check'
+
+                 
+                MDFloatLayout:
+                    id:my_float_layout
+                    MDRaisedButton:
+                        size_hint: .5,.01
+                        id:delete_row
+                        disabled:False
+                        text:"Delete Row"
+                        theme_text_color:"Custom"
+                        text_color: 0,0,0,1
+                        pos_hint:{'center_x':0.5, 'center_y':0.15}
+                        on_press: root.delete_selected_rows()
+                        
+                
+            MDBottomNavigationItem:
+                name: 'sales'
+                text: 'Sales'
+                icon: 'cash-check'
+                icon_size: "36dp"
+
+                SalesContent:
+                    #in  kv_files
+
+
+                
+                    
+                        
+
+
+   
+    

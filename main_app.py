@@ -4,6 +4,8 @@ from kivy.uix.screenmanager import Screen,ScreenManager
 from kivy.core.window import Window
 from os import listdir
 from kivy.clock import Clock
+from kivymd.uix.datatables import MDDataTable
+from kivy.metrics import dp
 
 import kivy
 import kivymd
@@ -11,9 +13,8 @@ import kivymd
 from classes import WelcomeScreen
 from classes import LoginScreen
 from classes import SignupScreen
-from classes import OrderScreen
-from classes import CatalogueScreen
-from classes import SalesScreen
+from classes import SellerScreen
+
 
 Window.size=(350,600)
 
@@ -21,6 +22,15 @@ Window.size=(350,600)
 class MyScreen(Screen):
     pass
 
+class CatalogueContent(Screen):
+    pass
+
+class OrdersContent(Screen):
+    pass
+
+
+class SalesContent(Screen):
+    pass
 
     
 class MyApp(MDApp):
@@ -31,15 +41,11 @@ class MyApp(MDApp):
         self.theme_cls.primary_hue='700'
 
     
-
-        
-        
     def build(self):
         #Creation of every style screen 
         kv_path = "./kv_files/"
         for kv in listdir(kv_path): 
             Builder.load_file(kv_path+kv)
-        Builder.load_file("style.kv")
         
         #Creation of every screen of the MAJI MAZURI APP
         sm=ScreenManager()
@@ -47,15 +53,12 @@ class MyApp(MDApp):
         sm.add_widget(LoginScreen(name="login"))
         sm.add_widget(SignupScreen(name="signup"))
         sm.add_widget(MyScreen(name="test"))
-        sm.add_widget(OrderScreen(name="orders"))
-        sm.add_widget(CatalogueScreen(name="catalogue"))
-        sm.add_widget(SalesScreen(name="sales"))
+        sm.add_widget(SellerScreen(name="orders"))
+        
         #Loading up every screen
         return sm
     
          
-        
-    
 if __name__=="__main__":
     MyApp().run()
         

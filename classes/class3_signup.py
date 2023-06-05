@@ -14,14 +14,12 @@ class SignupScreen(Screen,Database):
         if re.match(pattern,email):
             return True
         return False
-
     
     def validate_phone_re(self,phone):
         pattern = r'^\d{10}$'
         if re.match(pattern, phone):
             return True
         return False
-
     
     def validate_password_re(self,password):
         # Add your password validation rules here
@@ -183,6 +181,7 @@ class SignupScreen(Screen,Database):
              
              
              if self.ids.checkbox2.active:
+                #If the email is not already in the customer.databse then you can add the info
                 if email not in email_customer_list:
                     exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
                     value=(email,phone_no,first_name,last_name,password2,password3)
@@ -191,11 +190,10 @@ class SignupScreen(Screen,Database):
                     return True
                 else:
                     self.ids.email_signup_error.text="Email is already Registered"
-                    return False
-
-             
+                    return False   
                 
              elif self.ids.checkbox3.active:
+                #If the email is not already in the seller.databse then you can add the info
                 if email not in email_seller_list:
                     exexute1="INSERT INTO maji_mazuri.seller(seller_email ,seller_phone_number ,seller_first_name ,seller_last_name ,seller_pswd ,seller_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
                     value=(email,phone_no,first_name,last_name,password2,password3)
