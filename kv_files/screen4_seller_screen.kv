@@ -71,18 +71,20 @@ ScreenManager:
                         size_hint:.85,None
                         height:"10dp"
                         pos_hint: {"center_x": .45, "center_y": .1}
-                        spacing:"5dp"
+                        spacing:"20dp"
 
                         MDTextField:
-                            id: catalogue_text
+                            id: num_update
                             mode:"fill"
                             fill_color: 0, 1, 0, 1
-                            pos_hint: {"center_x": .5, "center_y": .5}
+                            pos_hint: {"center_x": .4, "center_y": .5}
                             size_hint_x: 1
                             width: "160dp"
-                            hint_text: "Select Item"
+                            hint_text: "Enter Amount"
+                            #input_filter: "int"
+                            #input_type: "number"
                             color_mode:"accent"
-                            on_focus: 
+                            on_text:root.input_check()
                             
                         MDRaisedButton:
                             id:update_catalogue
@@ -92,7 +94,7 @@ ScreenManager:
                             pos_hint: {"center_x": .5, "center_y": .1}
                             font_size:"18dp"
                             disabled:False
-                            on_press:
+                            on_press:root.update_data()
                             
 
                 
