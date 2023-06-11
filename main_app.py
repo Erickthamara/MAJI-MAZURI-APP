@@ -6,6 +6,8 @@ from os import listdir
 from kivy.clock import Clock
 from kivymd.uix.datatables import MDDataTable
 from kivy.metrics import dp
+from kivy.factory import Factory
+from kivymd.uix.bottomsheet import MDCustomBottomSheet
 
 import kivy
 import kivymd
@@ -14,6 +16,7 @@ from classes import WelcomeScreen
 from classes import LoginScreen
 from classes import SignupScreen
 from classes import SellerScreen
+from classes import CustomerBrowse
 
 
 Window.size=(350,600)
@@ -40,6 +43,15 @@ class MyApp(MDApp):
         self.theme_cls.primary_palette="Blue"
         self.theme_cls.primary_hue='700'
 
+    def show_example_custom_bottom_sheet(self,image,price,rating):
+        bottom_sheet=Factory.ContentCustomSheet()
+        bottom_sheet.image=image
+        bottom_sheet.price=price
+        bottom_sheet.rating=rating
+
+        self.custom_sheet = MDCustomBottomSheet(screen=bottom_sheet)
+        self.custom_sheet.open()
+
     
     def build(self):
         #Creation of every style screen 
@@ -54,7 +66,7 @@ class MyApp(MDApp):
         sm.add_widget(SignupScreen(name="signup"))
         sm.add_widget(MyScreen(name="test"))
         sm.add_widget(SellerScreen(name="orders"))
-        
+        sm.add_widget(CustomerBrowse(name="customerbrowse"))
         #Loading up every screen
         return sm
     

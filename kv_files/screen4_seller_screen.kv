@@ -1,3 +1,4 @@
+#:kivy 2.1.0
 ScreenManager:
     MyScreen:
     SellerScreen:
@@ -16,9 +17,10 @@ ScreenManager:
         orientation: "vertical"
 
         MDTopAppBar:
-            title: "MDTopAppBar"
-            right_action_items: [["dots-vertical", lambda x: app.callback()]]
-        
+            id:bar
+            title: "ADMIN PANNEL"
+            right_action_items: [["dots-vertical", lambda x: root.dropdown_bar()  ,"Options"]]
+            
 
         MDBottomNavigation:
             panel_color: 184/255, 190/255, 195/255,1
@@ -108,15 +110,30 @@ ScreenManager:
                  
                 MDFloatLayout:
                     id:my_float_layout
-                    MDRaisedButton:
-                        size_hint: .5,.01
-                        id:delete_row
-                        disabled:False
-                        text:"Delete Row"
-                        theme_text_color:"Custom"
-                        text_color: 0,0,0,1
-                        pos_hint:{'center_x':0.5, 'center_y':0.15}
-                        on_press: root.delete_selected_rows()
+                    BoxLayout:
+                        size_hint:.85,None
+                        height:"30dp"
+                        pos_hint: {"center_x": .5, "center_y": .15}
+                        spacing:"15dp"
+
+                        MDRaisedButton:
+                            id:signin_button
+                            disabled:False
+                            text:"Order Cleared"
+                            size_hint_x: 1
+                            font_size:"18dp"
+                            on_press:root.sign_in()
+                            disabled:False
+                        MDRaisedButton:
+                            id:delete_row
+                            text:"Delete Row"
+                            disabled:False
+                            size_hint_x: 1
+                            font_size:"18dp"
+                            on_press: root.delete_selected_rows()
+                        
+
+                   
                         
                 
             MDBottomNavigationItem:
@@ -125,12 +142,94 @@ ScreenManager:
                 icon: 'cash-check'
                 icon_size: "36dp"
 
-                SalesContent:
-                    #in  kv_files
+                ScrollView:
+                    size:self.size
+                    do_scroll_x: False
 
 
-                
+                    GridLayout:
+                        size_hint_y:None
+                        height:self.minimum_height
+                        width:self.minimum_width
+                        cols:1
+                        spacing:"30dp"
+                        padding:"20dp"
+                        
+                        MDLabel:
+                            text:"SALES ENTRY"
+                            theme_text_color:"Custom"
+                            text_color: 21/255,39/255,112/255,1
+                            
+                            halign:"center"
+                            font_size:"45sp"
+                            font_style:"H4"
+                        BoxLayout:
+                            size_hint:.9,None
+                            height:self.minimum_height
+                            
+                            spacing:"15dp"
+
+                            MDTextField:
+                                id:sales_entry
+                                mode:"fill"
+                                hint_text:"Enter Sale"
+                                size_hint_x: 1
+                                font_size:"18dp"
+                                on_text:root.sales_input_check()
+                                
+                            MDRaisedButton:
+                                id:submit_sales
+                                text:"Submit"
+                                disabled:False
+                                size_hint_x: 1
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                font_size:"18dp"
+                                on_press: 
+
+                        FloatLayout:
+                            id:sales_layout
+                            size_hint:.9,None
+
+                        MDLabel:
+                            text:"SALES ENTRY"
+                            theme_text_color:"Custom"
+                            text_color: 21/255,39/255,112/255,1
+                            
+                            halign:"center"
+                            font_size:"45sp"
+                            font_style:"H4"
+                        BoxLayout:
+                            size_hint:.9,None
+                            height:self.minimum_height
+                            
+                            spacing:"15dp"
+
+                            MDTextField:
+                                id:sales_entry
+                                mode:"fill"
+                                hint_text:"Enter Sale"
+                                size_hint_x: 1
+                                font_size:"18dp"
+                                on_text:root.sales_input_check()
+                                
+                            MDRaisedButton:
+                                id:submit_sales
+                                text:"Submit"
+                                disabled:False
+                                size_hint_x: 1
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                                font_size:"18dp"
+                                on_press: 
+
+                        
+                           
+                            
+                       
+                        
+
+
                     
+                        
                         
 
 
