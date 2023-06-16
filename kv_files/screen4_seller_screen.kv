@@ -1,12 +1,12 @@
 #:kivy 2.1.0
 ScreenManager:
-    MyScreen:
+    #MyScreen:
     SellerScreen:
+   # SalesGraph:
    
     
 
-<MyScreen>
-    name:"test"
+
 
 
 <SellerScreen>
@@ -110,10 +110,19 @@ ScreenManager:
                  
                 MDFloatLayout:
                     id:my_float_layout
+                    MDLabel:
+                        text:"ORDERS"
+                        theme_text_color:"Custom"
+                        text_color: 21/255,39/255,112/255,1
+                        pos_hint: {"center_x": .5, "center_y": .95} 
+                        halign:"center"
+                        font_size:"45sp"
+                        font_style:"H4"
+                        height:"15dp"
                     BoxLayout:
                         size_hint:.85,None
                         height:"30dp"
-                        pos_hint: {"center_x": .5, "center_y": .15}
+                        pos_hint: {"center_x": .5, "center_y": .09}
                         spacing:"15dp"
 
                         MDRaisedButton:
@@ -130,7 +139,7 @@ ScreenManager:
                             disabled:False
                             size_hint_x: 1
                             font_size:"18dp"
-                            on_press: root.delete_selected_rows()
+                            on_press:root.show_alert_dialog_delete()
                         
 
                    
@@ -142,89 +151,78 @@ ScreenManager:
                 icon: 'cash-check'
                 icon_size: "36dp"
 
-                ScrollView:
-                    size:self.size
-                    do_scroll_x: False
-
-
-                    GridLayout:
-                        size_hint_y:None
-                        height:self.minimum_height
-                        width:self.minimum_width
-                        cols:1
-                        spacing:"30dp"
-                        padding:"20dp"
+                MDFloatLayout:
+                    id:sales_layout
+    
+                    
+                    MDLabel:
+                        text:"SALES ENTRY"
+                        theme_text_color:"Custom"
+                        text_color: 21/255,39/255,112/255,1
+                        pos_hint: {"center_x": .5, "center_y": .95} 
+                        halign:"center"
+                        font_size:"45sp"
+                        font_style:"H4"
+                        height:"15dp"
+                    BoxLayout:
+                        size_hint:.9,None
+                        height:"30dp"
+                        pos_hint: {"center_x": .5, "center_y": .8}
+                        spacing:"15dp"
                         
-                        MDLabel:
-                            text:"SALES ENTRY"
-                            theme_text_color:"Custom"
-                            text_color: 21/255,39/255,112/255,1
-                            
-                            halign:"center"
-                            font_size:"45sp"
-                            font_style:"H4"
-                        BoxLayout:
-                            size_hint:.9,None
-                            height:self.minimum_height
-                            
-                            spacing:"15dp"
 
-                            MDTextField:
-                                id:sales_entry
-                                mode:"fill"
-                                hint_text:"Enter Sale"
-                                size_hint_x: 1
-                                font_size:"18dp"
-                                on_text:root.sales_input_check()
-                                
-                            MDRaisedButton:
-                                id:submit_sales
-                                text:"Submit"
-                                disabled:False
-                                size_hint_x: 1
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                font_size:"18dp"
-                                on_press: 
-
-                        FloatLayout:
-                            id:sales_layout
-                            size_hint:.9,None
-
-                        MDLabel:
-                            text:"SALES ENTRY"
-                            theme_text_color:"Custom"
-                            text_color: 21/255,39/255,112/255,1
+                        MDTextField:
+                            id:sales_entry
+                            mode:"fill"
+                            hint_text:"Enter Sale"
+                            size_hint_x: 1
                             
-                            halign:"center"
-                            font_size:"45sp"
-                            font_style:"H4"
-                        BoxLayout:
-                            size_hint:.9,None
-                            height:self.minimum_height
+                            font_size:"18dp"
+                            on_text:root.sales_input_check()
                             
-                            spacing:"15dp"
+                        MDRaisedButton:
+                            id:submit_sales
+                            text:"Submit"
+                            disabled:False
+                            size_hint_x: 1
+                            pos_hint: {"center_x": .5, "center_y": .9}
+                            font_size:"18dp"
+                            on_press: root.input_sales()
+                    
+                    MDRaisedButton:
+                        id:sales_graph
+                        text:"Generate Graph"
+                        disabled:False
+                        size_hint_x: .5
+                        pos_hint: {"center_x": .5, "center_y": .06}
+                        font_size:"18dp"
+                        on_press: 
 
-                            MDTextField:
-                                id:sales_entry
-                                mode:"fill"
-                                hint_text:"Enter Sale"
-                                size_hint_x: 1
-                                font_size:"18dp"
-                                on_text:root.sales_input_check()
-                                
-                            MDRaisedButton:
-                                id:submit_sales
-                                text:"Submit"
-                                disabled:False
-                                size_hint_x: 1
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                font_size:"18dp"
-                                on_press: 
+            MDBottomNavigationItem:
+                name: 'report'
+                text: 'Report'
+                icon: 'cash-check'
+                icon_size: "36dp"
+
+
+                    
+                    
+#<SalesGraph>
+ #   name:"sales_graph"
+
+#    BoxLayout:
+ #       id:sale_graph
+  #      orientation:"vertical"
+
+   #     MDLabel:
+    #        text:"sales"                   
 
                         
-                           
-                            
-                       
+                    
+                    
+                        
+                        
+                    
                         
 
 

@@ -22,7 +22,7 @@ ScreenManager:
             font_style:"H4"
         
         MDLabel:
-            text:"welcome"
+            text:"Welcome"
             theme_text_color:"Custom"
             text_color: 21/255,39/255,112/255,1
             pos_hint:{'center_x':0.5, 'center_y':0.6}
@@ -38,5 +38,5 @@ ScreenManager:
             pos_hint:{'center_x':0.5, 'center_y':0.35}
             on_press:
                 root.manager.transition.direction = 'left'
-                root.manager.current = 'customerbrowse'
+                root.manager.current = 'orders'
 

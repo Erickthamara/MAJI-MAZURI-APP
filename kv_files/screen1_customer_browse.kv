@@ -14,7 +14,7 @@ ScreenManager:
 
         MDTopAppBar:
             id:bar
-            title: "ADMIN PANNEL"
+            title: "PURCHASE BOTTLES"
             right_action_items: [["dots-vertical", lambda x: root.dropdown_bar()  ,"Options"],["cart", lambda x: x]]
             left_action_items:[["arrow-left", lambda x: x]]
             
@@ -43,27 +43,27 @@ ScreenManager:
                         
                         ItemCard:
                             image:"images/1l.jpg"
-                            rating:"4/5"
+                            rating:"1Litre Bottle"
                             price:"KSH.40"
                         ItemCard:
                             image:"images/5l.jpg"
-                            rating:"4.1/5"
+                            rating:"5L Bottle"
                             price:"KSH.100"
                         ItemCard:
                             image:"images/10l.jpg"
-                            rating:"4.2/5"
+                            rating:"1OL Bottle"
                             price:"KSH.150"
                         ItemCard:
                             image:"images/189.jpg"
-                            rating:"4/5"
+                            rating:"18.9L Bottle"
                             price:"KSH.250"
                         ItemCard:
                             image:"images/20l.jpeg"
-                            rating:"4.8/5"
+                            rating:"20L Bottle"
                             price:"300"
                         ItemCard:
                             image:"images/20lKeringet.jpg"
-                            rating:"4.5/5"
+                            rating:"20L Bottle"
                             price:"KSH.1300"
 
                        
@@ -73,13 +73,13 @@ ScreenManager:
                 
                 
             MDBottomNavigationItem:
-                name: 'orders'
+                name: 'notification'
                 text: 'Notification'
                 icon: 'store-check'
 
                  
             MDBottomNavigationItem:
-                name: 'sales'
+                name: 'profile'
                 text: 'Profile'
                 icon: 'cash-check'
                 icon_size: "36dp"
@@ -94,40 +94,50 @@ ScreenManager:
     rating:""
     RelativeLayout:
         ItemCard:
-            pos_hint:{"x":.05,"y":.6}
+            pos_hint:{"x":.05,"y":.4}
             image:root.image
             price:root.price
             rating:root.rating
+    ScrollView:
+        BoxLayout:
+            orientation:"vertical"
+            
+            adaptive_height:True
 
-    MDLabel:
-        text:"this the latest version of our Brand with modern design."
-        adaptive_height:True
-    MDBoxLayout:
-        adaptive_width:True
-        MDIconButton:
-            icon:'plus'
-            pos_hint:{"center_x":.5,"center_y":.5}
-        MDLabel:
-            text:"1"
-            halign:'center'
-            valign:'center'
-        MDIconButton:
-            icon:"minus"
-            pos_hint:{"center_x":.5,"center_y":.5}
-    MDBoxLayout:
-        spacing:dp(8)
-        MDRoundFlatIconButton:
-            icon:"cart"
-            text:"Add to cart"
-            size_hint_x:1
-        MDRoundFlatIconButton:
-            icon:"cards-heart"
-            text:"Add to Favorite"
-            size_hint_x:1
-    MDRaisedButton:
-        size_hint_x:1
-        text:"Buy now"
-        pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                text:"This the latest version of our Brand with modern design."
+                adaptive_height:True
+            MDBoxLayout:
+                adaptive_width:True
+                MDIconButton:
+                    icon:"minus"
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    on_release: app.decrease_quantity()
+                
+                MDLabel:
+                    id:Labe_num
+                    text:app.num
+                    halign:'center'
+                    valign:'center'
+                MDIconButton:
+                    icon:'plus'
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    on_release: app.increase_quantity()
+                
+            MDBoxLayout:
+                spacing:dp(8)
+                MDRoundFlatIconButton:
+                    icon:"cart"
+                    text:"Add to cart"
+                    size_hint_x:1
+                MDRoundFlatIconButton:
+                    icon:"cards-heart"
+                    text:"Add to Favorite"
+                    size_hint_x:1
+            MDRaisedButton:
+                size_hint_x:1
+                text:"Buy now"
+                pos_hint: {"center_x": .5, "center_y": .5}
 
 
 

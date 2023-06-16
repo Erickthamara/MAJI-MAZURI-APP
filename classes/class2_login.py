@@ -49,7 +49,7 @@ class LoginScreen(Screen,Database):
             self.ids.pswd1_error.text=""
             self.ids.signin_button.disabled=False
     def change_screen1(self):
-        self.manager.current = 'customers'
+        self.manager.current = 'customerbrowse'
         self.manager.transition.direction = 'left'
 
     def change_screen2(self):

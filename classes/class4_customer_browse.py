@@ -1,13 +1,21 @@
 from kivymd.uix.screen import MDScreen
 from kivy.factory import Factory
 from kivymd.uix.bottomsheet import MDCustomBottomSheet
+from kivy.properties import StringProperty
 
 class CustomerBrowse(MDScreen): 
-    """def show_example_custom_bottom_sheet(self,image,price):
-        bottom_sheet=Factory.ContentCustomSheet()
-        bottom_sheet.image=image
-        bottom_sheet.price=price
+    num = StringProperty(0)
 
-        self.custom_sheet = MDCustomBottomSheet(screen=bottom_sheet)
-        self.custom_sheet.open()
-        """
+    def __init__(self, **kwargs):
+        super(CustomerBrowse, self).__init__(**kwargs)
+        self.num = str(int(0))
+
+    def change_text(self):
+       # self.random_number = str(random.randint(1, 100))
+        pass
+    def increase_quantity(self):
+        self.quantity += 1
+
+    def decrease_quantity(self):
+        if self.quantity > 0:
+            self.quantity -= 1
