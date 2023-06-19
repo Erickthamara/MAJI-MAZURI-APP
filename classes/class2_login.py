@@ -87,22 +87,25 @@ class LoginScreen(Screen,Database):
             
             if email in email_customer_list:
                 self.cursor.execute(f"SELECT customer_pswd FROM maji_mazuri.customer WHERE customer_email='{email}';")
-                for j in self.cursor:
+                cust_pswd=self.cursor.fetchall()
+                for j in cust_pswd:
                     if password1==j[0]:
                         self.change_screen1()
+                        
                         return True
                     else:
                         self.ids.pswd1_error.text="Incorrect Password"
-                self.cursor.close()
+                
             elif email in email_seller_list:
                 self.cursor.execute(f"SELECT seller_pswd FROM maji_mazuri.seller WHERE seller_email='{email}';")
-                for j in self.cursor:
+                seller_pswd=self.cursor.fetchall()
+                for j in seller_pswd:
                     if password1==j[0]:
                         self.change_screen2()
                         return True
                     else:
                         self.ids.pswd1_error.text="Incorrect Password"
-                self.cursor.close()
+                
             else:
                 self.ids.email_login_error.text="Email is not Registered"
                 return False

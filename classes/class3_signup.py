@@ -128,7 +128,7 @@ class SignupScreen(Screen,Database):
          
 
     def signup_validate(self):
-         
+         #Here we collect all te info entered by the user
          email=self.ids.email_signup.text.strip()
          phone_no=self.ids.phone_no.text.strip()
          first_name=self.ids.first_name.text.strip()
@@ -136,18 +136,21 @@ class SignupScreen(Screen,Database):
          password2=self.ids.pswd_signup.text.strip()
          password3=self.ids.pswd_confirm.text.strip()
 
+        #Here we collect the customers emails
          self.cursor.execute("SELECT customer_email FROM maji_mazuri.customer;")
          email_customer=self.cursor.fetchall()
          email_customer_list=[]
          for eml in email_customer:
             email_customer_list.append(eml[0])
         
+        #here we collect the seller emails
          self.cursor.execute("SELECT seller_email FROM maji_mazuri.seller;")
          email_seller=self.cursor.fetchall()
          email_seller_list=[]
          for eml in email_seller:
             email_seller_list.append(eml[0])
 
+        #Here we ensure that all fields have data
          if not email:
              self.ids.submit_button2.disabled=True
              self.ids.email_signup_error.text="Email is Required"
@@ -179,7 +182,7 @@ class SignupScreen(Screen,Database):
          else:
              self.ids.submit_button2.disabled=False
              
-             
+            #Once all info is filled,i ensure the email does not already exist then add it
              if self.ids.checkbox2.active:
                 #If the email is not already in the customer.databse then you can add the info
                 if email not in email_customer_list:
@@ -207,23 +210,28 @@ class SignupScreen(Screen,Database):
                 return False
      
     def show_success_message(self):
-       snackbar = Snackbar(text="Details successfully authenticated",)
-       snackbar.duration = 2  # Optional: Set the duration in seconds
-       snackbar.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
-       self.ids.my_layout3.add_widget(snackbar)
+       
+       snackbar=Snackbar(
+          text="REGISTRATION SUCCESSFUL",
+          snackbar_x="10dp",
+          snackbar_y="10dp",
+          pos_hint={'center_x': 0.5, 'center_y': 0.5},
+          #bg_color=(1,0,0,1),
+          radius=[13,13,13,13],
+          duration=3,
+          #auto_dismiss=False
 
-    def submit_info(self):
-        # Validation logic
-        if self.details_authenticated():
-            self.show_success_message()
-            self.screen_manager.current = 'next_screen'
-
+      )
+       snackbar.open()
+    
 
     def change_screen2(self):
+            #this is the function called in the kv file
             self.show_success_message()
-            Clock.schedule_once(lambda dt: self.transition1(), 2)
+            Clock.schedule_once(lambda dt: self.transition1(), 4)
 
 
     def transition1(self):
+            #to actually change the screen
             self.manager.current = 'login'
             self.manager.transition.direction = 'right'
