@@ -5,6 +5,14 @@ ScreenManager:
 
     MDFloatLayout:
         id: graph
+
+        MDIconButton:
+            icon: 'arrow-left-circle'
+            user_font_size: '80sp'
+            pos_hint: {"center_x": .1, "center_y": .9}
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'orders'
         
 
         MDLabel:

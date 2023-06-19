@@ -23,6 +23,7 @@ from kivy.garden.matplotlib import FigureCanvasKivy
 
 
 import matplotlib.pyplot as plt
+import datetime as dt
 
 
 
@@ -50,7 +51,7 @@ class SellerScreen(SalesScreen,CatalogueScreen,Reports):
     
     
     def topbar_close(self):   
-        if not self.dialog2:
+        if self.dialog2 is None:
                 self.dialog2 = MDDialog(
                     title="Log Out?",
                     buttons=[
@@ -149,6 +150,15 @@ class SellerScreen(SalesScreen,CatalogueScreen,Reports):
 
          # ORDERS TABLE
         self.order_table()
+
+        #update the records
+        text=f"Order record Deleted"
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I:%M:%S %p')
+        self.insert_item_to_database(text,date,time)
+        self.retrieve_exixting_reports()
+
+
        elif not self.selected_rows:
           print("select a row")
 
@@ -174,9 +184,9 @@ class SellerScreen(SalesScreen,CatalogueScreen,Reports):
     
     
 
-    def show_alert_dialog_delete(self):
+    def show_dialog_delete(self):
             
-            if not self.dialog:
+            if self.dialog is None:
                 self.dialog = MDDialog(
                     text="Are you sure you want to delete a record?",
                     buttons=[
@@ -186,8 +196,8 @@ class SellerScreen(SalesScreen,CatalogueScreen,Reports):
                             
                         ),
                         MDRaisedButton(
-                            text="DISCARD",
-                            on_press=self.delete,
+                            text="CONFIRM",
+                            on_press=self.delete_row,
                             
                         ),
                     ],
@@ -197,30 +207,11 @@ class SellerScreen(SalesScreen,CatalogueScreen,Reports):
     def dismiss_dialog(self, instance):
         self.dialog.dismiss()
 
-    def delete(self,instance):
+    def delete_row(self,instance):
         self.delete_selected_rows()
         self.dialog.dismiss()
 
-    def show_alert_dialog_update(self):
-            
-            if not self.dialog:
-                self.dialog = MDDialog(
-                    text="Are you sure you want to update a record?",
-                    buttons=[
-                        MDFlatButton(
-                            text="CANCEL",
-                            on_press=self.dismiss_dialog,
-                            
-                        ),
-                        MDFlatButton(
-                            text="Confirm",
-                            on_press=self.delete,
-                            
-                        ),
-                    ],
-                )
-            self.dialog.open()
-   
+    
     #code to remove shadows in future
     """
     def remove_item(self):

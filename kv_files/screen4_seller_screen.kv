@@ -138,7 +138,7 @@ ScreenManager:
                             disabled:False
                             size_hint_x: 1
                             font_size:"18dp"
-                            on_press:root.show_alert_dialog_delete()
+                            on_press:root.show_dialog_delete()
                         
 
                    
@@ -195,11 +195,13 @@ ScreenManager:
                         size_hint_x: .5
                         pos_hint: {"center_x": .5, "center_y": .06}
                         font_size:"18dp"
-                        on_press: root.report_test()
+                        on_press:
+                            root.manager.transition.direction = 'left'
+                            root.manager.current = 'sales_graph'
 
             MDBottomNavigationItem:
                 name: 'report'
-                text: 'Report'
+                text: 'Transactions'
                 icon: 'cash-check'
                 icon_size: "36dp"
 

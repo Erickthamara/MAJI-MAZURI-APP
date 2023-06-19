@@ -8,7 +8,10 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 
-class SalesScreen(Screen,Database):
+from .class8_reports import Reports
+
+class SalesScreen(Reports):
+    dialog3=None
     def sales_table(self):
          
          headers=["SALES_ID","AMOUNT","DATE","TIME"]
@@ -50,24 +53,28 @@ class SalesScreen(Screen,Database):
              self.sales_table()
              self.alert_dialog_sale()
 
+             #here we update the report
+             transaction_sale=f"Sales Record Updated:{sale}"
+             self.insert_item_to_database(transaction_sale,date,time)
+             self.retrieve_exixting_reports()
 
     def alert_dialog_sale(self):
           
-          if not self.dialog:
-                self.dialog = MDDialog(
+          if not self.dialog3:
+                self.dialog3 = MDDialog(
                     title="SALES RECORD UPDATED!",
                     radius=[20,7,20,7],
                     buttons=[
                         MDFlatButton(
                             text="OK",
-                            on_press=self.dismiss_dialog,   
+                            on_press=self.dismiss_dialog3,   
                         ),
                     ],
                 )
-          self.dialog.open()
+          self.dialog3.open()
 
-    def dismiss_dialog(self, instance):
-        self.dialog.dismiss()
+    def dismiss_dialog3(self, instance):
+        self.dialog3.dismiss()
 
     def sales_input_check(self):
         #Ensure the user only enters a numeral
