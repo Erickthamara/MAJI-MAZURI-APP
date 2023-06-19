@@ -8,6 +8,7 @@ from kivy.clock import Clock
 from .zdatabase import Database
 from .class6_sales import SalesScreen
 from .class7_catalogue import CatalogueScreen
+from .class8_reports import Reports
 
 
 from kivymd.uix.list import OneLineIconListItem
@@ -25,7 +26,7 @@ import matplotlib.pyplot as plt
 
 
 
-class SellerScreen(SalesScreen,CatalogueScreen):
+class SellerScreen(SalesScreen,CatalogueScreen,Reports):
     dialog=None
     dialog2=None
     
@@ -33,6 +34,10 @@ class SellerScreen(SalesScreen,CatalogueScreen):
         super(SellerScreen, self).__init__(**kwargs)
        # self.graph_data()
         Clock.schedule_once(self.onmycall, 0)
+
+        self.widget_list = []
+        
+        
 
        
 
@@ -84,6 +89,7 @@ class SellerScreen(SalesScreen,CatalogueScreen):
         self.catalogue_table()  
         self.order_table()
         self.sales_table()
+        self.retrieve_exixting_reports()
          
    
          
@@ -147,36 +153,6 @@ class SellerScreen(SalesScreen,CatalogueScreen):
           print("select a row")
 
     
-
-    def report_test(self):
-        item=ThreeLineIconListItem(
-                IconLeftWidget(
-                    icon="language-python"
-                ), text="Single-line item with avatar",
-                secondary_text="Secondary text here",
-                tertiary_text="fit more text than usual"
-             )
-        
-
-        container=self.ids.container
-        container.add_widget(item,0)
-        
-        
-    def report_test2(self):
-         item2=ThreeLineIconListItem(
-                IconLeftWidget(
-                    icon="language-python"
-                ), text="11",
-                secondary_text="Secondary text here",
-                tertiary_text="fit more text than usual"
-             )
-        
-         container=self.ids.container
-         if not container.children:
-            container.add_widget(item2)
-         else:
-            #container.insert_widget(0, item2)
-            pass
 
     
     def set_list(self, text=" "): 
