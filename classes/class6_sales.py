@@ -8,9 +8,9 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 
-from .class8_reports import Reports
+from .class8_reports import Transations
 
-class SalesScreen(Reports):
+class SalesScreen(Transations):
     dialog3=None
     def sales_table(self):
          

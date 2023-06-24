@@ -10,7 +10,6 @@ from kivy.factory import Factory
 from kivymd.uix.bottomsheet import MDCustomBottomSheet
 from kivy.properties import StringProperty
 
-
 import kivy
 import kivymd
 import cProfile
@@ -28,14 +27,11 @@ from classes import ReportScreen
 Window.size=(350,600)
 
 
-
-
 class CatalogueContent(Screen):
     pass
 
 class OrdersContent(Screen):
     pass
-
 
 class SalesContent(Screen):
     pass
@@ -50,9 +46,7 @@ class MyApp(MDApp):
         self.theme_cls.primary_palette="Blue"
         self.theme_cls.primary_hue='700'
         
-        self.num = str(0)
-
-    
+        self.num = str(0)  
     
     def increase_quantity(self):
         self.num = str(int(self.num) + 1)
@@ -67,7 +61,6 @@ class MyApp(MDApp):
         bottom_sheet.price=price
         bottom_sheet.rating=rating
         
-
         self.custom_sheet = MDCustomBottomSheet(screen=bottom_sheet)
         self.custom_sheet.open()
 

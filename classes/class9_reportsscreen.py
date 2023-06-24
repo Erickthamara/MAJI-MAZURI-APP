@@ -24,6 +24,7 @@ class ReportScreen(Screen,Database):
     def __init__(self, **kw):
         super().__init__(**kw)
         Clock.schedule_once(self.order_table, 0)
+        
 
     def order_table(self,instance):
          
@@ -57,12 +58,15 @@ class ReportScreen(Screen,Database):
          float_layout.add_widget(self.mytable_order)
     
     def download_report(self):
+        self.date=dt.datetime.now().strftime('%d-%m-%Y')
+        self.time=dt.datetime.now().strftime('%I-%M-%S %p')
+        
         app_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(app_dir)
         reports_dir = os.path.join(root_dir, "reports")
         os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
 
-        self.pdf_filename = os.path.join(reports_dir, "report.pdf")  # Save the report in the "reports" directory
+        self.pdf_filename = os.path.join(reports_dir, f"Report on {self.date} at {self.time}.pdf")  # Save the report in the "reports" directory
 
         doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
 
@@ -83,6 +87,7 @@ class ReportScreen(Screen,Database):
         doc.build(elements)
 
         print(f"Report saved as {self.pdf_filename}")
+        doc=None
 
 
     def send_email(self):
