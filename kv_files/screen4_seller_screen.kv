@@ -188,17 +188,36 @@ ScreenManager:
                             font_size:"18dp"
                             on_press: root.input_sales()
                     
-                    MDRaisedButton:
-                        id:sales_graph
-                        text:"Generate Graph"
-                        disabled:False
-                        size_hint_x: .5
-                        pos_hint: {"center_x": .5, "center_y": .06}
-                        font_size:"18dp"
-                        on_press:
-                            root.manager.transition.direction = 'left'
-                            root.manager.current = 'sales_graph'
+                    BoxLayout:
+                        size_hint:.85,None
+                        height:"30dp"
+                        pos_hint: {"center_x": .45, "center_y": .06}
+                        spacing:"15dp"
 
+                        MDRaisedButton:
+                            id:sales_graph
+                            text:"Generate Report"
+                            disabled:False
+                            size_hint_x: 1
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            font_size:"18dp"
+                            on_press:
+                                root.manager.transition.direction = 'left'
+                                root.manager.current = 'reports'
+
+                        MDRaisedButton:
+                            id:sales_graph
+                            text:"Generate Graph"
+                            disabled:False
+                            size_hint_x: 1
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            font_size:"18dp"
+                            on_press:
+                                root.manager.transition.direction = 'left'
+                                root.manager.current = 'sales_graph'
+
+                        
+                                
             MDBottomNavigationItem:
                 name: 'report'
                 text: 'Transactions'

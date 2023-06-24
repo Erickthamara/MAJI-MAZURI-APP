@@ -6,5 +6,6 @@ from .class5_catalogue import CatalogueScreen
 from .class6_sales import SalesScreen
 from .class4_customer_browse import CustomerBrowse
 from .class7_catalogue import CatalogueScreen
+from .class9_reportsscreen import ReportScreen
 from .salesgraph import SalesGraph
 from .zdatabase import Database
