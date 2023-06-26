@@ -8,14 +8,14 @@ from kivymd.uix.snackbar import Snackbar
 from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 
-from .class8_reports import Transations
+from .class8_transactions import Transactions
 
-class SalesScreen(Transations):
+class SalesScreen(Transactions):
     dialog3=None
     def sales_table(self):
          
-         headers=["SALES_ID","AMOUNT","DATE","TIME"]
-         self.cursor.execute("SELECT * FROM maji_mazuri.cash_sales3")
+         headers=["AMOUNT","DATE","TIME"]
+         self.cursor.execute("SELECT amount,entry_date,entry_time FROM maji_mazuri.cash_sales3 ORDER BY id DESC")
          result = self.cursor.fetchall()
          row_data = [] 
          for row in result:
@@ -24,7 +24,7 @@ class SalesScreen(Transations):
          self.mytable_catalogue=MDDataTable(
             size_hint=(.9,.6),
             pos_hint= {'center_x':0.5, 'center_y':0.42},
-            check=True,
+            #check=True,
             use_pagination=True,
             pagination_menu_height="240dp",
 

@@ -22,8 +22,8 @@ class OrdersScreen(Screen,Database):
     def order_table(self):
          
         # ORDERS TABLE
-         headers=["cutomer_id","email","phone_no","first_name","last_name","password2","password3"]
-         self.cursor.execute("SELECT * FROM maji_mazuri.customer")
+         headers=["ID","Email","Phone Number","First Name","Last Name"]
+         self.cursor.execute("SELECT customer_id,customer_email,customer_phone_number,customer_first_name,customer_last_name FROM maji_mazuri.customer")
          myresult = self.cursor.fetchall()
          rows = [] 
          for row in myresult:

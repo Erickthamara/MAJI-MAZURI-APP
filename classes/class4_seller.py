@@ -8,7 +8,7 @@ from kivy.clock import Clock
 from .zdatabase import Database
 from .class6_sales import SalesScreen
 from .class7_catalogue import CatalogueScreen
-from .class8_reports import Transations
+from .class8_transactions import Transactions
 from .class10_orders import OrdersScreen
 
 
@@ -28,7 +28,7 @@ import datetime as dt
 
 
 
-class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transations):
+class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
     dialog=None
     dialog2=None
     

@@ -10,7 +10,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import ThreeLineIconListItem,IconLeftWidget
 
 
-class Transations(Screen,Database):
+class Transactions(Screen,Database):
   def __init__(self, **kw):
         super().__init__(**kw)
         self.widget_list = []

@@ -9,7 +9,7 @@ ScreenManager:
         MDIconButton:
             icon: 'arrow-left-circle'
             user_font_size: '80sp'
-            pos_hint: {"center_x": .1, "center_y": .88}
+            pos_hint: {"center_x": .1, "center_y": .95}
             on_press: 
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'orders'
@@ -22,11 +22,39 @@ ScreenManager:
             font_size:"45sp"
             font_style:"H4"
             height:"15dp"
+        MDLabel:
+            text:"Enter your preferred dates below!"
+            theme_text_color:"Custom"
+            text_color: 21/255,39/255,112/255,1
+            pos_hint: {"center_x": .5, "center_y": .85} 
+            halign:"center"
+            font_size:"30sp"
+            font_style:"H6"
+            height:"15dp"
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .47, "center_y": .75}
+            spacing:"15dp"
+
+            MDTextField:
+                id: start_date_field
+                mode:"fill"
+                hint_text: "Start Date"
+                readonly: True
+                on_focus: if self.focus: root.show_date_picker("start_date_field")
+
+            MDTextField:
+                id: end_date_field
+                mode:"fill"
+                hint_text: "End Date"
+                readonly: True
+                on_focus: if self.focus: root.show_date_picker("end_date_field")
 
         BoxLayout:
             size_hint:.85,None
             height:"30dp"
-            pos_hint: {"center_x": .47, "center_y": .18}
+            pos_hint: {"center_x": .47, "center_y": .1}
             spacing:"15dp"
 
             MDRaisedButton:
