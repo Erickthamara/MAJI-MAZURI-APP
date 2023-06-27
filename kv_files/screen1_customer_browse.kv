@@ -16,7 +16,7 @@ ScreenManager:
             id:bar
             title: "PURCHASE BOTTLES"
             right_action_items: [["dots-vertical", lambda x: root.dropdown_bar()  ,"Options"],["cart", lambda x: x]]
-            left_action_items:[["arrow-left", lambda x: x]]
+            left_action_items:[["arrow-left", lambda x: root.topbar_close2()  ,"Exit"]]
             
 
         MDBottomNavigation:
@@ -138,8 +138,9 @@ ScreenManager:
                 size_hint_x:1
                 text:"Buy now"
                 pos_hint: {"center_x": .5, "center_y": .5}
-
-
+                on_press:app.root.current_screen.add_to_cart(self)
+#Th on _press abobve has a very important method.
+#it allows you to call a method from a different class as long as its defined in that class.
 
 
                 

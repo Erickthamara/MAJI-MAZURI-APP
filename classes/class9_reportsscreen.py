@@ -26,6 +26,9 @@ from email import encoders
 class ReportScreen(Screen,Database):
     start_date = None
     end_date = None
+    dialog4=None
+    dialog5=None
+    dialog6=None
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -147,14 +150,18 @@ class ReportScreen(Screen,Database):
 
             doc.build(elements)
 
-            print(f"Report saved as {self.pdf_filename}")
+            self.download_dialog()
             doc=None
         else:
-            print("Enter the fields")
+            self.enter_dates()
 
     def send_email(self):
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
+        if not self.pdf_filename:
+         self.email_dialog2()
+         
+        
         if start_date and end_date:
             # Email configuration
             sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
@@ -201,19 +208,12 @@ class ReportScreen(Screen,Database):
                 server.sendmail(sender_email, receiver_email, text)
                 self.email_dialog()
         else:
-            print("enter details")
+            self.enter_dates()
 
-    """ def show_date_picker(self):
-        date_dialog = MDDatePicker(
-            min_date=dt.date.today(),
-            max_date=dt.date(
-                dt.date.today().year,
-                dt.date.today().month,
-                dt.date.today().day + 2,
-            ),
-        )
+    def show_date_picker(self,text_field_id):
+        date_dialog = MDDatePicker()
+        date_dialog.bind(on_save=lambda instance, value, date_range: self.on_save(text_field_id, value, date_range), on_cancel=self.on_cancel)
         date_dialog.open()
-        """
     
     def on_save(self, text_field_id, value, date_range):
         '''
@@ -230,21 +230,21 @@ class ReportScreen(Screen,Database):
         
 
         # Perform logic with the selected date
-        print("Selected Date:", selected_date)
+        #print("Selected Date:", selected_date)
         start_date_field = self.ids['start_date_field']
         start_date_str = start_date_field.text
 
         if text_field_id == 'end_date_field':
             if not start_date_str:
                 # Handle the case where the start date is not specified
-                print("Start date is not specified.")
+                self.wrong_dates_end()
                 return
 
             start_date = dt.datetime.strptime(start_date_str, '%d-%m-%Y').date()
 
             if selected_date < start_date:
                 # Display an error message or handle the invalid selection as needed
-                print("Invalid selection. End date cannot be before the start date.")
+                self.wrong_dates_end()
                 self.ids.end_date_field.text=""
                 return
             
@@ -265,10 +265,7 @@ class ReportScreen(Screen,Database):
     def on_cancel(self, instance, value):
         '''Events called when the "CANCEL" dialog box button is clicked.'''
 
-    def show_date_picker(self,text_field_id):
-        date_dialog = MDDatePicker()
-        date_dialog.bind(on_save=lambda instance, value, date_range: self.on_save(text_field_id, value, date_range), on_cancel=self.on_cancel)
-        date_dialog.open()
+    
 
     def grab_total_sales(self):
        
@@ -288,13 +285,33 @@ class ReportScreen(Screen,Database):
             #print(sale)
             sales_total+=sale
         
-        print(sales_total)
+        #print(sales_total)
         return sales_total
+    
+    def download_dialog(self):
+          
+          if not self.dialog6:
+                self.dialog6= MDDialog(
+                    title=f"Report downloaded successfully!",
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDFlatButton(
+                            text="OK",
+                            on_press=self.dismiss_email_dialog6,   
+                        ),
+                    ],
+                )
+          self.dialog6.open()
+
+    def dismiss_email_dialog6(self, instance):
+        self.dialog6.dismiss()
+
+        
     def email_dialog(self):
           
-          if not self.dialog3:
-                self.dialog3 = MDDialog(
-                    title="SALES RECORD UPDATED!",
+          if not self.dialog4:
+                self.dialog4= MDDialog(
+                    title="EMAIL SENT SUCCESSFULLY!!",
                     radius=[20,7,20,7],
                     buttons=[
                         MDFlatButton(
@@ -303,7 +320,86 @@ class ReportScreen(Screen,Database):
                         ),
                     ],
                 )
-          self.dialog3.open()
+          self.dialog4.open()
 
     def dismiss_email_dialog3(self, instance):
-        self.dialog3.dismiss()
+        self.dialog4.dismiss()
+
+    def email_dialog2(self):
+          
+          if not self.dialog5:
+                self.dialog5= MDDialog(
+                    title="Please download the report before sending the email.",
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDFlatButton(
+                            text="OK",
+                            on_press=self.dismiss_email_dialog5,   
+                        ),
+                    ],
+                )
+          self.dialog5.open()
+
+    def dismiss_email_dialog5(self, instance):
+        self.dialog5.dismiss()
+    
+    def enter_dates(self):
+      snackbar=Snackbar(
+          text="Enter Start Date and End Date",
+          snackbar_x="10dp",
+          snackbar_y="10dp",
+          pos_hint={'center_x': 0.5, 'center_y': 0.5},
+          #bg_color=(1,0,0,1),
+          radius=[20,7,20,7],
+          duration=3,
+          auto_dismiss=True
+
+      )
+      snackbar.buttons=[
+          MDFlatButton(text="OK",
+          text_color=(1,0,0,1),
+          on_release=snackbar.dismiss
+            )
+        ]
+      snackbar.open()
+
+    def wrong_dates_end(self):
+      snackbar=Snackbar(
+          text="Invalid selection. End date cannot be before the start date.",
+          snackbar_x="10dp",
+          snackbar_y="10dp",
+          pos_hint={'center_x': 0.5, 'center_y': 0.5},
+          #bg_color=(1,0,0,1),
+          radius=[20,7,20,7],
+          duration=3,
+          auto_dismiss=True
+
+      )
+      snackbar.buttons=[
+          MDFlatButton(text="OK",
+          text_color=(1,0,0,1),
+          on_release=snackbar.dismiss
+            )
+        ]
+      snackbar.open()
+
+    def wrong_dates_start(self):
+      snackbar=Snackbar(
+          text="Start date is not specified.",
+          snackbar_x="10dp",
+          snackbar_y="10dp",
+          pos_hint={'center_x': 0.5, 'center_y': 0.5},
+          #bg_color=(1,0,0,1),
+          radius=[20,7,20,7],
+          duration=3,
+          auto_dismiss=True
+
+      )
+      snackbar.buttons=[
+          MDFlatButton(text="OK",
+          text_color=(1,0,0,1),
+          on_release=snackbar.dismiss
+            )
+        ]
+      snackbar.open()
+    
