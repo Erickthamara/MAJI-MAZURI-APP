@@ -1,0 +1,61 @@
+ScreenManager:
+    CheckoutScreen:
+
+<CheckoutScreen>
+    name:"checkout"
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            id:bar
+            title: "Checkout"
+            left_action_items:[["arrow-left", lambda x: root.browse_screen()  ,"BACK"]]
+            #right_action_items: [["cart", lambda x: root.cart_screen(),"Cart"]]
+            
+        
+        RecycleView:
+                        
+
+            MDList:
+                id:container2
+
+                OneLineListItem:
+                    text: "Single-line item"
+                OneLineListItem:
+                    text: "double-line item"
+                OneLineListItem:
+                    text: "dontline item"
+                OneLineListItem:
+                    text: "Axelngle-line item"
+                OneLineListItem:
+                    text: "Beuytiful-ngle-line item"
+                OneLineListItem:
+                    text: "Joyrengle-line item"
+                OneLineListItem:
+                    text: "Samrengle-line item"
+                OneLineListItem:
+                    text: "Angekngle-line item"
+                OneLineListItem:
+                    text: "dontline item"
+                OneLineListItem:
+                    text: "Axelngle-line item"
+                OneLineListItem:
+                    text: "Beuytiful-ngle-line item"
+                OneLineListItem:
+                    text: "Joyrengle-line item"
+                OneLineListItem:
+                    text: "Samrengle-line item"
+                OneLineListItem:
+                    text: "Angekngle-line item"
+        BoxLayout:
+            size_hint_y: None
+            height: "56dp"  # Set the height of the button
+
+            MDRaisedButton:
+                size_hint_x: 1
+                font_size:"18dp"
+                text: "CHECKOUT"
+                on_release: root.button_action() 
+        BoxLayout:
+            size_hint_y: None
+            height: "5"  # Set the height of the button

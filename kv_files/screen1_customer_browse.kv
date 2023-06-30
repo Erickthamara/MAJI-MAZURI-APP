@@ -15,21 +15,32 @@ ScreenManager:
         MDTopAppBar:
             id:bar
             title: "PURCHASE BOTTLES"
-            right_action_items: [["dots-vertical", lambda x: root.dropdown_bar()  ,"Options"],["cart", lambda x: x]]
             left_action_items:[["arrow-left", lambda x: root.topbar_close2()  ,"Exit"]]
+            right_action_items: [["cart", lambda x: root.cart_screen(),"Cart"]]
+            
             
 
         MDBottomNavigation:
             panel_color: 184/255, 190/255, 195/255,1
+            id:bottom_nav
                     
 
             MDBottomNavigationItem:
                 name: 'catalogue'
-                text: 'Home'
-                icon: 'order-bool-descending-variant'
+                text: 'Water'
+                icon: 'water'
                 icon_size: "36dp"
 
                 
+
+                
+                
+                
+            MDBottomNavigationItem:
+                name: 'notification'
+                text: 'Bottles'
+                icon: 'bottle-soda'
+
                 ScrollView:
                     
                     GridLayout:
@@ -45,10 +56,12 @@ ScreenManager:
                             image:"images/1l.jpg"
                             rating:"1Litre Bottle"
                             price:"KSH.40"
+                            
                         ItemCard:
                             image:"images/5l.jpg"
                             rating:"5L Bottle"
                             price:"KSH.100"
+                            
                         ItemCard:
                             image:"images/10l.jpg"
                             rating:"1OL Bottle"
@@ -68,20 +81,18 @@ ScreenManager:
 
                        
                           
-                            
-
-                
-                
-            MDBottomNavigationItem:
-                name: 'notification'
-                text: 'Notification'
-                icon: 'store-check'
 
                  
             MDBottomNavigationItem:
-                name: 'profile'
-                text: 'Profile'
-                icon: 'cash-check'
+                name: 'account'
+                text: 'Account'
+                icon: 'account-check'
+                icon_size: "36dp"
+            
+            MDBottomNavigationItem:
+                name: 'help'
+                text: 'Help'
+                icon: 'help-circle'
                 icon_size: "36dp"
 
 
@@ -92,12 +103,15 @@ ScreenManager:
     image:""
     price:""
     rating:""
+    num:"0"
+
     RelativeLayout:
         ItemCard:
             pos_hint:{"x":.05,"y":.4}
             image:root.image
             price:root.price
             rating:root.rating
+
     ScrollView:
         BoxLayout:
             orientation:"vertical"
@@ -107,38 +121,45 @@ ScreenManager:
             MDLabel:
                 text:"This the latest version of our Brand with modern design."
                 adaptive_height:True
+
             MDBoxLayout:
                 adaptive_width:True
+                
                 MDIconButton:
                     icon:"minus"
                     pos_hint:{"center_x":.5,"center_y":.5}
-                    on_release: app.decrease_quantity()
-                
+                    on_release: app.root.current_screen.decrease_quantity(root)
                 MDLabel:
                     id:Labe_num
-                    text:app.num
+                    text:root.num
                     halign:'center'
                     valign:'center'
                 MDIconButton:
                     icon:'plus'
                     pos_hint:{"center_x":.5,"center_y":.5}
-                    on_release: app.increase_quantity()
+                    on_release: app.root.current_screen.increase_quantity(root)
                 
             MDBoxLayout:
-                spacing:dp(8)
+                size_hint_y: None
+                height: "20dp"
                 MDRoundFlatIconButton:
                     icon:"cart"
                     text:"Add to cart"
                     size_hint_x:1
+                    on_press:app.root.current_screen.add_to_cart()
                 MDRoundFlatIconButton:
                     icon:"cards-heart"
-                    text:"Add to Favorite"
+                    text:"Buy now"
                     size_hint_x:1
-            MDRaisedButton:
-                size_hint_x:1
-                text:"Buy now"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                on_press:app.root.current_screen.add_to_cart(self)
+            MDBoxLayout:
+                size_hint_y: None
+                height: "20dp"
+            
+            #MDRaisedButton:
+               # size_hint_x:1
+                #text:"Buy now"
+                #pos_hint: {"center_x": .5, "center_y": .5}
+                #on_press:app.root.current_screen.add_to_cart2("profile")
 #Th on _press abobve has a very important method.
 #it allows you to call a method from a different class as long as its defined in that class.
 
@@ -153,7 +174,7 @@ ScreenManager:
     #elevation:1
     radius:25
     md_bg_color:  105/255, 84/255, 151/255, 0.8
-    on_release:app.show_example_custom_bottom_sheet(root.image,root.price,root.rating)
+    on_release:app.root.current_screen.show_example_custom_bottom_sheet(root.image,root.price,root.rating)
 
     image:""
     price:""
