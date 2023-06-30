@@ -6,10 +6,14 @@ from kivymd.uix.bottomsheet import MDCustomBottomSheet
 from kivymd.uix.label import MDLabel
 from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.tooltip import MDTooltip
-from kivymd.uix.list import ThreeLineIconListItem,IconLeftWidget,TwoLineIconListItem
+from kivymd.uix.list import OneLineAvatarIconListItem,IconLeftWidget,IconRightWidget
 from kivymd.uix.dialog import MDDialog
 from kivy.clock import Clock
 from kivy.metrics import dp   #data pixels
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.list import IRightBodyTouch
+from kivymd.uix.button import MDIconButton
+from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
 
 
@@ -23,7 +27,7 @@ class CustomerBrowse(MDScreen):
         super(CustomerBrowse, self).__init__(**kwargs)
 
         #self.cart_dot=None
-        #Clock.schedule_once(self.add_cart_dot, 0)
+        #Clock.schedule_once(self.call, 0)
         
         self.num = str(0)
         self.widget_list=[]
@@ -87,19 +91,32 @@ class CustomerBrowse(MDScreen):
     
    
     def add_to_cart(self):
-        
       
-        item2=TwoLineIconListItem(
-            IconLeftWidget(
-                icon="language-python"
-            ),
-            text="Single-line item with avatar",
-            secondary_text="Secondary text here"
-        )
+        item2=OneLineAvatarIconListItem(
+        IconLeftWidget(
+            icon="plus",
+            on_press=self.plus_icon
+        ),
+        IconRightWidget(
+            icon="minus",
+            size_hint=(0.3, 0.5),
+            on_press=self.plus_icon
+        ),
+        IconRightWidget(
+            icon="plus",
+            size_hint=(0.3, 0.5),
+            on_press=self.plus_icon
+        ),
+        text="Single-line item with avatar",
+   )
+         
         #container = self.manager.get_screen("checkout").ids.container2
         #container.add_widget(item2,0)
         self.widget_list.insert(0,item2)
         self.update_container2()
+
+    def plus_icon(self,widget):
+        print("nive")
 
     def update_container2(self):
         container = self.manager.get_screen("checkout").ids.container2
@@ -108,10 +125,23 @@ class CustomerBrowse(MDScreen):
         for widget in self.widget_list:      
             container.add_widget(widget)
 
-    def add_to_cart2(self, nav_item):
-        # change to the MainScreen and switch to the spcified MDBottomNavigationItem
+    def on_start(self):
+        container = self.manager.get_screen("checkout").ids.container2
+        self.root.ids._right_container.width = container.width
+        container.x = container.width
        
+    def change_screen2(self, nav_item):
+        # change to the MainScreen and switch to the spcified MDBottomNavigationItem
         button=self.ids.bottom_nav
         self.custom_sheet.dismiss()
         button.switch_tab(nav_item)
+
+    def call(self,instance):
+        self.on_call()
+    
+
        
+
+class YourContainer(IRightBodyTouch, MDBoxLayout):
+    adaptive_width = True
+

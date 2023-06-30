@@ -11,6 +11,10 @@ from kivymd.uix.dialog import MDDialog
 from .class8_transactions import Transactions
 
 class CheckoutScreen(Screen):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        
+    
     def browse_screen(self):
         #calls a dialog that will go back to welcomescreen
         self.manager.current = 'customerbrowse'
