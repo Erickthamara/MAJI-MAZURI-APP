@@ -6,7 +6,7 @@ from kivymd.uix.bottomsheet import MDCustomBottomSheet
 from kivymd.uix.label import MDLabel
 from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.tooltip import MDTooltip
-from kivymd.uix.list import OneLineAvatarIconListItem,IconLeftWidget,IconRightWidget
+from kivymd.uix.list import TwoLineAvatarIconListItem,OneLineAvatarIconListItem,IconLeftWidget,IconRightWidget
 from kivymd.uix.dialog import MDDialog
 from kivy.clock import Clock
 from kivy.metrics import dp   #data pixels
@@ -91,32 +91,88 @@ class CustomerBrowse(MDScreen):
     
    
     def add_to_cart(self):
-      
-        item2=OneLineAvatarIconListItem(
+        number = int(self.custom_sheet.screen.num)  # Get the amount from the custom bottom sheet
+        item=self.custom_sheet.screen.rating
+        price=self.custom_sheet.screen.price
+        self.text1 = f"{item} : {price}"  # Construct the text using f-string
+        text2=f"     Amount : {number}"
+        self.item2=TwoLineAvatarIconListItem(
         IconLeftWidget(
-            icon="plus",
-            on_press=self.plus_icon
+            icon="trash-can",
+            on_press=lambda instance: self.delete_item(instance.parent.parent) if instance.parent else None
         ),
         IconRightWidget(
             icon="minus",
             size_hint=(0.3, 0.5),
-            on_press=self.plus_icon
+            on_press=self.minus_icon
         ),
         IconRightWidget(
             icon="plus",
             size_hint=(0.3, 0.5),
             on_press=self.plus_icon
         ),
-        text="Single-line item with avatar",
+        text=self.text1,
+        secondary_text=text2,
    )
          
         #container = self.manager.get_screen("checkout").ids.container2
         #container.add_widget(item2,0)
-        self.widget_list.insert(0,item2)
-        self.update_container2()
+        self.widget_list.append(self.item2)  # Add the item to your widget list
 
-    def plus_icon(self,widget):
-        print("nive")
+        container = self.manager.get_screen("checkout").ids.container2
+        container.add_widget(self.item2)
+
+
+
+    def plus_icon(self, instance):
+        item = instance.parent.parent  # Get the parent widget (TwoLineAvatarIconListItem)
+        number = int(item.secondary_text.split(":")[-1].strip())
+        number += 1
+        item.secondary_text = f"     Amount : {number}"
+
+    def minus_icon(self, instance):
+        item = instance.parent.parent  # Get the parent widget (TwoLineAvatarIconListItem)
+        number = int(item.secondary_text.split(":")[-1].strip())
+        if number > 0:
+            number -= 1
+            item.secondary_text = f"     Amount : {number}"
+   
+
+
+   
+    
+    def delete_item(self, item):
+        container = self.manager.get_screen("checkout").ids.container2
+        container.remove_widget(item)
+
+    def delete_item2(self, instance):
+        container = self.manager.get_screen("checkout").ids.container2
+        print(container.children)
+
+        if len(self.widget_list)>1:
+
+        
+            for child in list(container.children):
+                if "1L" in child.text:
+                    container.remove_widget(child)
+                    break
+                elif "5L"in child.text:
+                    container.remove_widget(child)
+                    break
+                elif "10L"in child.text:
+                    container.remove_widget(child)
+                    break
+                elif "18.9L"in child.text:
+                    container.remove_widget(child)
+                    break
+                elif "20L"in child.text:
+                    container.remove_widget(child)
+                    break
+                elif "Hard"in child.text:
+                    container.remove_widget(child)
+                    break
+        elif len(self.widget_list)==1:
+            container.clear_widgets
 
     def update_container2(self):
         container = self.manager.get_screen("checkout").ids.container2

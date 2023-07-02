@@ -54,7 +54,7 @@ ScreenManager:
                         
                         ItemCard:
                             image:"images/1l.jpg"
-                            rating:"1Litre Bottle"
+                            rating:"1L Bottle"
                             price:"KSH.40"
                             
                         ItemCard:
@@ -76,7 +76,7 @@ ScreenManager:
                             price:"300"
                         ItemCard:
                             image:"images/20lKeringet.jpg"
-                            rating:"20L Bottle"
+                            rating:"20L Hard Bottle"
                             price:"KSH.1300"
 
                        
@@ -151,6 +151,7 @@ ScreenManager:
                     icon:"cards-heart"
                     text:"Buy now"
                     size_hint_x:1
+                    on_press:app.root.current_screen.add_to_cart2()
             MDBoxLayout:
                 size_hint_y: None
                 height: "20dp"
