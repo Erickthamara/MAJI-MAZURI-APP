@@ -16,6 +16,8 @@ from kivymd.uix.button import MDIconButton
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
 
+import re
+
 
 
 class CustomerBrowse(MDScreen): 
@@ -91,11 +93,20 @@ class CustomerBrowse(MDScreen):
     
    
     def add_to_cart(self):
-        number = int(self.custom_sheet.screen.num)  # Get the amount from the custom bottom sheet
-        item=self.custom_sheet.screen.rating
-        price=self.custom_sheet.screen.price
-        self.text1 = f"{item} : {price}"  # Construct the text using f-string
-        text2=f"     Amount : {number}"
+        self.number = int(self.custom_sheet.screen.num)  # Get the amount from the custom bottom sheet
+        self.item=self.custom_sheet.screen.rating
+        self.price=self.custom_sheet.screen.price
+
+         # Extract the numeric value from the price string
+        price_value = float(self.price.split("KSH.")[-1].strip())
+        total_amount = self.number * price_value  # Calculate the total amount for the item
+
+
+        self.text1 = f"{self.item} : {self.price}"  # Construct the text using f-string
+        text2 = f"Amount : {self.number}  Total: Ksh {total_amount:.2f}"  # Include the total amount in the secondary text
+
+        
+
         self.item2=TwoLineAvatarIconListItem(
         IconLeftWidget(
             icon="trash-can",
@@ -112,31 +123,68 @@ class CustomerBrowse(MDScreen):
             on_press=self.plus_icon
         ),
         text=self.text1,
-        secondary_text=text2,
+        secondary_text=text2 if text2 else ""
    )
-         
+        
+        
         #container = self.manager.get_screen("checkout").ids.container2
         #container.add_widget(item2,0)
         self.widget_list.append(self.item2)  # Add the item to your widget list
 
         container = self.manager.get_screen("checkout").ids.container2
         container.add_widget(self.item2)
+        self.update_checkout_total()
 
 
 
     def plus_icon(self, instance):
         item = instance.parent.parent  # Get the parent widget (TwoLineAvatarIconListItem)
-        number = int(item.secondary_text.split(":")[-1].strip())
+        text2=item.secondary_text
+        pattern = r"Amount : ([\d.]+)"
+        matches = re.findall(pattern, text2)
+        if matches:
+            number_str = matches[0]
+            number = int(number_str)
+        #number = int(self.custom_sheet.screen.num)
         number += 1
-        item.secondary_text = f"     Amount : {number}"
+        item.secondary_text = self.update_secondary_text(item,number)
+        self.update_checkout_total()
 
+        
     def minus_icon(self, instance):
         item = instance.parent.parent  # Get the parent widget (TwoLineAvatarIconListItem)
-        number = int(item.secondary_text.split(":")[-1].strip())
+       
+        text2=item.secondary_text
+        pattern = r"Amount : ([\d.]+)"
+        matches = re.findall(pattern, text2)
+
+        if matches:
+            number_str = matches[0]
+            number = int(number_str)
+        #number = int(self.custom_sheet.screen.num)
         if number > 0:
             number -= 1
-            item.secondary_text = f"     Amount : {number}"
-   
+            item.secondary_text = self.update_secondary_text(item,number)
+            self.update_checkout_total()
+
+    def update_secondary_text(self, item, number):
+        price = item.text
+        price_value = float(''.join(filter(str.isdigit, price.split(':')[-1].strip())))
+
+        total_amount = number * price_value
+
+        secondary_text = f"Amount : {number} Total: Ksh {total_amount:.2f}"
+        return secondary_text if secondary_text else ""
+
+
+    def update_checkout_total(self):
+        total = sum(
+            float(item.secondary_text.split("Ksh")[-1].strip().split(" ")[-1])
+            for item in self.widget_list
+            if item.secondary_text is not None
+        )
+        checkout_button = self.manager.get_screen("checkout").ids.checkout_btn
+        checkout_button.text = f"CHECKOUT : Ksh {total:.2f}"
 
 
    
@@ -144,36 +192,10 @@ class CustomerBrowse(MDScreen):
     def delete_item(self, item):
         container = self.manager.get_screen("checkout").ids.container2
         container.remove_widget(item)
+        self.widget_list.remove(item)  # Remove the item from the widget list
+        self.update_checkout_total()  # Update the checkout total
 
-    def delete_item2(self, instance):
-        container = self.manager.get_screen("checkout").ids.container2
-        print(container.children)
-
-        if len(self.widget_list)>1:
-
-        
-            for child in list(container.children):
-                if "1L" in child.text:
-                    container.remove_widget(child)
-                    break
-                elif "5L"in child.text:
-                    container.remove_widget(child)
-                    break
-                elif "10L"in child.text:
-                    container.remove_widget(child)
-                    break
-                elif "18.9L"in child.text:
-                    container.remove_widget(child)
-                    break
-                elif "20L"in child.text:
-                    container.remove_widget(child)
-                    break
-                elif "Hard"in child.text:
-                    container.remove_widget(child)
-                    break
-        elif len(self.widget_list)==1:
-            container.clear_widgets
-
+  
     def update_container2(self):
         container = self.manager.get_screen("checkout").ids.container2
           
@@ -181,10 +203,7 @@ class CustomerBrowse(MDScreen):
         for widget in self.widget_list:      
             container.add_widget(widget)
 
-    def on_start(self):
-        container = self.manager.get_screen("checkout").ids.container2
-        self.root.ids._right_container.width = container.width
-        container.x = container.width
+    
        
     def change_screen2(self, nav_item):
         # change to the MainScreen and switch to the spcified MDBottomNavigationItem
