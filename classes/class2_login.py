@@ -39,9 +39,11 @@ class LoginScreen(Screen,Database):
     def validate_password1(self):
         #Here we grab the data inputed using the .strip() functio
         password1=self.ids.pswd1.text.strip()
+        #if password is empty
         if not password1:
             self.ids.pswd1_error.text="Password is Required"
             self.ids.signin_button.disabled=True
+        #if password is too short
         elif not self.validate_password_re(password1):
             self.ids.pswd1_error.text="Password Too Short" 
             self.ids.signin_button.disabled=True

@@ -24,11 +24,13 @@ import re
 class CustomerWater(SalesScreen):
      def __init__(self, **kw):
          super().__init__(**kw)
+         self.dialog_33=None
+         self.dialog_44=None
          self.added_water_cash=[]
          self.added_water_widget=[]
          self.zcheckout_manager = CheckoutManager()
          self.zcheckout_manager.checkout_total = 0  # Initialize the checkout total to 
-         
+         self.is_closing_screen = False
 
      def dropdown2(self):   
         self.menu_items2 = [
@@ -77,45 +79,143 @@ class CustomerWater(SalesScreen):
             width_mult=4,
         )
         self.menu.open()
+        
 
      def set_item(self, text__item):
         self.ids.field2.text = text__item
         self.menu.dismiss()
+        self.entry2()
+        
+
+     def check_fields(self):
+        size=self.ids.field2.text.strip()
+        amount=self.ids.amount_field.text.strip()
+        if not size:
+            self.ids.checkbox_error.text="Enter the Size field!"
+            self.ids.submit_order.disabled=True
+            return False
+        elif not amount:
+            self.ids.checkbox_error.text="Enter the Amount field!"
+            self.ids.submit_order.disabled=True
+            return False
+        else:
+            self.ids.checkbox_error.text=""
+            self.ids.submit_order.disabled=False
+            return True
+
+
 
      def entry_warning(self):
           #Ensure the user only enters a numeral
+        if self.is_closing_screen:
+            # Reset the flag and return early
+            self.is_closing_screen = False
+            return
         new_text=self.ids.amount_field.text.strip()
-        if new_text:
-            if not new_text.isdigit():
-                self.show_numeral_message()
-                self.ids.submit_order.disabled = True
-                return False
-            else:
-                #self.update_total()
-                #self.update_water_total()
-                self.ids.submit_order.disabled = False
-                return True
-        else:
+        
+        if not new_text.isdigit():
+            self.ids.amount_field.text=""
+            self.show_numeral_message()
             self.ids.submit_order.disabled = True
+            return False
+        else:
+            #self.update_total()
+            #self.update_water_total()
+            self.ids.checkbox_error.text=""
+
+            self.ids.submit_order.disabled = False
+            return True
+        
+     def entry2(self):
+         text=self.ids.field2.text.strip()
+         if text:
+              self.ids.checkbox_error.text=""
+         
+              self.ids.submit_order.disabled = False
+        
 
      def checkbox_checked2 (self):
-        size=self.ids.field2.text.strip()
-        amount=self.ids.amount_field.text.strip()
-
-        """if amount and size:
-            self.ids.submit_order.disabled=False
-        else:
-            self.ids.submit_order.disabled=False
-            """
-
-        if self.ids.checkbox3.active or self.ids.checkbox4.active: 
-            #self.ids.checkbox_error.text=" "
-            self.ids.submit_order.disabled=False
-            return True   
-        else: 
+        
+        if not self.ids.checkbox3.active and not self.ids.checkbox4.active:
             self.ids.checkbox_error.text="Select Purchase or Exchange"
             self.ids.submit_order.disabled=True
             return False
+        
+        else: 
+             self.ids.submit_order.disabled=False
+             self.ids.checkbox_error.text=""
+             return True
+        
+     def topbar_3(self):   
+        if self.dialog_33 is None:
+                self.dialog_33 = MDDialog(
+                    title="Order Sumitted",
+                    text="Proceed to purchase bottles?",
+                    buttons=[
+                        MDFlatButton(
+                            text="CANCEL",
+                            on_press=self.dismiss_3,
+                            
+                        ),
+                        MDRaisedButton(
+                            text="YES",
+                            on_press=self.close_screen3
+                            
+                        ),
+                    ],
+                )
+        self.dialog_33.open()
+
+     def dismiss_3(self,instance):
+        self.dialog_33.dismiss()
+
+     def close_screen3(self,instance):
+        self.is_closing_screen = True
+        #clear the text_fields
+        self.ids.field2.text=""
+        self.ids.amount_field.text=""
+        self.ids.submit_order.text ="CHECKOUT"
+        #change the screen
+        button=self.ids.bottom_nav
+        button.switch_tab("bottles")
+        
+        self.dismiss_3(self)
+
+     def topbar_4(self):   
+        if self.dialog_44 is None:
+                self.dialog_44 = MDDialog(
+                    title="Order Sumitted",
+                    text="You have indicated that you already own bottles.Would you like to proceed to chekout?",
+                    buttons=[
+                        MDFlatButton(
+                            text="CANCEL",
+                            on_press=self.dismiss_4,
+                            
+                        ),
+                        MDRaisedButton(
+                            text="YES",
+                            on_press=self.close_screen4
+                            
+                        ),
+                    ],
+                )
+        self.dialog_44.open()
+
+     def dismiss_4(self,instance):
+        self.dialog_44.dismiss()
+
+     def close_screen4(self,instance):
+        #calls a dialog that will go back to welcomescreen
+        self.is_closing_screen = True
+        #clear the text_fields
+        self.ids.field2.text=""
+        self.ids.amount_field.text=""
+        self.ids.submit_order.text ="CHECKOUT"
+        #change the screen
+        self.manager.current = 'checkout'
+        self.manager.transition.direction = 'left'
+        self.dismiss_4(self)
+        
         
 
      def update_total(self):
@@ -153,19 +253,31 @@ class CustomerWater(SalesScreen):
         size=self.ids.field2.text.strip()
         new_amount=self.ids.amount_field.text.strip()
 
-        if size and new_amount:
-            pass
-        else:
-             self.ids.submit_order.disabled=True
-             print("fill in details")
-             return
-        
-        if self.checkbox_checked2():
-            pass
-        else:
-            self.ids.checkbox_error.text="Select Purchase or Exchange"
+        #check if the text_fields are good
+        if not size:
+            self.ids.checkbox_error.text="Enter the Size!"
             self.ids.submit_order.disabled=True
             return
+            
+        elif not new_amount:
+            self.ids.checkbox_error.text="Enter the Amount!"
+            self.ids.submit_order.disabled=True
+            return
+            
+        
+        self.ids.checkbox_error.text=""
+        self.ids.submit_order.disabled=False
+
+        #check if one of the otions is taken
+        if not self.ids.checkbox3.active and not self.ids.checkbox4.active:
+            self.ids.checkbox_error.text="Select Purchase or Exchange"
+            self.ids.submit_order.disabled=True
+            
+        else: 
+            self.ids.submit_order.disabled=False
+            self.ids.checkbox_error.text=""
+                
+
 
 
         cash=self.update_total()
@@ -196,8 +308,17 @@ class CustomerWater(SalesScreen):
 
         self.update_water_total(cash)
         self.added_water_widget.append(self.item2)  # Add the item to your widget list
-
-        #self.update_checkout_total()
+        
+        if self.ids.checkbox3.active: 
+            #self.ids.checkbox_error.text=" "
+            #self.ids.submit_order.disabled=False
+            self.topbar_3()
+            return True   
+        elif self.ids.checkbox4.active:
+            self.ids.submit_order.disabled=False
+            self.topbar_4()
+            return True  
+      
  
      def delete_item2(self, item):
         container = self.manager.get_screen("checkout").ids.container2
