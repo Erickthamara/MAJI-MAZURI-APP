@@ -6,21 +6,20 @@ from kivymd.uix.bottomsheet import MDCustomBottomSheet
 from kivymd.uix.label import MDLabel
 from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.tooltip import MDTooltip
-from kivymd.uix.list import TwoLineAvatarIconListItem,OneLineAvatarIconListItem,IconLeftWidget,IconRightWidget
+from kivymd.uix.list import TwoLineAvatarIconListItem,IconLeftWidget,IconRightWidget
 from kivymd.uix.dialog import MDDialog
 from kivy.clock import Clock
 from kivy.metrics import dp   #data pixels
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.list import IRightBodyTouch
-from kivymd.uix.button import MDIconButton
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
 
 import re
 
+from .class12_customerwater import CustomerWater
 
 
-class CustomerBrowse(MDScreen): 
+
+class CustomerBrowse(CustomerWater): 
     num = StringProperty(0)
     dialog9=None
     cart_count = NumericProperty(0)
@@ -133,7 +132,8 @@ class CustomerBrowse(MDScreen):
 
         container = self.manager.get_screen("checkout").ids.container2
         container.add_widget(self.item2)
-        self.update_checkout_total()
+        #self.update_checkout_total()
+        self.update_water_total(total_amount)
 
 
 
@@ -144,16 +144,25 @@ class CustomerBrowse(MDScreen):
         matches = re.findall(pattern, text2)
         if matches:
             number_str = matches[0]
-            number = int(number_str)
+            number = int(number_str)   #number of items
         #number = int(self.custom_sheet.screen.num)
         number += 1
         item.secondary_text = self.update_secondary_text(item,number)
-        self.update_checkout_total()
+
+        price = item.text
+        price_value = float(''.join(filter(str.isdigit, price.split(':')[-1].strip())))
+
+        total_amount = price_value
+        self.update_water_total(total_amount)
 
         
     def minus_icon(self, instance):
         item = instance.parent.parent  # Get the parent widget (TwoLineAvatarIconListItem)
-       
+ 
+        price = item.text
+        price_value = float(''.join(filter(str.isdigit, price.split(':')[-1].strip())))
+
+        total_amount = price_value
         text2=item.secondary_text
         pattern = r"Amount : ([\d.]+)"
         matches = re.findall(pattern, text2)
@@ -165,7 +174,8 @@ class CustomerBrowse(MDScreen):
         if number > 0:
             number -= 1
             item.secondary_text = self.update_secondary_text(item,number)
-            self.update_checkout_total()
+            self.minus_water_total(total_amount)
+
 
     def update_secondary_text(self, item, number):
         price = item.text
@@ -177,31 +187,25 @@ class CustomerBrowse(MDScreen):
         return secondary_text if secondary_text else ""
 
 
-    def update_checkout_total(self):
-        total = sum(
-            float(item.secondary_text.split("Ksh")[-1].strip().split(" ")[-1])
-            for item in self.widget_list
-            if item.secondary_text is not None
-        )
-        checkout_button = self.manager.get_screen("checkout").ids.checkout_btn
-        checkout_button.text = f"CHECKOUT : Ksh {total:.2f}"
-
-
-   
     
     def delete_item(self, item):
         container = self.manager.get_screen("checkout").ids.container2
         container.remove_widget(item)
         self.widget_list.remove(item)  # Remove the item from the widget list
-        self.update_checkout_total()  # Update the checkout total
+        
+        text=item.secondary_text
 
+        pattern = r"Total: Ksh ([\d.]+)"  # Regular expression pattern to match the total amount
+        matches = re.findall(pattern, text)  # Find all matches of the pattern in the text2 string
+
+        if matches:
+            total_amount_str = matches[0]  # Extract the first match (assuming there's only one match)
+            total_amount = float(total_amount_str)  # Convert the total amount string to a float
+            self.minus_water_total(total_amount)
+
+       
   
-    def update_container2(self):
-        container = self.manager.get_screen("checkout").ids.container2
-          
-        container.clear_widgets()    
-        for widget in self.widget_list:      
-            container.add_widget(widget)
+    
 
     
        
@@ -211,12 +215,12 @@ class CustomerBrowse(MDScreen):
         self.custom_sheet.dismiss()
         button.switch_tab(nav_item)
 
-    def call(self,instance):
-        self.on_call()
+    
+
+    
     
 
        
 
-class YourContainer(IRightBodyTouch, MDBoxLayout):
-    adaptive_width = True
+
 

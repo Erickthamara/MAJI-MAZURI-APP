@@ -158,9 +158,12 @@ class ReportScreen(Screen,Database):
     def send_email(self):
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
+        if not start_date or not end_date:
+            self.enter_dates()
+            return
         if not self.pdf_filename:
          self.email_dialog2()
-         
+         return
         
         if start_date and end_date:
             # Email configuration

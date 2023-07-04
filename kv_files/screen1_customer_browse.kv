@@ -31,7 +31,144 @@ ScreenManager:
                 icon: 'water'
                 icon_size: "36dp"
 
+                MDLabel:
+                    text:"ORDER WATER"
+                    theme_text_color:"Custom"
+                    text_color: 21/255,39/255,112/255,1
+                    pos_hint: {"center_x": .5, "center_y": .95} 
+                    halign:"center"
+                    font_size:"45sp"
+                    font_style:"H4"
+                    height:"15dp"
                 
+                MDLabel:
+                    text:"Water is priced at only Ksh.10 per litre."
+                    theme_text_color:"Custom"
+                    text_color: 21/255,39/255,112/255,1
+                    pos_hint: {"center_x": .5, "center_y": .82} 
+                    halign:"center"
+                    font_size:"30sp"
+                    font_style:"H6"
+                    height:"15dp"
+
+                BoxLayout:
+                    size_hint:.9,None
+                    height:"30dp"
+                    pos_hint: {"center_x": .5, "center_y": .68}
+                    spacing:"5dp"
+
+                    MDLabel:
+                        id:sales_entry
+                        text:"Bottle Size(litres)"
+                        size_hint_x: 1
+                        pos_hint: {"center_x": .7, "center_y": .5}
+                        font_size:"25sp"
+                        font_style:"H6"
+                        
+                        
+                    MDTextField:
+                        id:field2
+                        mode:"fill"
+                        fill_color: 0, 1, 0, 1
+                        pos_hint: {"center_x": .3, "center_y": .5}
+                        size_hint_x: 1
+                        width: "160dp"
+                        hint_text: "Bottle size"
+                        color_mode:"accent"
+                        on_focus: if self.focus: root.dropdown2()
+
+                BoxLayout:
+                    size_hint:.9,None
+                    height:"30dp"
+                    pos_hint: {"center_x": .5, "center_y": .52}
+                    spacing:"5dp"
+
+                    MDLabel:
+                        id:sales_entry
+                        #mode:"fill"
+                        text:"Bottle Amount"
+                        size_hint_x: 1
+                        pos_hint: {"center_x": .7, "center_y": .5}
+                        font_size:"25sp"
+                        font_style:"H6"
+                        #on_text:root.sales_input_check()
+                        
+                    MDTextField:
+                        id:amount_field
+                        mode:"fill"
+                        fill_color: 0, 1, 0, 1
+                        pos_hint: {"center_x": .3, "center_y": .5}
+                        size_hint_x: 1
+                        width: "160dp"
+                        hint_text: "Bottle Amount"
+                        color_mode:"accent"
+                        on_text:root.entry_warning()
+
+                MDLabel:
+                    text:"Would you like to purchase or exchange your bottle?"
+                    theme_text_color:"Custom"
+                    text_color: 21/255,39/255,112/255,1
+                    pos_hint: {"center_x": .5, "center_y": .37} 
+                    halign:"center"
+                    font_size:"30sp"
+                    font_style:"H6"
+                    height:"15dp"
+                
+                BoxLayout:
+                    size_hint:.85,None
+                    height:"30dp"
+                    pos_hint: {"center_x": .5, "center_y": .27}
+                    spacing:"5dp"
+
+                    MDCheckbox:
+                        group:"checkbox_group"
+                        id:checkbox3
+                        on_active:root.checkbox_checked2()
+                        size_hint:None,None
+                        height:"30dp"
+                        width: "30dp"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        
+
+                    MDLabel:
+                        text:"[ref=Show Password]Purchase[/ref]"
+                        markup:True
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                    MDCheckbox:
+                        group:"checkbox_group"
+                        id:checkbox4
+                        on_active:root.checkbox_checked2()
+                        size_hint:None,None
+                        height:"30dp"
+                        width: "30dp"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                    
+                    MDLabel:
+                        text:"[ref=Show Password]Exchange [/ref]"
+                        markup:True
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                
+                MDLabel:
+                    id: checkbox_error
+                    halign: 'center'
+                    pos_hint:{'center_y':0.18}
+                    theme_text_color: 'Error'
+                    text: ''
+
+                MDRaisedButton:
+                    id:submit_order
+                    size_hint: .7,.01
+                    disabled:False
+                    text:"CHECKOUT "
+                    theme_text_color:"Custom"
+                    text_color: 0,0,0,1
+                    pos_hint:{'center_x':0.5, 'center_y':0.1}
+                    on_press:root.add_to_cart2()
+                                        
+
+            
 
                 
                 
@@ -85,13 +222,13 @@ ScreenManager:
                  
             MDBottomNavigationItem:
                 name: 'account'
-                text: 'Account'
+                text: 'Order'
                 icon: 'account-check'
                 icon_size: "36dp"
             
             MDBottomNavigationItem:
                 name: 'help'
-                text: 'Help'
+                text: 'Contact'
                 icon: 'help-circle'
                 icon_size: "36dp"
 

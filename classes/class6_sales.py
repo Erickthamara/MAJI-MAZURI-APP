@@ -94,7 +94,7 @@ class SalesScreen(Transactions):
           #bg_color=(1,0,0,1),
           radius=[20,7,20,7],
           duration=3,
-          auto_dismiss=False
+          auto_dismiss=True
 
       )
       snackbar.buttons=[
