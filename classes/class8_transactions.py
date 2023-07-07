@@ -19,7 +19,7 @@ class Transactions(Screen,Database):
   def retrieve_exixting_reports(self):
         self.widget_list=[]
 
-        self.cursor.execute("SELECT * FROM maji_mazuri.report ORDER BY report_id DESC")
+        self.cursor.execute("SELECT * FROM maji_mazuri.seller_transactions ORDER BY report_id DESC")
         reports=self.cursor.fetchall()
 
         for row in reports:

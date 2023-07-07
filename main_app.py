@@ -12,6 +12,7 @@ import cProfile
 from classes import WelcomeScreen
 from classes import LoginScreen
 from classes import SignupScreen
+from classes import CustomerSignupScreen
 from classes import SellerScreen
 from classes import CustomerBrowse
 from classes import Database
@@ -56,6 +57,7 @@ class MyApp(MDApp):
         sm.add_widget(WelcomeScreen(name="welcome"))
         sm.add_widget(LoginScreen(name="login"))
         sm.add_widget(SignupScreen(name="signup"))
+        sm.add_widget(CustomerSignupScreen(name="customersignup"))
         sm.add_widget(SellerScreen(name="orders"))
         sm.add_widget(CustomerBrowse(name="customerbrowse"))
         sm.add_widget(SalesGraph(name="sales_graph"))

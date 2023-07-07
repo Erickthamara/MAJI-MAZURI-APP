@@ -22,13 +22,13 @@ class SalesGraph(Screen,Database):
 
         
 
-        self.cursor.execute("SELECT amount FROM maji_mazuri.cash_sales3;")
+        self.cursor.execute("SELECT amount FROM maji_mazuri.cash_sales;")
         data=self.cursor.fetchall()
         sales=[]
         for x in data:
             sales.append(x[0])
 
-        self.cursor.execute("SELECT entry_date FROM maji_mazuri.cash_sales3;")
+        self.cursor.execute("SELECT entry_date FROM maji_mazuri.cash_sales;")
         data=self.cursor.fetchall()
         dates=[]
         for x in data:

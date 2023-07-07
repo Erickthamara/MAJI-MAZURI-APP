@@ -15,7 +15,7 @@ class SalesScreen(Transactions):
     def sales_table(self):
          
          headers=["AMOUNT","DATE","TIME"]
-         self.cursor.execute("SELECT amount,entry_date,entry_time FROM maji_mazuri.cash_sales3 ORDER BY id DESC")
+         self.cursor.execute("SELECT amount,entry_date,entry_time FROM maji_mazuri.cash_sales ORDER BY id DESC")
          result = self.cursor.fetchall()
          row_data = [] 
          for row in result:

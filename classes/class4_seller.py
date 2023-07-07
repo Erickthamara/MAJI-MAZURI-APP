@@ -77,19 +77,25 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
          
     
     def set_list(self, text=" "): 
-        # text defaults to blank space to not show any icons initially
-        # each OneLineListItem takes the pressed func on press
-        cont=self.ids.container
-        self.ids.container.clear_widgets() # refresh list
+        #grabb all children of the main widget in this case mdlist
+        cont = self.ids.container.children
+        #create a list to hold all the dates
+        widget_date_list=[]
 
-        children = list(self.ids.container.children)
-        mylist= [type(widget) for widget in cont.walk(restrict=True)]
-        print(mylist)
-        for child in children:
-            if text.casefold() in child.text.casefold():
-                self.ids.container.add_widget(child)
+        for item in cont:
+         widget_date_list.append(item.secondary_text)
 
-    
+        #print(widget_date_list)
+
+        self.ids.container.clear_widgets()  # Clear the container before populating search results
+        
+        #for item, date in zip(cont, widget_date_list):
+        if text in widget_date_list:
+            for new_text in widget_date_list:
+             if new_text==text:
+              self.ids.container.add_widget(item)
+            
+        #find a way to compare the widget_text with its parent
 
     
 
