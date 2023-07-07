@@ -170,3 +170,17 @@ class MyApp(App):
 
 if __name__ == '__main__':
     MyApp().run()
+
+"""
+for timeouts  
+{
+    "Body": {
+        "stkCallback": {
+            "MerchantRequestID": "10920-75279282-1",
+            "CheckoutRequestID": "ws_CO_07072023193716119724395632",
+            "ResultCode": 1037,
+            "ResultDesc": "DS timeout user cannot be reached"
+        }
+    }
+}
+"""
