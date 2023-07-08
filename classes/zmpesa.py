@@ -1,5 +1,3 @@
-from kivy.app import App
-from kivy.uix.label import Label
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import json
@@ -30,7 +28,7 @@ class MpesaClient:
         filtered_access_token = res_json['access_token']
         return filtered_access_token
 
-    def initiate_stk(self):
+    def initiate_stk(self, phone_number, amount):
         access_token = self.generate_access_token()
         api_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
         headers = {"Authorization": "Bearer %s" % access_token }
@@ -44,7 +42,7 @@ class MpesaClient:
             "PartyA": 254796892684,
             "PartyB": zcredentials.bs_shortcode,
             "PhoneNumber": 254796892684,
-            "CallBackURL": "https://5c69-41-89-10-241.ngrok-free.app/payment_result/",
+            "CallBackURL": "https://7c54-105-163-156-78.ngrok-free.app/payment_result/",
             "AccountReference": "MAJI MAZURI",
             "TransactionDesc": "Pay for goods"
         }
@@ -80,7 +78,7 @@ def payment_result(request):
     result_code = int(params['Body']['stkCallback']['ResultCode'])
     option_name = cache.get('option_name')
     user = cache.get('user')
-    
+
     if 'CallbackMetadata' in params['Body']['stkCallback']:
         callback_metadata = params['Body']['stkCallback']['CallbackMetadata']['Item']
         # Extract the payment details from CallbackMetadata
@@ -95,25 +93,37 @@ def payment_result(request):
 
     returned_amount = float(payment_details.get('Amount', 0))
     receipt_number = payment_details.get('MpesaReceiptNumber', '')
-    transaction_date_str =str(payment_details.get('TransactionDate', ''))
+    transaction_date_str = str(payment_details.get('TransactionDate', ''))
     phone_number = payment_details.get('PhoneNumber', '')
-
 
     if transaction_date_str:
         transaction_date = datetime.strptime(transaction_date_str, "%Y%m%d%H%M%S")
     else:
         transaction_date = None
+
     if result_code == 0:
         if option_name is not None:
             print("Option Name:", option_name)
+        
         if returned_amount != 0.0:
             print("Returned Amount:", returned_amount)
+        
         if receipt_number:
             print("Receipt Number:", receipt_number)
+        
         if transaction_date is not None:
             print("Transaction Date:", transaction_date)
+      
         if phone_number:
             print("Phone Number:", phone_number)
+        
+
+    elif result_code==1032:
+        # If the result code is not 0, set all the results to None
+        print("REQUEST HAS BEEN CANCELLED")
+    elif result_code==1037:
+        print("REQUEST TIMED OUT")
+
 
         # Perform additional processing or save the data to the database
         # ...
@@ -127,60 +137,36 @@ def payment_result(request):
 
     return "Okay"
 
-class MyApp(App):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        obj = MpesaClient()
-        obj.initiate_stk()
-        
-    def build(self):
-        label = Label(text="Waiting for requests...")
-        
+def start_server():
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, MyRequestHandler)
+    httpd.handle_request()
 
-        class MyRequestHandler(BaseHTTPRequestHandler):
-            def do_GET(self):
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
+class MyRequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
 
-                response = b"<html><body><h1>Hello from Kivy!</h1></body></html>"
-                self.wfile.write(response)
+        response = b"<html><body><h1>Hello from Kivy!</h1></body></html>"
+        self.wfile.write(response)
+        # Stop the server after sending the response
+        self.server.shutdown()
 
-            def do_POST(self):
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
 
-                response = payment_result(self)
-                self.wfile.write(response.encode())
-               
+        response = payment_result(self)
+        self.wfile.write(response.encode())
 
-        server_address = ('', 8000)
-        httpd = HTTPServer(server_address, MyRequestHandler)
+def main(phone_number,pay_amount):
+    obj = MpesaClient()
+    phn_number = phone_number  # Replace with the desired phone number
+    amount = pay_amount  # Replace with the desired amount
+    obj.initiate_stk(phn_number, amount)
+    start_server()
+    #print("working")
 
-        def start_server():
-            httpd.serve_forever()
-
-        import threading
-        server_thread = threading.Thread(target=start_server)
-        server_thread.daemon = True
-        server_thread.start()
-
-        return label
-
-if __name__ == '__main__':
-    MyApp().run()
-
-"""
-for timeouts  
-{
-    "Body": {
-        "stkCallback": {
-            "MerchantRequestID": "10920-75279282-1",
-            "CheckoutRequestID": "ws_CO_07072023193716119724395632",
-            "ResultCode": 1037,
-            "ResultDesc": "DS timeout user cannot be reached"
-        }
-    }
-}
-"""
+main("254796892684",1)

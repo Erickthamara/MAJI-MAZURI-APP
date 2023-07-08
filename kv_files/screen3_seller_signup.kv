@@ -9,16 +9,16 @@ ScreenManager:
         MDIconButton:
             icon: 'arrow-left-circle'
             user_font_size: '80sp'
-            pos_hint: {"center_x": .1, "center_y": .88}
+            pos_hint: {"center_x": .1, "center_y": .93}
             on_press: 
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'login'
             
         MDLabel:
-            text:"SIGN UP"
-            font_style:"H3"
+            text:"SELLER SIGN UP"
+            font_style:"H4"
             halign:"center"
-            pos_hint:{'center_y':0.92}
+            pos_hint:{'center_y':0.95}
             theme_text_color:"Custom"
             text_color: 0,0,0,1
         
@@ -28,14 +28,14 @@ ScreenManager:
             icon_right:"email"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .8}
+            pos_hint: {"center_x": .5, "center_y": .85}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_email2()
         MDLabel:
             id: email_signup_error
             halign: 'center'
-            pos_hint:{'center_y':0.75}
+            pos_hint:{'center_y':0.8}
             theme_text_color: 'Error'
             text: ''
 
@@ -45,14 +45,14 @@ ScreenManager:
             icon_right:"cellphone-check"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .7}
+            pos_hint: {"center_x": .5, "center_y": .75}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_phone_no()
         MDLabel:
             id: phone_no_error
             halign: 'center'
-            pos_hint:{'center_y':0.65}
+            pos_hint:{'center_y':0.7}
             theme_text_color: 'Error'
             text: ''
 
@@ -62,14 +62,14 @@ ScreenManager:
             icon_right:"account"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .6}
+            pos_hint: {"center_x": .5, "center_y": .65}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_first_name()
         MDLabel:
             id: first_name_error
             halign: 'center'
-            pos_hint:{'center_y':0.55}
+            pos_hint:{'center_y':0.6}
             theme_text_color: 'Error'
             text: ''
 
@@ -79,96 +79,96 @@ ScreenManager:
             icon_right:"account"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .5}
+            pos_hint: {"center_x": .5, "center_y": .55}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_last_name()
         MDLabel:
             id: last_name_error
             halign: 'center'
-            pos_hint:{'center_y':0.45}
+            pos_hint:{'center_y':0.5}
             theme_text_color: 'Error'
             text: ''
 
         MDTextField:
             id: pswd_signup
             hint_text: "Password"
-            helper_text: "Minimum of 4 characters"
+            helper_text: "Minimum of 8 characters"
             helper_text_mode: "on_focus"
             password:True
             icon_right:"eye-off"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .4}
+            pos_hint: {"center_x": .5, "center_y": .45}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_password2()
         MDLabel:
             id: pswd_signup_error
             halign: 'center'
-            pos_hint:{'center_y':0.35}
+            pos_hint:{'center_y':0.4}
             theme_text_color: 'Error'
             text: ''
         
         MDTextField:
             id: pswd_confirm
             hint_text: "Confirm Password"
-            helper_text: "Minimum of 4 characters"
+            helper_text: "Minimum of 8 characters"
             helper_text_mode: "on_focus"
             password:True
             icon_right:"eye-off"
             font_size:"16dp"
             size_hint_x: .85
-            pos_hint: {"center_x": .5, "center_y": .3}
+            pos_hint: {"center_x": .5, "center_y": .35}
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_password3()
         MDLabel:
             id: pswd_confirm_error
             halign: 'center'
-            pos_hint:{'center_y':0.25}
+            pos_hint:{'center_y':0.3}
             theme_text_color: 'Error'
             text: ''
 
-        BoxLayout:
-            size_hint:.85,None
-            height:"30dp"
-            pos_hint: {"center_x": .5, "center_y": .2}
-            spacing:"5dp"
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox2
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                
-
-            MDLabel:
-                text:"[ref=Show Password]Customer[/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox3
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-               
-            MDLabel:
-                text:"[ref=Show Password]Seller [/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
+        MDTextField:
+            id: national_id
+            hint_text: "National ID Number"
+            helper_text: "Minimum of 8 characters"
+            helper_text_mode: "on_focus"
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .25}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+            on_text:root.validate_national_id()
+        
         MDLabel:
-            id: checkbox_error
+            id: national_id_error
             halign: 'center'
-            pos_hint:{'center_y':0.161}
+            pos_hint:{'center_y':0.2}
+            theme_text_color: 'Error'
+            text: ''
+
+        MDTextField:
+            id: shop_name
+            hint_text: "Enter your Shop Name"
+            #helper_text: "Minimum of 4 characters"
+            #helper_text_mode: "on_focus"
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .15}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+            on_text:root.validate_shop_name()
+        
+        MDLabel:
+            id: shop_name_error
+            halign: 'center'
+            pos_hint:{'center_y':0.1}
             theme_text_color: 'Error'
             text: ''
 
@@ -179,7 +179,7 @@ ScreenManager:
             text:"SUBMIT"
             theme_text_color:"Custom"
             text_color: 0,0,0,1
-            pos_hint:{'center_x':0.5, 'center_y':0.1}
+            pos_hint:{'center_x':0.5, 'center_y':0.05}
             on_press:if root.signup_validate():root.change_screen2()
            
 

@@ -1,6 +1,6 @@
 from .class1_welcome import WelcomeScreen
 from .class2_login import LoginScreen
-from .class3_signup import SignupScreen
+from .class3_seller_signup import SignupScreen
 from .class3_customer_signup import CustomerSignupScreen
 from .class4_seller import SellerScreen
 from .class6_sales import SalesScreen

@@ -15,7 +15,7 @@ ScreenManager:
                 root.manager.current = 'login'
             
         MDLabel:
-            text:"SIGN UP"
+            text:"CUSTOMER SIGN UP"
             font_style:"H3"
             halign:"center"
             pos_hint:{'center_y':0.92}
@@ -23,7 +23,7 @@ ScreenManager:
             text_color: 0,0,0,1
         
         MDTextField:
-            id: email_signup
+            id: email_customer_signup
             hint_text: 'Enter your email'
             icon_right:"email"
             font_size:"16dp"
@@ -33,14 +33,14 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_email2()
         MDLabel:
-            id: email_signup_error
+            id: email_customer_signup_error
             halign: 'center'
             pos_hint:{'center_y':0.75}
             theme_text_color: 'Error'
             text: ''
 
         MDTextField:
-            id: phone_no
+            id: customer_phone_no
             hint_text: 'Phone Number'
             icon_right:"cellphone-check"
             font_size:"16dp"
@@ -50,14 +50,14 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_phone_no()
         MDLabel:
-            id: phone_no_error
+            id: customer_phone_no_error
             halign: 'center'
             pos_hint:{'center_y':0.65}
             theme_text_color: 'Error'
             text: ''
 
         MDTextField:
-            id: first_name
+            id: customer_first_name
             hint_text: 'First Name'
             icon_right:"account"
             font_size:"16dp"
@@ -67,14 +67,14 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_first_name()
         MDLabel:
-            id: first_name_error
+            id: customer_first_name_error
             halign: 'center'
             pos_hint:{'center_y':0.55}
             theme_text_color: 'Error'
             text: ''
 
         MDTextField:
-            id: last_name
+            id: customer_last_name
             hint_text: 'Last Name'
             icon_right:"account"
             font_size:"16dp"
@@ -84,14 +84,14 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_last_name()
         MDLabel:
-            id: last_name_error
+            id: customer_last_name_error
             halign: 'center'
             pos_hint:{'center_y':0.45}
             theme_text_color: 'Error'
             text: ''
 
         MDTextField:
-            id: pswd_signup
+            id: customer_pswd_signup
             hint_text: "Password"
             helper_text: "Minimum of 4 characters"
             helper_text_mode: "on_focus"
@@ -104,14 +104,14 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_password2()
         MDLabel:
-            id: pswd_signup_error
+            id: customer_pswd_signup_error
             halign: 'center'
             pos_hint:{'center_y':0.35}
             theme_text_color: 'Error'
             text: ''
         
         MDTextField:
-            id: pswd_confirm
+            id: cutomer_pswd_confirm
             hint_text: "Confirm Password"
             helper_text: "Minimum of 4 characters"
             helper_text_mode: "on_focus"
@@ -124,49 +124,28 @@ ScreenManager:
             write_tab:False
             on_text:root.validate_password3()
         MDLabel:
-            id: pswd_confirm_error
+            id: customer_pswd_confirm_error
             halign: 'center'
             pos_hint:{'center_y':0.25}
             theme_text_color: 'Error'
             text: ''
 
-        BoxLayout:
-            size_hint:.85,None
-            height:"30dp"
+        MDTextField:
+            id: seller_id
+            hint_text: "Confirm Password"
+            helper_text: "Minimum of 4 characters"
+            helper_text_mode: "on_focus"
+            password:True
+            icon_right:"eye-off"
+            font_size:"16dp"
+            size_hint_x: .85
             pos_hint: {"center_x": .5, "center_y": .2}
-            spacing:"5dp"
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox2
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                
-
-            MDLabel:
-                text:"[ref=Show Password]Customer[/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-            MDCheckbox:
-                group:"checkbox_group"
-                id:checkbox3
-                on_active:root.checkbox_checked()
-                size_hint:None,None
-                height:"30dp"
-                width: "30dp"
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-               
-            MDLabel:
-                text:"[ref=Show Password]Seller [/ref]"
-                markup:True
-                pos_hint: {"center_x": .5, "center_y": .5}
+            on_text:self.text=self.text.replace(" ","")
+            write_tab:False
+            on_text:root.validate_seller_id()
+        
         MDLabel:
-            id: checkbox_error
+            id: seller_id_error
             halign: 'center'
             pos_hint:{'center_y':0.161}
             theme_text_color: 'Error'
@@ -174,7 +153,7 @@ ScreenManager:
 
         MDRaisedButton:
             size_hint: .5,.01
-            id:submit_button2
+            id:submit_button3
             disabled:False
             text:"SUBMIT"
             theme_text_color:"Custom"
