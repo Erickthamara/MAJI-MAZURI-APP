@@ -3,6 +3,12 @@ from kivy.uix.screenmanager import Screen
 from kivymd.uix.snackbar import Snackbar
 from kivy.clock import Clock
 
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from kivymd.uix.button import MDFlatButton,MDRaisedButton
+from kivymd.uix.dialog import MDDialog
+
 from .zdatabase import Database
 
 
@@ -23,9 +29,11 @@ class CustomerSignupScreen(Screen,Database):
     
     def validate_password_re(self,password):
         # Add your password validation rules here
-        if len(password) >= 8:
+        if len(password) >= 8 and re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             return True
-        return False
+        else:
+            return False
+     
     
 
     def validate_customer_email2(self):
@@ -37,11 +45,11 @@ class CustomerSignupScreen(Screen,Database):
             self.ids.email_customer_signup_error.text="Email is Required"
             self.ids.submit_button3.disabled=True
         elif not self.validate_email_re(email):
-            self.ids.email__customer_signup_error.text="Invalid Email"
+            self.ids.email_customer_signup_error.text="Invalid Email"
             self.ids.submit_button3.disabled=True
        
         else:
-            self.ids.email__customer_signup_error.text=""
+            self.ids.email_customer_signup_error.text=""
             self.ids.submit_button3.disabled=False
 
         
@@ -65,13 +73,13 @@ class CustomerSignupScreen(Screen,Database):
         first_name=self.ids.customer_first_name.text.strip()
         
         if not first_name:
-            self.ids.seller_id_error.text="Input Required"
+            self.ids.customer_first_name_error.text="Input Required"
             self.ids.submit_button3.disabled=True
-        elif self.ids.first_name.text.isalpha()==False:
-            self.ids.seller_id_error.text="Incorrect Input"
+        elif self.ids.customer_first_name.text.isalpha()==False:
+            self.ids.customer_first_name_error.text="Incorrect Input"
             self.ids.submit_button3.disabled=True
         else:
-            self.ids.seller_id_error.text=""
+            self.ids.customer_first_name_error.text=""
             self.ids.submit_button3.disabled=False
 
     def validate_last_name(self):
@@ -81,7 +89,7 @@ class CustomerSignupScreen(Screen,Database):
         if not last_name:
             self.ids.customer_last_name_error.text="Input Required"
             self.ids.submit_button3.disabled=True
-        elif self.ids.last_name.text.isalpha()==False:
+        elif self.ids.customer_last_name.text.isalpha()==False:
             self.ids.customer_last_name_error.text="Incorrect Input"
             self.ids.submit_button3.disabled=True
         else:
@@ -95,7 +103,7 @@ class CustomerSignupScreen(Screen,Database):
             self.ids.customer_pswd_signup_error.text="Password is Required"
             self.ids.submit_button3.disabled=True
         elif not self.validate_password_re(password2):
-            self.ids.customer_pswd_signup_error.text="Passowrd Too Short" 
+            self.ids.customer_pswd_signup_error.text="Should have 8 characters and a special character" 
             self.ids.submit_button3.disabled=True
         else:
             self.ids.customer_pswd_signup_error.text=""
@@ -109,9 +117,9 @@ class CustomerSignupScreen(Screen,Database):
             self.ids.customer_pswd_confirm_error.text="Password is Required"
             self.ids.submit_button3.disabled=True
         elif not self.validate_password_re(password3):
-            self.ids.customer_pswd_confirm_error.text="Passowrd Too Short" 
+            self.ids.customer_pswd_confirm_error.text="Should have 8 characters and a special character" 
             self.ids.submit_button3.disabled=True
-        elif self.ids.pswd_signup.text!=self.ids.pswd_confirm.text:
+        elif self.ids.customer_pswd_signup.text!=self.ids.customer_pswd_confirm.text:
             self.ids.customer_pswd_confirm_error.text="Passwords Do Not Match"
             self.ids.submit_button3.disabled=True
         else:
@@ -120,27 +128,40 @@ class CustomerSignupScreen(Screen,Database):
 
     def validate_seller_id(self):
         #Here we grab the data inputed using the .strip() function
-        seller_id=self.ids.seller_id.text.strip()
-        
-        if not seller_id:
-            self.ids.seller_id_error.text="Input Required"
-            self.ids.submit_button3.disabled=True
-        elif self.ids.first_name.text.isalpha()==False:
-            self.ids.seller_id_error.text="Incorrect Input"
-            self.ids.submit_button3.disabled=True
+        seller_id_input = self.ids.seller_id.text.strip()
+
+        if not seller_id_input:
+            self.ids.seller_id_error.text = "Input Required"
+            self.ids.submit_button3.disabled = True
+            return
+
+        try:
+            seller_id = int(seller_id_input)
+        except ValueError:
+            self.ids.seller_id_error.text = "Incorrect Input"
+            self.ids.submit_button3.disabled = True
+            return
+
+        self.cursor.execute("SELECT seller_id FROM maji_mazuri.seller;")
+        data = self.cursor.fetchall()
+        seller_ids_list = [id[0] for id in data]
+
+        if seller_id not in seller_ids_list:
+            self.ids.seller_id_error.text = "Seller ID is not registered!"
+            self.ids.submit_button3.disabled = True
         else:
-            self.ids.seller_id_error.text=""
-            self.ids.submit_button3.disabled=False
-         
+            self.ids.seller_id_error.text = ""
+            self.ids.submit_button3.disabled = False
+            
 
     def signup_validate(self):
          #Here we collect all te info entered by the user
-         email=self.ids.email_signup.text.strip()
-         phone_no=self.ids.phone_no.text.strip()
-         first_name=self.ids.first_name.text.strip()
-         last_name=self.ids.last_name.text.strip()
-         password2=self.ids.pswd_signup.text.strip()
-         password3=self.ids.pswd_confirm.text.strip()
+         email=self.ids.email_customer_signup.text.strip()
+         phone_no=self.ids.customer_phone_no.text.strip()
+         first_name=self.ids.customer_first_name.text.strip()
+         last_name=self.ids.customer_last_name.text.strip()
+         password2=self.ids.customer_pswd_signup.text.strip()
+         password3=self.ids.customer_pswd_confirm.text.strip()
          seller_id=self.ids.seller_id.text.strip()
 
         #Here we collect the customers emails
@@ -155,7 +176,7 @@ class CustomerSignupScreen(Screen,Database):
         #Here we ensure that all fields have data
          if not email:
              self.ids.submit_button3.disabled=True
-             self.ids.email__customer_signup_error.text="Email is Required"
+             self.ids.email_customer_signup_error.text="Email is Required"
              return False
          elif not phone_no:
              self.ids.submit_button3.disabled=True
@@ -179,7 +200,7 @@ class CustomerSignupScreen(Screen,Database):
              return False
          elif  not seller_id:
              self.ids.submit_button3.disabled=True
-             self.ids.customer_pswd_confirm_error.text="Seller ID is Required"
+             self.ids.seller_id_error.text="Seller ID is Required"
              return False
          else:
              self.ids.submit_button3.disabled=False
@@ -187,16 +208,52 @@ class CustomerSignupScreen(Screen,Database):
             #Once all info is filled,ensure the email does not already exist then add it
              
              if email not in email_customer_list:
-                exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm) VALUES(%s,%s,%s,%s,%s,%s);"
-                value=(email,phone_no,first_name,last_name,password2,password3)
+                exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm,seller_id) VALUES(%s,%s,%s,%s,%s,%s,%s);"
+                value=(email,phone_no,first_name,last_name,password2,password3,seller_id)
                 self.cursor.execute(exexute1,value)
                 self.connection.commit()
                 return True
              else:
-                self.ids.email__customer_signup_error.text="Email is already Registered"
+                self.ids.email_customer_signup_error.text="Email is already Registered"
                 return False   
                 
-             
+    def send_registration_email(self,email, unique_id):
+        # Email details
+        sender_email = 'allantham897@gmail.com'  # Replace with your email address
+        sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
+        subject = 'MAJI MAZURI Seller Registration Successful'
+        message = f'''
+        Dear Customer,
+        
+        Congratulations! Your registration with MAJI MAZURI Corporation was successful.
+        
+        Unique ID: {unique_id}
+        
+        Thank you for joining us. If you have any questions or need further assistance, feel free to contact us.
+        
+        Best regards,
+        MAJI MAZURI Corporation
+        '''
+
+        try:
+            # Create a multipart message
+            email_message = MIMEMultipart()
+            email_message['From'] = sender_email
+            email_message['To'] = email
+            email_message['Subject'] = subject
+
+            # Attach the message to the email
+            email_message.attach(MIMEText(message, 'plain'))
+
+            # Connect to the SMTP server and send the email
+            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+                smtp.starttls()
+                smtp.login(sender_email, sender_password)
+                smtp.send_message(email_message)
+
+            print('Email sent successfully')
+        except Exception as e:
+            print('Error sending email:', str(e))
      
     def show_success_message(self):
        

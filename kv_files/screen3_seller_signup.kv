@@ -20,11 +20,12 @@ ScreenManager:
             halign:"center"
             pos_hint:{'center_y':0.95}
             theme_text_color:"Custom"
-            text_color: 0,0,0,1
+            text_color: 0,0,1,1
         
         MDTextField:
             id: email_signup
             hint_text: 'Enter your email'
+            hint_text_color_normal: 0, 0, 0, 1 
             icon_right:"email"
             font_size:"16dp"
             size_hint_x: .85
@@ -42,6 +43,7 @@ ScreenManager:
         MDTextField:
             id: phone_no
             hint_text: 'Phone Number'
+            hint_text_color_normal: 0, 0, 0, 1 
             icon_right:"cellphone-check"
             font_size:"16dp"
             size_hint_x: .85
@@ -59,6 +61,7 @@ ScreenManager:
         MDTextField:
             id: first_name
             hint_text: 'First Name'
+            hint_text_color_normal: 0, 0, 0, 1 
             icon_right:"account"
             font_size:"16dp"
             size_hint_x: .85
@@ -76,6 +79,7 @@ ScreenManager:
         MDTextField:
             id: last_name
             hint_text: 'Last Name'
+            hint_text_color_normal: 0, 0, 0, 1 
             icon_right:"account"
             font_size:"16dp"
             size_hint_x: .85
@@ -91,8 +95,9 @@ ScreenManager:
             text: ''
 
         MDTextField:
-            id: pswd_signup
+            id:pswd_signup
             hint_text: "Password"
+            hint_text_color_normal: 0, 0, 0, 1 
             helper_text: "Minimum of 8 characters"
             helper_text_mode: "on_focus"
             password:True
@@ -103,6 +108,7 @@ ScreenManager:
             on_text:self.text=self.text.replace(" ","")
             write_tab:False
             on_text:root.validate_password2()
+            
         MDLabel:
             id: pswd_signup_error
             halign: 'center'
@@ -113,6 +119,7 @@ ScreenManager:
         MDTextField:
             id: pswd_confirm
             hint_text: "Confirm Password"
+            hint_text_color_normal: 0, 0, 0, 1 
             helper_text: "Minimum of 8 characters"
             helper_text_mode: "on_focus"
             password:True
@@ -133,9 +140,10 @@ ScreenManager:
         MDTextField:
             id: national_id
             hint_text: "National ID Number"
+            hint_text_color_normal: 0, 0, 0, 1 
             helper_text: "Minimum of 8 characters"
             helper_text_mode: "on_focus"
-            password:True
+           # password:True
             icon_right:"eye-off"
             font_size:"16dp"
             size_hint_x: .85
@@ -154,9 +162,10 @@ ScreenManager:
         MDTextField:
             id: shop_name
             hint_text: "Enter your Shop Name"
+            hint_text_color_normal: 0, 0, 0, 1 
             #helper_text: "Minimum of 4 characters"
             #helper_text_mode: "on_focus"
-            password:True
+            #password:True
             icon_right:"eye-off"
             font_size:"16dp"
             size_hint_x: .85
@@ -180,7 +189,7 @@ ScreenManager:
             theme_text_color:"Custom"
             text_color: 0,0,0,1
             pos_hint:{'center_x':0.5, 'center_y':0.05}
-            on_press:if root.signup_validate():root.change_screen2()
+            on_press:if root.signup_validate():root.email_dialog()
            
 
 

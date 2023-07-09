@@ -6,13 +6,16 @@ from kivy.clock import Clock
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from kivymd.uix.button import MDFlatButton,MDRaisedButton
+from kivymd.uix.dialog import MDDialog
 
 from .zdatabase import Database
 
 
 
 class SignupScreen(Screen,Database):
-     #This are all the methods used in the signup screen backend
+     #This are all the methods used in the signup screen backend\
+    dialog4=None
     def validate_email_re(self,email):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         if re.match(pattern,email):
@@ -216,6 +219,10 @@ class SignupScreen(Screen,Database):
                 value=(email,phone_no,first_name,last_name,password2,password3,national_id,shop_name)
                 self.cursor.execute(exexute1,value)
                 self.connection.commit()
+
+                unique_id = self.cursor.lastrowid
+
+                self.send_registration_email(email, unique_id)
                 return True
              else:
                     self.show_failed_message()
@@ -256,18 +263,19 @@ class SignupScreen(Screen,Database):
       
         # Changing screen after successful registration
         self.show_success_message()
+        
         Clock.schedule_once(lambda dt: self.transition1(), 4)
 
     def transition1(self):
             #to actually change the screen
             self.manager.current = 'login'
             self.manager.transition.direction = 'right'
-            
-    def send_registration_email(email, unique_id):
+
+    def send_registration_email(self,email, unique_id):
         # Email details
-        sender_email = 'your_email@example.com'  # Replace with your email address
-        sender_password = 'your_password'  # Replace with your email password
-        subject = 'Registration Successful'
+        sender_email = 'allantham897@gmail.com'  # Replace with your email address
+        sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
+        subject = 'MAJI MAZURI Seller Registration Successful'
         message = f'''
         Dear Customer,
         
@@ -292,7 +300,7 @@ class SignupScreen(Screen,Database):
             email_message.attach(MIMEText(message, 'plain'))
 
             # Connect to the SMTP server and send the email
-            with smtplib.SMTP('smtp.example.com', 587) as smtp:
+            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
                 smtp.starttls()
                 smtp.login(sender_email, sender_password)
                 smtp.send_message(email_message)
@@ -300,3 +308,27 @@ class SignupScreen(Screen,Database):
             print('Email sent successfully')
         except Exception as e:
             print('Error sending email:', str(e))
+
+    def email_dialog(self):
+          
+          if not self.dialog4:
+                self.dialog4= MDDialog(
+                    title="REGISTRATION SUCCESSFULL!!",
+                    text="You will recieve an email shortly.",
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDRaisedButton(
+                            text="OK",
+                            on_press=self.dismiss_email_dialog3,   
+                        ),
+                    ],
+                )
+          self.dialog4.open()
+
+    def dismiss_email_dialog3(self, instance):
+        self.dialog4.dismiss()
+        self.transition1()
+    
+   
+        
+        
