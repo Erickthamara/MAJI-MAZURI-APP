@@ -17,6 +17,8 @@ class Transactions(Screen,Database):
 
 
   def retrieve_exixting_reports(self):
+        #this loads up all transactions alareday in the database
+        #called from seller.py LINE 76 by 
         self.widget_list=[]
 
         self.cursor.execute("SELECT * FROM maji_mazuri.seller_transactions ORDER BY report_id DESC")
@@ -34,40 +36,16 @@ class Transactions(Screen,Database):
         self.update_container()
 
   def insert_item_to_database(self,text,secondary_text,tertiary_text):
-        query = "INSERT INTO maji_mazuri.report (text, secondary_text, tertiary_text) VALUES (%s, %s, %s)"
+        #this is called inoreder to add transactions to the DB
+        query = "INSERT INTO maji_mazuri.seller_transactions (text, secondary_text, tertiary_text) VALUES (%s, %s, %s)"
         values = (text,secondary_text,tertiary_text)
 
         self.cursor.execute(query, values)
         self.connection.commit()
+        self.retrieve_exixting_reports()
 
 
-  def report_test(self):
-        item=ThreeLineIconListItem(
-                IconLeftWidget(
-                    icon="language-python"
-                ), text="Number1",
-                secondary_text="Secondary text here",
-                tertiary_text="fit more text than usual"
-             )
-        
 
-        self.widget_list.insert(0, item)
-        self.insert_item_to_database(item.text,item.secondary_text,item.tertiary_text)
-        self.update_container()
-        
-        
-  def report_test2(self):
-         item2=ThreeLineIconListItem(
-                IconLeftWidget(
-                    icon="language-python"
-                ), text="Number2",
-                secondary_text="Secondary text here",
-                tertiary_text="fit more text than usual"
-             )
-        
-         self.widget_list.insert(0, item2)
-         self.insert_item_to_database(item2.text,item2.secondary_text,item2.tertiary_text)
-         self.update_container()
          
 
   def update_container(self):
@@ -75,4 +53,4 @@ class Transactions(Screen,Database):
         container.clear_widgets()
         for widget in self.widget_list:
             container.add_widget(widget)
-            
+ 

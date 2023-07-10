@@ -43,7 +43,7 @@ class SalesScreen(Transactions):
         if not sale:
             self.ids.submit.disabled=True
         else:
-             exexute1="INSERT INTO maji_mazuri.cash_sales3(amount,entry_date,entry_time) VALUES(%s,%s,%s);"
+             exexute1="INSERT INTO maji_mazuri.cash_sales(amount,entry_date,entry_time) VALUES(%s,%s,%s);"
              value=(sale,date,time)
              self.cursor.execute(exexute1,value)
              self.connection.commit()
@@ -56,7 +56,7 @@ class SalesScreen(Transactions):
              #here we update the report
              transaction_sale=f"Sales Record Updated:{sale}"
              self.insert_item_to_database(transaction_sale,date,time)
-             self.retrieve_exixting_reports()
+             
 
     def alert_dialog_sale(self):
           

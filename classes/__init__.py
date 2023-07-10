@@ -8,5 +8,6 @@ from .class4_customer_browse import CustomerBrowse
 from .class7_catalogue import CatalogueScreen
 from .class9_reportsscreen import ReportScreen
 from .class11_checkout import CheckoutScreen
+from .class13_paymentscreen import PaymentScreen
 from .salesgraph import SalesGraph
 from .zdatabase import Database

@@ -15,6 +15,7 @@ from .zdatabase import Database
 
 class CustomerSignupScreen(Screen,Database):
      #This are all the methods used in the signup screen backend
+    dialog6=None
     def validate_email_re(self,email):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         if re.match(pattern,email):
@@ -212,22 +213,23 @@ class CustomerSignupScreen(Screen,Database):
                 value=(email,phone_no,first_name,last_name,password2,password3,seller_id)
                 self.cursor.execute(exexute1,value)
                 self.connection.commit()
+                self.send_registration_email(email,seller_id)
                 return True
              else:
                 self.ids.email_customer_signup_error.text="Email is already Registered"
                 return False   
                 
-    def send_registration_email(self,email, unique_id):
+    def send_registration_email(self,email, seller_id):
         # Email details
         sender_email = 'allantham897@gmail.com'  # Replace with your email address
         sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
-        subject = 'MAJI MAZURI Seller Registration Successful'
+        subject = 'MAJI MAZURI Customer Registration Successful'
         message = f'''
         Dear Customer,
         
         Congratulations! Your registration with MAJI MAZURI Corporation was successful.
         
-        Unique ID: {unique_id}
+        You have been registered to seller id {seller_id}
         
         Thank you for joining us. If you have any questions or need further assistance, feel free to contact us.
         
@@ -281,3 +283,23 @@ class CustomerSignupScreen(Screen,Database):
             #to actually change the screen
             self.manager.current = 'login'
             self.manager.transition.direction = 'right'
+    
+    def email_dialog(self):
+          
+          if not self.dialog6:
+                self.dialog6= MDDialog(
+                    title="REGISTRATION SUCCESSFULL!!",
+                    text="You will recieve an email shortly.",
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDRaisedButton(
+                            text="OK",
+                            on_press=self.dismiss_email_dialog3,   
+                        ),
+                    ],
+                )
+          self.dialog6.open()
+
+    def dismiss_email_dialog3(self, instance):
+        self.dialog6.dismiss()
+        self.transition1()

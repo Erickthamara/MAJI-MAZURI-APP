@@ -19,6 +19,7 @@ from classes import Database
 from classes import SalesGraph
 from classes import ReportScreen
 from classes import CheckoutScreen
+from classes import PaymentScreen
 
 
 Window.size=(350,600)
@@ -63,6 +64,7 @@ class MyApp(MDApp):
         sm.add_widget(SalesGraph(name="sales_graph"))
         sm.add_widget(ReportScreen(name="reports"))
         sm.add_widget(CheckoutScreen(name="checkout"))
+        sm.add_widget(PaymentScreen(name="payment"))
         
         #Loading up every screen
         return sm

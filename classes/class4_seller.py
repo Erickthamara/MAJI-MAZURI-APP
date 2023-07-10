@@ -39,7 +39,8 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
 
         self.widget_list = []
         
-    
+   
+        
     def topbar_close(self):   
         if self.dialog2 is None:
                 self.dialog2 = MDDialog(
@@ -66,6 +67,14 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
         #calls a dialog that will go back to welcomescreen
         self.manager.current = 'welcome'
         self.manager.transition.direction = 'right'
+
+        
+        #transaction details
+        text=f"Logged out"
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I:%M:%S %p')
+        self.insert_item_to_database(text,date,time)
+
         self.dismiss2(self)
     
    

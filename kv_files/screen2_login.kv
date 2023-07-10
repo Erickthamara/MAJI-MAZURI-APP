@@ -18,6 +18,7 @@ ScreenManager:
         MDTextField:
             id: email_login
             hint_text: 'Enter Your Email'
+            hint_text_color_normal: 0, 0, 0, 1 
             icon_right:"account"
             font_size:"16dp"
             size_hint_x: .85
@@ -36,6 +37,7 @@ ScreenManager:
         MDTextField:
             id: pswd1
             hint_text: 'Password'
+            hint_text_color_normal: 0, 0, 0, 1 
             helper_text: "Minimum of 4 characters"
             helper_text_mode: "on_focus"
             password:True
@@ -52,7 +54,7 @@ ScreenManager:
         MDLabel:
             id: pswd1_error
             halign: 'center'
-            pos_hint:{'center_y':0.42}
+            pos_hint:{'center_y':0.44}
             theme_text_color: 'Error'
             text: ''
 
@@ -79,6 +81,14 @@ ScreenManager:
                 pos_hint: {"center_x": .5, "center_y": .5}
                 
 
+        MDLabel:
+            text:"Log In"
+            font_style:"H6"
+            halign:"center"
+            pos_hint:{'center_y':0.33}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+            
         BoxLayout:
             size_hint:.85,None
             height:"30dp"
@@ -86,13 +96,20 @@ ScreenManager:
             spacing:"15dp"
 
             MDRaisedButton:
-                id:signin_button
+                id:login_customer_button
                 disabled:False
-                text:"Sign In"
+                text:"Customer"
                 size_hint_x: 1
                 font_size:"18dp"
-                on_press:root.sign_in()
+                on_press:root.customer_sign_in()
+                
+            MDRaisedButton:
+                id: login_seller_button
+                text:"Seller"
                 disabled:False
+                size_hint_x: 1
+                font_size:"18dp"
+                on_press:root.seller_sign_in()
         MDLabel:
             text:"Create Account"
             font_style:"H6"
@@ -110,7 +127,7 @@ ScreenManager:
             MDRoundFlatIconButton:
                 id:signin_button
                 disabled:False
-                text:"Customer Acc"
+                text:"Customer"
                 size_hint_x: 1
                 font_size:"18dp"
                 on_press:
@@ -119,7 +136,7 @@ ScreenManager:
                 disabled:False
             MDRoundFlatIconButton:
                 id: signup_button
-                text:"Seller Acc"
+                text:"Seller"
                 disabled:False
                 size_hint_x: 1
                 font_size:"18dp"

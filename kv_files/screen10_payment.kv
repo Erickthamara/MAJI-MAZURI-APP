@@ -1,8 +1,8 @@
 ScreenManager:
-    CheckoutScreen:
+    PaymentScreen:
 
-<CheckoutScreen>
-    name:"checkout"
+<PaymentScreen>
+    name:"payment"
     BoxLayout:
         orientation: "vertical"
 
@@ -28,9 +28,7 @@ ScreenManager:
                 size_hint_x: 1
                 font_size:"18dp"
                 text: "CHECKOUT"
-                on_release: 
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'payment' 
+                on_release: root.button_action() 
         BoxLayout:
             size_hint_y: None
             height: "5"  # Set the height of the button
