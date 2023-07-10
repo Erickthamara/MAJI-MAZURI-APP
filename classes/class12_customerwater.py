@@ -335,7 +335,7 @@ class CustomerWater(SalesScreen):
             checkout_button = self.manager.get_screen("checkout").ids.checkout_btn
             
             checkout_button.text = f"CHECKOUT: Ksh {self.zcheckout_manager.checkout_total:.2f}"
-        
+            self.manager.get_screen("payment").ids.total_amount.text =f"Total Amount: Ksh {self.zcheckout_manager.checkout_total}"
           
         
         
@@ -350,7 +350,7 @@ class CustomerWater(SalesScreen):
         checkout_button = self.manager.get_screen("checkout").ids.checkout_btn
        
         checkout_button.text = f"CHECKOUT: Ksh {self.zcheckout_manager.checkout_total:.2f}"
-       
+        self.manager.get_screen("payment").ids.total_amount.text =f"Total Amount: Ksh {self.zcheckout_manager.checkout_total}"
      def minus_water_total(self,amount):
           # Convert values to integers before summing
         if self.zcheckout_manager.checkout_total>0:
@@ -358,6 +358,6 @@ class CustomerWater(SalesScreen):
             checkout_button = self.manager.get_screen("checkout").ids.checkout_btn
         
             checkout_button.text = f"CHECKOUT: Ksh {self.zcheckout_manager.checkout_total:.2f}"
-        
+            self.manager.get_screen("payment").ids.total_amount.text =f"Total Amount: Ksh {self.zcheckout_manager.checkout_total}"
        
             

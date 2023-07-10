@@ -16,10 +16,88 @@ from kivymd.uix.button import MDIconButton
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
 from kivymd.uix.menu import MDDropdownMenu
+
 from .class6_sales import SalesScreen
-from .zcheckout_manager import CheckoutManager
+from .class11_checkout import CheckoutScreen
+from .class12_customerwater import CustomerWater
+from .zmpesa import mpesa_call
 
 import re
 
-class PaymentScreen(MDScreen):
-    pass
+class PaymentScreen(CustomerWater):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+       # Clock.schedule_once(self.on, 0)
+
+
+    def validate_phone_re(self,phone):
+        pattern = r'^\d{10}$'
+        if re.match(pattern, phone):
+            return True
+        return False
+
+    def checkout_screen(self):
+        #calls a dialog that will go back to welcomescreen
+        self.manager.current = 'checkout'
+        self.manager.transition.direction = 'right'
+
+    def validate_street_name(self):
+        #Here we grab the data inputed using the .strip() function
+        street_name=self.ids.street_name.text.strip()
+        
+        if not street_name:
+            self.ids.street_name_error.text="Input Required"
+            self.ids.mpesa_button.disabled=True
+        else:
+            self.ids.street_name_error.text=""
+            self.ids.mpesa_button.disabled=False
+
+    def validate_house_name(self):
+        #Here we grab the data inputed using the .strip() function
+        hs_num=self.ids.hs_num.text.strip()
+        
+        if not hs_num:
+            self.ids.hs_num_error.text="Input Required"
+            self.ids.mpesa_button.disabled=True
+        else:
+            self.ids.hs_num_error.text=""
+            self.ids.mpesa_button.disabled=False
+
+    def validate_phone_no(self):
+        #Here we grab the data inputed using the .strip() function
+        phone_no=self.ids.pay_num.text.strip()
+        
+        if not phone_no:
+            self.ids.pay_num_error.text="Phone Number Required"
+            self.ids.mpesa_button.disabled=True
+        elif not self.validate_phone_re(phone_no) :
+            self.ids.pay_num_error.text="Invalid Phone Number"
+            self.ids.mpesa_button.disabled=True
+        else:
+            self.ids.pay_num_error.text=""
+            self.ids.mpesa_button.disabled=False
+    
+    def mpesa_payment(self):
+        
+        string=self.ids.total_amount.text
+        
+        amount = re.search(r'\d+', string).group()
+        actual_amount=float(amount)
+        street_name=self.ids.street_name.text.strip()
+        phone_no=self.ids.pay_num.text.strip()
+        
+
+        
+        if not street_name:
+            self.ids.mpesa_button.disabled=True
+            self.ids.street_name_error.text="Street name required"
+       
+        elif not phone_no:
+            self.ids.mpesa_button.disabled=True
+            self.ids.pay_num_error.text="Phone Number Required"
+        else:   
+            self.ids.mpesa_button.disabled=False
+
+            mpesa_call(phone_no,amount)
+
+    

@@ -4,11 +4,18 @@ import json
 import pprint
 from datetime import datetime
 from urllib.parse import parse_qs
-import zcredentials
+
 import requests
 from requests.auth import HTTPBasicAuth
 from urllib.parse import parse_qs
 import base64
+
+consumer_key = 'U3uZndIeO10CSUAyjahb6uHTTnTTA9Tx'
+consumer_secrete = 'lgJH0xs5hGoz5JE7'
+lnm_passkey ="bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+bs_shortcode ="174379" # paybill number
+acess_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+b2c_initiator = 'testapi' # initiator name
 
 class MpesaClient:
     def format_time(self):
@@ -17,13 +24,13 @@ class MpesaClient:
         return formatted_datetime
 
     def decode_password(self):
-        pass_to_be_encoded = zcredentials.bs_shortcode + zcredentials.lnm_passkey + self.format_time()
+        pass_to_be_encoded = bs_shortcode + lnm_passkey + self.format_time()
         pass_encoded = base64.b64encode(pass_to_be_encoded.encode())
         pass_decoded = pass_encoded.decode('utf_8')
         return pass_decoded
 
     def generate_access_token(self):
-        response = requests.get(zcredentials.acess_token_url, auth=HTTPBasicAuth(zcredentials.consumer_key, zcredentials.consumer_secrete))
+        response = requests.get(acess_token_url, auth=HTTPBasicAuth(consumer_key, consumer_secrete))
         res_json = response.json()
         filtered_access_token = res_json['access_token']
         return filtered_access_token
@@ -34,13 +41,13 @@ class MpesaClient:
         headers = {"Authorization": "Bearer %s" % access_token }
 
         request = {
-            "BusinessShortCode": zcredentials.bs_shortcode,
+            "BusinessShortCode": bs_shortcode,
             "Password": self.decode_password(),
             "Timestamp": self.format_time(),
             "TransactionType": "CustomerPayBillOnline",
             "Amount": 1,
             "PartyA": 254796892684,
-            "PartyB": zcredentials.bs_shortcode,
+            "PartyB": bs_shortcode,
             "PhoneNumber": 254796892684,
             "CallBackURL": "https://7c54-105-163-156-78.ngrok-free.app/payment_result/",
             "AccountReference": "MAJI MAZURI",
@@ -161,7 +168,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
         response = payment_result(self)
         self.wfile.write(response.encode())
 
-def main(phone_number,pay_amount):
+def mpesa_call(phone_number,pay_amount):
     obj = MpesaClient()
     phn_number = phone_number  # Replace with the desired phone number
     amount = pay_amount  # Replace with the desired amount
@@ -169,4 +176,5 @@ def main(phone_number,pay_amount):
     start_server()
     #print("working")
 
-main("254796892684",1)
+
+

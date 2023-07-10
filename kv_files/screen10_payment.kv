@@ -8,29 +8,112 @@ ScreenManager:
 
         MDTopAppBar:
             id:bar
-            title: "Checkout"
-            left_action_items:[["arrow-left", lambda x: root.browse_screen()  ,"BACK"]]
+            title: "Payment"
+            left_action_items:[["arrow-left", lambda x: root.checkout_screen()  ,"BACK"]]
             #right_action_items: [["cart", lambda x: root.cart_screen(),"Cart"]]
             
-        
-        RecycleView:
-                        
-            MDList:
-                id:container2
+        MDFloatLayout:
+            id:float
+            MDLabel:
+                text:"Enter Address"
+                font_style:"H4"
+                halign:"center"
+                pos_hint:{'center_y':0.95}
+                theme_text_color:"Custom"
+                text_color: 0,0,0,1
 
-              
-        BoxLayout:
-            size_hint_y: None
-            height: "56dp"  # Set the height of the button
+            MDTextField:
+                id: street_name
+                hint_text: 'Enter Street/Estate'
+                hint_text_color_normal: 0, 0, 0, 1 
+                helper_text: "Minimum of 4 characters"
+                helper_text_mode: "on_focus"
+                password:False
+                icon_right:"home"
+                font_size:"16dp"
+                size_hint_x: .85
+                pos_hint: {"center_x": .5, "center_y": .84}
+                on_text:self.text=self.text.replace(" ","")
+                write_tab:False
+                on_text: root.validate_street_name()
+            
+            MDLabel:
+                id: street_name_error
+                halign: 'center'
+                pos_hint:{'center_y':0.79}
+                theme_text_color: 'Error'
+                text: ''
+
+            MDTextField:
+                id: hs_num
+                hint_text: 'Enter House Number/Name'
+                hint_text_color_normal: 0, 0, 0, 1 
+                helper_text: "Minimum of 4 characters"
+                helper_text_mode: "on_focus"
+                password:False
+                icon_right:"home"
+                font_size:"16dp"
+                size_hint_x: .85
+                pos_hint: {"center_x": .5, "center_y": .74}
+                on_text:self.text=self.text.replace(" ","")
+                write_tab:False
+                on_text: root.validate_house_name()
+            MDLabel:
+                id: hs_num_error
+                halign: 'center'
+                pos_hint:{'center_y':0.69}
+                theme_text_color: 'Error'
+                text: ''
+
+            MDLabel:
+                id:total_amount
+                text:"Total Amount:"
+                font_style:"H5"
+                halign:"center"
+                pos_hint:{'center_y':0.6}
+                theme_text_color:"Custom"
+                text_color: 0,0,0,1
+            
+            Image:
+                source: 'images/mpesalogo2.jpg'
+                pos_hint: {"center_x": .5, "center_y": .45}
+                size_hint: (0.5, 0.5)
+                
+
+            MDTextField:
+                id: pay_num
+                hint_text: 'Phone Number'
+                hint_text_color_normal: 0, 0, 0, 1 
+                helper_text: "Minimum of 4 characters"
+                helper_text_mode: "on_focus"
+                password:False
+                icon_right:"cellphone-check"
+                font_size:"16dp"
+                size_hint_x: .85
+                pos_hint: {"center_x": .5, "center_y": .31}
+                on_text:self.text=self.text.replace(" ","")
+                write_tab:False
+                on_text:root.validate_phone_no()
+                
+            MDLabel:
+                id: pay_num_error
+                halign: 'center'
+                pos_hint:{'center_y':0.26}
+                theme_text_color: 'Error'
+                text: ''
 
             MDRaisedButton:
-                id:checkout_btn
-                size_hint_x: 1
-                font_size:"18dp"
-                text: "CHECKOUT"
-                on_release: root.button_action() 
-        BoxLayout:
-            size_hint_y: None
-            height: "5"  # Set the height of the button
+                id: mpesa_button
+                text:"Initiate Paymnet"
+                size_hint: .5,.06
+                pos_hint: {"center_x": .5, "center_y": .2}
+                on_press:root.mpesa_payment()
 
-          
+            
+                
+            
+
+                
+        
+
+            

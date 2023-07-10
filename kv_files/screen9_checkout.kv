@@ -28,9 +28,10 @@ ScreenManager:
                 size_hint_x: 1
                 font_size:"18dp"
                 text: "CHECKOUT"
-                on_release: 
+                on_press: 
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'payment' 
+                #on_release:root.release()
         BoxLayout:
             size_hint_y: None
             height: "5"  # Set the height of the button
