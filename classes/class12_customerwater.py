@@ -224,7 +224,7 @@ class CustomerWater(SalesScreen):
         if new_amount and size:
             amount = int(new_amount)
             if size == "1L":
-                new = amount * 10
+                new = amount * 1
             elif size == "5L":
                 new = amount * 50
             elif size == "10L":

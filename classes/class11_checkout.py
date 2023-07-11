@@ -22,15 +22,7 @@ class CheckoutScreen(Screen):
         self.manager.current = 'customerbrowse'
         self.manager.transition.direction = 'right'
 
-    def release(self):
-        Clock.schedule_once(self.update_payment_screen, 0.1)  # Delay the execution slightly
-
-    def update_payment_screen(self, dt):
-        amount = self.ids.checkout_btn.text
-        self.manager.get_screen("payment").ids.total_amount.text =f"{amount}"
-
-    def show_amount(self):
-        amount = self.ids.checkout_btn.text
+    
 
 
         

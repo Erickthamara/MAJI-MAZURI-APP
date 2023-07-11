@@ -31,7 +31,7 @@ class PaymentScreen(CustomerWater):
 
 
     def validate_phone_re(self,phone):
-        pattern = r'^\d{10}$'
+        pattern = r'^\d{12}$'
         if re.match(pattern, phone):
             return True
         return False
@@ -70,6 +70,9 @@ class PaymentScreen(CustomerWater):
         if not phone_no:
             self.ids.pay_num_error.text="Phone Number Required"
             self.ids.mpesa_button.disabled=True
+        elif not phone_no.startswith("254"):
+            self.ids.pay_num_error.text = "Phone Number should start with 254"
+            self.ids.mpesa_button.disabled = True
         elif not self.validate_phone_re(phone_no) :
             self.ids.pay_num_error.text="Invalid Phone Number"
             self.ids.mpesa_button.disabled=True
@@ -98,6 +101,29 @@ class PaymentScreen(CustomerWater):
         else:   
             self.ids.mpesa_button.disabled=False
 
-            mpesa_call(phone_no,amount)
+            result_code,data=mpesa_call(phone_no,amount)
+
+            if result_code == 0:
+                print("SUCCESS")
+                print(data)
+                
+                
+
+                
+
+            elif result_code==1032:
+                # If the result code is not 0, set all the results to None
+                print("REQUEST HAS BEEN CANCELLED")
+            elif result_code==1037:
+                print("REQUEST TIMED OUT")
+
+    def items(self):
+        container=self.manager.get_screen("checkout").ids.container2
+        items=[]
+        for item in container.children:
+            items.append(item.text)
+        print(items)
+
+
 
     

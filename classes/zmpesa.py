@@ -45,10 +45,10 @@ class MpesaClient:
             "Password": self.decode_password(),
             "Timestamp": self.format_time(),
             "TransactionType": "CustomerPayBillOnline",
-            "Amount": 1,
-            "PartyA": 254796892684,
+            "Amount": amount,
+            "PartyA": phone_number,
             "PartyB": bs_shortcode,
-            "PhoneNumber": 254796892684,
+            "PhoneNumber": phone_number,
             "CallBackURL": "https://7c54-105-163-156-78.ngrok-free.app/payment_result/",
             "AccountReference": "MAJI MAZURI",
             "TransactionDesc": "Pay for goods"
@@ -178,3 +178,4 @@ def mpesa_call(phone_number,pay_amount):
 
 
 
+mpesa_call("254796892684",1)
