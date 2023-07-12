@@ -82,6 +82,7 @@ class MpesaClient:
         else:
             print(f"Request failed with status code: {response.status_code}")
             print(f"Response content: {response.text}")
+            
     def simulate_response(self, access_token, checkout_request_id, simulate_success=True):
         headers = {
             'Content-Type': 'application/json',
@@ -134,8 +135,8 @@ class MpesaClient:
         urllib.request.urlopen(req)
 
 
-#obj = MpesaClient()
-#response_data = obj.initiate_stk("254796892684", 1)  # Call initiate_stk to get response data
-#obj.simulate_response(obj.generate_access_token(), response_data["CheckoutRequestID"], simulate_success=False)
+obj = MpesaClient()
+response_data = obj.initiate_stk("254796892684", 1)  # Call initiate_stk to get response data
+obj.simulate_response(obj.generate_access_token(), response_data["CheckoutRequestID"], simulate_success=False)
 
 

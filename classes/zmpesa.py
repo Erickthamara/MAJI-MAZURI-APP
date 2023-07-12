@@ -50,7 +50,7 @@ class MpesaClient:
             "PartyA": phone_number,
             "PartyB": bs_shortcode,
             "PhoneNumber": phone_number,
-            "CallBackURL": "https://0e6a-105-163-158-59.ngrok-free.app/",
+            "CallBackURL": "https://bfb0-41-89-10-241.ngrok-free.app/",
             "AccountReference": "MAJI MAZURI",
             "TransactionDesc": "Pay for goods"
         }
@@ -188,4 +188,4 @@ def mpesa_call(phone_number,pay_amount):
 
 
 
-#mpesa_call("254796892684",1)
+mpesa_call("254796892684",1)
