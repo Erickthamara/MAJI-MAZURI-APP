@@ -225,7 +225,84 @@ ScreenManager:
                 text: 'Order'
                 icon: 'account-check'
                 icon_size: "36dp"
-            
+                BoxLayout:
+                    orientation: "vertical"
+                    
+
+                    MDFloatLayout:
+                        MDLabel:
+                            id:shop_name
+                            text:"Shop Name"
+                            font_style:"H4"
+                            halign:"center"
+                            pos_hint:{'center_y':0.9}
+                            theme_text_color:"Custom"
+                            text_color: 0,0,0,1
+                        MDLabel:
+                            id:seller_phn_number
+                            text:"Phone Number"
+                            font_style:"H4"
+                            halign:"center"
+                            pos_hint:{'center_y':0.8}
+                            theme_text_color:"Custom"
+                            text_color: 0,0,0,1
+                        MDLabel:
+                            id:seller_id
+                            text:"Seller ID"
+                            font_style:"H4"
+                            halign:"center"
+                            pos_hint:{'center_y':0.7}
+                            theme_text_color:"Custom"
+                            text_color: 0,0,0,1
+                        MDLabel:
+                            id:items_ord
+                            text:"Orders"
+                            font_style:"H4"
+                            halign:"center"
+                            pos_hint:{'center_y':0.56}
+                            theme_text_color:"Custom"
+                            text_color: 0,0,0,1
+                        ScrollView:
+                            size_hint_y: 0.5  # Set the height hint to 0.5 (half of the screen)
+                            BoxLayout:
+                                id: order_container
+                                orientation: "vertical"
+                                size_hint_y: None
+                                height: self.minimum_height
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                                TwoLineListItem:
+                                    text: "Two-line item"
+                                    secondary_text: "Secondary text here"
+
+                    
             MDBottomNavigationItem:
                 name: 'help'
                 text: 'Contact'

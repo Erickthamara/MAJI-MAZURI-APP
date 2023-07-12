@@ -2,12 +2,19 @@ from kivy.uix.screenmanager import Screen
 
 from .zdatabase import Database
 from .class8_transactions import Transactions
+from .zids_manager import CustomerIds,SellerIds
+
 import datetime as dt
 import re
 
 
 
 class LoginScreen(Transactions): 
+    customer_id=None
+    seller_id=None
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        
 
     #This are all the methods used in the Login screen 
     
@@ -131,12 +138,16 @@ class LoginScreen(Transactions):
             #check if email is valid
             
             if email in email_customer_list:
-                self.cursor.execute(f"SELECT customer_pswd FROM maji_mazuri.customer WHERE customer_email='{email}';")
+                self.cursor.execute(f"SELECT customer_pswd,customer_id,seller_id FROM maji_mazuri.customer WHERE customer_email='{email}';")
                 cust_pswd=self.cursor.fetchall()
                 for j in cust_pswd:
                     if password1==j[0]:
                         #call this to change the screen
                         self.customer_screen1()
+
+                        LoginScreen.customer_id=j[1]
+                        LoginScreen.seller_id=j[2]
+                        
                         
                         return True
                     else:

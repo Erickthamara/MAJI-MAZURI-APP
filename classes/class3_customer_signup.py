@@ -10,10 +10,11 @@ from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.dialog import MDDialog
 
 from .zdatabase import Database
+from .zids_manager import CustomerIds
 
 
 
-class CustomerSignupScreen(Screen,Database):
+class CustomerSignupScreen(Screen,Database,CustomerIds):
      #This are all the methods used in the signup screen backend
     dialog6=None
     def validate_email_re(self,email):

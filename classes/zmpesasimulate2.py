@@ -7,6 +7,7 @@ from urllib.parse import parse_qs
 
 import requests
 from requests.auth import HTTPBasicAuth
+import urllib
 from urllib.parse import parse_qs
 import base64
 
@@ -81,111 +82,60 @@ class MpesaClient:
         else:
             print(f"Request failed with status code: {response.status_code}")
             print(f"Response content: {response.text}")
+    def simulate_response(self, access_token, checkout_request_id, simulate_success=True):
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + access_token
+        }
 
-        pprint.pprint(data)
-        return data
+        payload = {
+            "BusinessShortCode": bs_shortcode,
+            "Password": self.decode_password(),
+            "Timestamp": self.format_time(),
+            "CheckoutRequestID": checkout_request_id,
+        }
 
-cache = {}
+        if simulate_success:
+            # Simulate a successful response
+            response = {
+                "MerchantRequestID": checkout_request_id,
+                "ResultCode": 0,
+                "ResultDesc": "Success",
+                "CallbackMetadata": {
+                    "Item": [
+                        {
+                            "Name": "Amount",
+                            "Value": "1"
+                        },
+                        {
+                            "Name": "MpesaReceiptNumber",
+                            "Value": "ABC123"
+                        },
+                        {
+                            "Name": "TransactionDate",
+                            "Value": "2023-07-11 23:30:45"
+                        }
+                    ]
+                }
+            }
+        else:
+            # Simulate an error response
+            response = {
+                "requestId": checkout_request_id,
+                "errorCode": "500.001.1001",
+                "errorMessage": "Error processing the transaction"
+            }
 
-def payment_result(request):
-    content_length = int(request.headers['Content-Length'])
-    body = request.rfile.read(content_length).decode('utf-8')
-    params = json.loads(body)
+        response = json.dumps(response)
+        response = response.encode('utf-8')
 
-    result_code = int(params['Body']['stkCallback']['ResultCode'])
-    option_name = cache.get('option_name')
-    user = cache.get('user')
-
-    if 'CallbackMetadata' in params['Body']['stkCallback']:
-        callback_metadata = params['Body']['stkCallback']['CallbackMetadata']['Item']
-        # Extract the payment details from CallbackMetadata
-        payment_details = {}
-        for item in callback_metadata:
-            name = item['Name']
-            value = item.get('Value')
-            if value is not None:
-                payment_details[name] = value
-    else:
-        payment_details = {}
-
-    returned_amount = float(payment_details.get('Amount', 0))
-    receipt_number = payment_details.get('MpesaReceiptNumber', '')
-    transaction_date_str = str(payment_details.get('TransactionDate', ''))
-    phone_number = payment_details.get('PhoneNumber', '')
-
-    if transaction_date_str:
-        transaction_date = datetime.strptime(transaction_date_str, "%Y%m%d%H%M%S")
-    else:
-        transaction_date = None
-
-    if result_code == 0:
-        if option_name is not None:
-            print("Option Name:", option_name)
-        
-        if returned_amount != 0.0:
-            print("Returned Amount:", returned_amount)
-        
-        if receipt_number:
-            print("Receipt Number:", receipt_number)
-        
-        if transaction_date is not None:
-            print("Transaction Date:", transaction_date)
-      
-        if phone_number:
-            print("Phone Number:", phone_number)
-        
-
-    elif result_code==1032:
-        # If the result code is not 0, set all the results to None
-        print("REQUEST HAS BEEN CANCELLED")
-    elif result_code==1037:
-        print("REQUEST TIMED OUT")
+        url = 'https://0e6a-105-163-158-59.ngrok-free.app/'  # Replace with your callback URL
+        req = urllib.request.Request(url, data=response, headers=headers)
+        urllib.request.urlopen(req)
 
 
-        # Perform additional processing or save the data to the database
-        # ...
-
-    if 'option_name' in cache:
-        del cache['option_name']
-    if 'user' in cache:
-        del cache['user']
-    if 'user' in cache:
-        del cache['user']
-
-    return "Okay"
-
-def start_server():
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, MyRequestHandler)
-    httpd.handle_request()
-
-class MyRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
-        response = b"<html><body><h1>Hello from Kivy!</h1></body></html>"
-        self.wfile.write(response)
-        # Stop the server after sending the response
-        self.server.shutdown()
-
-    def do_POST(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
-        response = payment_result(self)
-        self.wfile.write(response.encode())
-
-def mpesa_call(phone_number,pay_amount):
-    obj = MpesaClient()
-    phn_number = phone_number  # Replace with the desired phone number
-    amount = pay_amount  # Replace with the desired amount
-    obj.initiate_stk(phn_number, amount)
-    start_server()
-    #print("working")
+#obj = MpesaClient()
+#response_data = obj.initiate_stk("254796892684", 1)  # Call initiate_stk to get response data
+#obj.simulate_response(obj.generate_access_token(), response_data["CheckoutRequestID"], simulate_success=False)
 
 
-
-#mpesa_call("254796892684",1)

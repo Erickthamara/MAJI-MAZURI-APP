@@ -15,16 +15,21 @@ from kivymd.uix.list import IRightBodyTouch
 from kivymd.uix.button import MDIconButton
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
-from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.screen import MDScreen
 
 from .class6_sales import SalesScreen
 from .class11_checkout import CheckoutScreen
 from .class12_customerwater import CustomerWater
 from .zmpesa import mpesa_call
+from .zids_manager import CustomerIds
+from .class2_login import LoginScreen
+from.zdatabase import Database
+from .class10_orders import OrdersScreen
 
 import re
+import datetime as dt
 
-class PaymentScreen(CustomerWater):
+class PaymentScreen(OrdersScreen):
     def __init__(self, **kw):
         super().__init__(**kw)
        # Clock.schedule_once(self.on, 0)
@@ -83,12 +88,11 @@ class PaymentScreen(CustomerWater):
     def mpesa_payment(self):
         
         string=self.ids.total_amount.text
-        
         amount = re.search(r'\d+', string).group()
         actual_amount=float(amount)
         street_name=self.ids.street_name.text.strip()
         phone_no=self.ids.pay_num.text.strip()
-        
+        hs_num=self.ids.hs_num.text.strip()
 
         
         if not street_name:
@@ -98,6 +102,9 @@ class PaymentScreen(CustomerWater):
         elif not phone_no:
             self.ids.mpesa_button.disabled=True
             self.ids.pay_num_error.text="Phone Number Required"
+        elif not hs_num:
+            self.ids.mpesa_button.disabled=True
+            self.ids.street_name_error.text="House number/name required"
         else:   
             self.ids.mpesa_button.disabled=False
 
@@ -116,6 +123,48 @@ class PaymentScreen(CustomerWater):
                 print("REQUEST HAS BEEN CANCELLED")
             elif result_code==1037:
                 print("REQUEST TIMED OUT")
+    def mpesa_payment2(self):
+        street_name=self.ids.street_name.text.strip()
+        phone_no=self.ids.pay_num.text.strip()
+        hs_num=self.ids.hs_num.text.strip()
+
+        
+        string=self.ids.total_amount.text
+        amount = re.search(r'\d+', string).group()
+
+        
+        if not street_name:
+            self.ids.mpesa_button.disabled=True
+            self.ids.street_name_error.text="Street name required"
+       
+        elif not phone_no:
+            self.ids.mpesa_button.disabled=True
+            self.ids.pay_num_error.text="Phone Number Required"
+        elif not hs_num:
+            self.ids.mpesa_button.disabled=True
+            self.ids.street_name_error.text="House number/name required"
+        else:   
+            self.ids.mpesa_button.disabled=False
+
+            order_date=dt.datetime.now().strftime('%d-%m-%Y')
+            
+            
+            #get the items
+            container=self.manager.get_screen("checkout").ids.container2
+            items=[]
+            amounts=[]
+            for item in container.children:
+                items.append(item.text)
+                amounts.append(item.secondary_text.split(" ")[-1])
+
+            # Insert items and amounts into the database
+            for item, amount in zip(items, amounts):
+                execute_query = "INSERT INTO maji_mazuri.order(customer_id, seller_id, ordered_item, amount, street_name, house_number, order_date) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+                values = (LoginScreen.customer_id, LoginScreen.seller_id, item, amount, street_name, hs_num, order_date)
+                self.cursor.execute(execute_query, values)
+                self.connection.commit()
+                
+            
 
     def items(self):
         container=self.manager.get_screen("checkout").ids.container2

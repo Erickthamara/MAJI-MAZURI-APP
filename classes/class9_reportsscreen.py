@@ -66,7 +66,7 @@ class ReportScreen(Screen,Database):
          #Here we bind the oncheck press to this table
         # self.mytable_order.bind(on_check_press=self.on_check_press)
         # self.mytable.bind(on_row_press=self.on_row_press)
-         float_layout.add_widget(self.mytable_order)
+         #float_layout.add_widget(self.mytable_order)
 
     def table_update(self):
         #first grab the new total sales
@@ -86,10 +86,10 @@ class ReportScreen(Screen,Database):
 
     
     def download_report(self):
-        start_date=self.ids.start_date_field.text.strip()
-        end_date=self.ids.end_date_field.text.strip()
+        self.start_date=self.ids.start_date_field.text.strip()
+        self.end_date=self.ids.end_date_field.text.strip()
 
-        if  start_date and end_date:
+        if  self.start_date and self.end_date:
         
             self.date=dt.datetime.now().strftime('%d-%m-%Y')
             self.time=dt.datetime.now().strftime('%I-%M-%S %p')
@@ -105,13 +105,18 @@ class ReportScreen(Screen,Database):
             doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
             elements=[] #to store all elements in the report
 
-            report_heading = Paragraph(f"<u><b>MAJI MAZURI Report generated on {self.date}</b></u>", getSampleStyleSheet()["Heading2"])
+            report_heading = Paragraph(f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u>", getSampleStyleSheet()["Heading2"])
             elements.append(report_heading)
 
-            table_heading = Paragraph("<b>TABLE INFORMATION</b>", getSampleStyleSheet()["Heading2"])
+            table_heading = Paragraph(f"<b>MAJI MAZURI Sasles Report showng total sales between {self.start_date} and {self.end_date} </b>", getSampleStyleSheet()["Heading2"])
             elements.append(table_heading)
+            rows=[]
+            headers = ["Cash Sales", "Online Sales","Total sales"]
+            total_cash_sales=self.grab_total_sales()
+            total_online_sales=self.grab_online_sales()
+            rows.append([total_cash_sales, total_online_sales, total_cash_sales + total_online_sales])
 
-            table = Table([self.headers] + self.rows)
+            table = Table([headers] + rows)
             table.setStyle(TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), colors.gray),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
@@ -277,7 +282,7 @@ class ReportScreen(Screen,Database):
         end_date=self.ids.end_date_field.text.strip()
 
          #create a query for selecting all data from the START_DATE till END_DATE
-        query="SELECT amount FROM maji_mazuri.cash_sales3 WHERE entry_date BETWEEN %s AND %s;"
+        query="SELECT amount FROM maji_mazuri.cash_sales WHERE entry_date BETWEEN %s AND %s;"
         self.cursor.execute(query,(start_date,end_date))
         data_rows=self.cursor.fetchall()
 
@@ -290,6 +295,22 @@ class ReportScreen(Screen,Database):
         
         #print(sales_total)
         return sales_total
+    def grab_online_sales(self):
+       
+        #collect start and end dates
+        start_date=self.ids.start_date_field.text.strip()
+        end_date=self.ids.end_date_field.text.strip()
+
+        self.cursor.execute("SELECT amount FROM maji_mazuri.order")
+        rows = self.cursor.fetchall()
+
+        # Calculate the total amount
+        total_amount = 0
+        for row in rows:
+            amount = float(row[0])  # Convert the amount to a float
+            total_amount += amount
+
+        return total_amount
     
     def download_dialog(self):
           
@@ -406,3 +427,141 @@ class ReportScreen(Screen,Database):
         ]
       snackbar.open()
     
+    def download_catalogue(self):
+        self.headers=["PRODUCT","QUANTITY SOLD","AMOUNT GENERATED"]
+        self.cursor.execute("SELECT size,remaining,quantity FROM maji_mazuri.catalogue")
+        myresult = self.cursor.fetchall()
+        self.rows = [] 
+        for row in myresult:
+            self.rows.append(row)
+
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(app_dir)
+        reports_dir = os.path.join(root_dir, "reports")
+        os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
+
+        self.pdf_filename = os.path.join(reports_dir, f"Report on {self.date} at {self.time}.pdf")  # Save the report in the "reports" directory
+
+        doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
+        elements=[] #to store all elements in the report
+
+        report_heading = Paragraph(f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u>", getSampleStyleSheet()["Heading2"])
+        elements.append(report_heading)
+
+        table_heading = Paragraph(f"<b>MAJI MAZURI Sasles Report showng total sales between {self.start_date} and {self.end_date} </b>", getSampleStyleSheet()["Heading2"])
+        elements.append(table_heading)
+        rows=[]
+        headers = ["Cash Sales", "Online Sales","Total sales"]
+        total_cash_sales=self.grab_total_sales()
+        total_online_sales=self.grab_online_sales()
+        rows.append([total_cash_sales, total_online_sales, total_cash_sales + total_online_sales])
+
+        table = Table([self.headers] + self.rows)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.gray),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 12),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 1), (-1, -1), 10),
+        ]))
+
+        elements.append(table)
+
+        additional_heading = Paragraph("<u><b>ADDITIONAL INFORMATION</b></u>", getSampleStyleSheet()["Heading2"])
+        elements.append(additional_heading)
+
+        highlighted_points = [
+            f"Your total sales in the period entered were .",
+            f"The toatal number of new customers gained during that same period is 50.",
+            f"Additional point 3",
+        ]
+
+        styles = getSampleStyleSheet()
+
+        point_list = ListFlowable(
+            [
+                ListItem(Paragraph(point, getSampleStyleSheet()["BodyText"]))
+                for point in highlighted_points
+            ],
+            bulletType="bullet"  # Set to "bullet" for bullet points or "number" for numbered points
+        )
+
+        elements.append(point_list)
+
+
+        doc.build(elements)
+
+        self.download_dialog()
+        doc=None
+    def customers(self):
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I-%M-%S %p')
+        start_date=self.ids.start_date_field.text.strip()
+        end_date=self.ids.end_date_field.text.strip()
+
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(app_dir)
+        reports_dir = os.path.join(root_dir, "reports")
+        os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
+
+        self.pdf_filename = os.path.join(reports_dir, f"MAJI MAZURI Customer Report on {date} at {time}.pdf")  # Save the report in the "reports" directory
+
+        doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
+        elements=[] #to store all elements in the report
+
+        report_heading = Paragraph(f"<u><b>MAJI MAZURI Customers Report generated on {date}</b></u>", getSampleStyleSheet()["Heading2"])
+        elements.append(report_heading)
+
+        table_heading = Paragraph(f"<b>MAJI MAZURI Customers Report showng total number of customers between {start_date} and {end_date} </b>", getSampleStyleSheet()["Heading2"])
+        elements.append(table_heading)
+        rows=[]
+        headers = ["New Customers", "Total Customers",]
+        total_customers="170"
+        new_customers="20"
+        rows.append([new_customers,total_customers])
+
+        table = Table([headers] + rows)
+        table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.gray),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 12),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 1), (-1, -1), 10),
+        ]))
+
+        elements.append(table)
+
+        additional_heading = Paragraph("<u><b>ADDITIONAL INFORMATION</b></u>", getSampleStyleSheet()["Heading2"])
+        elements.append(additional_heading)
+
+        highlighted_points = [
+            f"Your total number of new customers gained in the period entered were {new_customers}.",
+            f"The toatal number of customers registered to your account are {total_customers}.",
+            f"Additional point 3",
+        ]
+
+        styles = getSampleStyleSheet()
+
+        point_list = ListFlowable(
+            [
+                ListItem(Paragraph(point, getSampleStyleSheet()["BodyText"]))
+                for point in highlighted_points
+            ],
+            #bulletType="bullet"  # Set to "bullet" for bullet points or "number" for numbered points
+        )
+
+        elements.append(point_list)
+
+
+        doc.build(elements)
+
+        self.download_dialog()
+        doc=None

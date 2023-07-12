@@ -16,6 +16,7 @@ from kivy.properties import StringProperty,NumericProperty
 import re
 
 from .class12_customerwater import CustomerWater
+from .class2_login import LoginScreen
 
 
 
@@ -28,7 +29,7 @@ class CustomerBrowse(CustomerWater):
         super(CustomerBrowse, self).__init__(**kwargs)
 
         #self.cart_dot=None
-        #Clock.schedule_once(self.call, 0)
+        #Clock.schedule_once(self.details, 0)
         
         self.num = str(0)
         self.widget_list=[]
@@ -204,10 +205,6 @@ class CustomerBrowse(CustomerWater):
             self.minus_water_total(total_amount)
 
        
-  
-    
-
-    
        
     def change_screen2(self, nav_item):
         # change to the MainScreen and switch to the spcified MDBottomNavigationItem
@@ -215,6 +212,22 @@ class CustomerBrowse(CustomerWater):
         self.custom_sheet.dismiss()
         button.switch_tab(nav_item)
 
+    def on_enter(self):
+        seller_id = LoginScreen.seller_id
+
+        if seller_id is not None:
+            # Retrieve seller details based on the seller_id
+            self.cursor.execute(f"SELECT seller_shop_name, seller_phone_number FROM maji_mazuri.seller WHERE seller_id = {seller_id};")
+            details = self.cursor.fetchall()
+            
+            if details:
+                shop_name =str(details[0][0].upper())
+                seller_phone_number = str(details[0][1])
+                id=str(seller_id)
+                # Update the KV details with the retrieved values
+                self.ids.shop_name.text =shop_name
+                self.ids.seller_phn_number.text =f"Phone: {seller_phone_number}"
+                self.ids.seller_id.text=f"Unique Seller ID:{id}"
     
 
     

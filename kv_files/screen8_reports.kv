@@ -51,10 +51,80 @@ ScreenManager:
                 readonly: True
                 on_focus: if self.focus: root.show_date_picker("end_date_field")
 
+        MDLabel:
+            text:"Sales Report"
+            font_style:"H5"
+            halign:"center"
+            pos_hint:{'center_y':0.68}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+
         BoxLayout:
             size_hint:.85,None
             height:"30dp"
-            pos_hint: {"center_x": .47, "center_y": .1}
+            pos_hint: {"center_x": .47, "center_y": .6}
+            spacing:"15dp"
+
+            MDRaisedButton:
+                id:dnwld_report
+                text:"Download Report"
+                disabled:False
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_size:"18dp"
+                on_press:root.download_report()
+
+            MDRaisedButton:
+                id:email_report
+                text:"Send Email"
+                disabled:False
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_size:"18dp"
+                on_press:root.send_email()
+        MDLabel:
+            text:"Customer Report"
+            font_style:"H5"
+            halign:"center"
+            pos_hint:{'center_y':0.5}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .47, "center_y": .4}
+            spacing:"15dp"
+
+            MDRaisedButton:
+                id:download_customers
+                text:"Download Report"
+                disabled:False
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_size:"18dp"
+                on_press:root.customers()
+
+            MDRaisedButton:
+                id:email_report
+                text:"Send Email"
+                disabled:False
+                size_hint_x: 1
+                pos_hint: {"center_x": .5, "center_y": .5}
+                font_size:"18dp"
+                on_press:root.send_email()
+        MDLabel:
+            text:"Catalogue Report"
+            font_style:"H5"
+            halign:"center"
+            pos_hint:{'center_y':0.3}
+            theme_text_color:"Custom"
+            text_color: 0,0,0,1
+
+        BoxLayout:
+            size_hint:.85,None
+            height:"30dp"
+            pos_hint: {"center_x": .47, "center_y": .2}
             spacing:"15dp"
 
             MDRaisedButton:

@@ -18,12 +18,15 @@ class OrdersScreen(Screen,Database):
         self.instance_table1 = None  # Initialize instance_table variable
         self.current_row1 = None  # Initialize current_row variable
         self.selected_rows=[]
+    def order2(self):
+        float_layout = self.ids.my_float_layout
 
     def order_table(self):
          
+         
         # ORDERS TABLE
-         headers=["ID","Email","Phone Number","First Name","Last Name"]
-         self.cursor.execute("SELECT customer_id,customer_email,customer_phone_number,customer_first_name,customer_last_name FROM maji_mazuri.customer")
+         headers=["Item","Amount","Street Address","House Number","Date"]
+         self.cursor.execute("SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order")
          myresult = self.cursor.fetchall()
          rows = [] 
          for row in myresult:
@@ -64,7 +67,7 @@ class OrdersScreen(Screen,Database):
        if self.selected_rows:
 
         for row in self.selected_rows:
-            delete_query = f"DELETE FROM maji_mazuri.customer WHERE customer_id = {row[0]}"
+            delete_query = f"DELETE FROM maji_mazuri.order WHERE order_id = {row[0]}"
             self.cursor.execute(delete_query)
             self.connection.commit()
 
