@@ -6,113 +6,131 @@ from kivy.clock import Clock
 from requests.auth import HTTPBasicAuth
 import asyncio
 
-amount = 1
-phone_number = "254796892684"
-bs_shortcode = "174379"  # paybill number
-lnm_passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-consumer_key = 'U3uZndIeO10CSUAyjahb6uHTTnTTA9Tx'
-consumer_secret = 'lgJH0xs5hGoz5JE7'
+class MpesaClient():
+    def __init__(self):
+        self.bs_shortcode = "174379"  # paybill number
+        self.lnm_passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+        self.consumer_key = 'U3uZndIeO10CSUAyjahb6uHTTnTTA9Tx'
+        self.consumer_secret = 'lgJH0xs5hGoz5JE7'
+        self.access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
-access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    def format_time(self):
+        unformatted_datetime = datetime.now()
+        formatted_datetime = unformatted_datetime.strftime("%Y%m%d%H%M%S")
+        return formatted_datetime
 
-def format_time():
-    unformatted_datetime = datetime.now()
-    formatted_datetime = unformatted_datetime.strftime("%Y%m%d%H%M%S")
-    return formatted_datetime
+    def decode_password(self):
+        pass_to_be_encoded = self.bs_shortcode + self.lnm_passkey + self.format_time()
+        pass_encoded = base64.b64encode(pass_to_be_encoded.encode())
+        pass_decoded = pass_encoded.decode('utf_8')
+        return pass_decoded
 
-def decode_password():
-    pass_to_be_encoded = bs_shortcode + lnm_passkey + format_time()
-    pass_encoded = base64.b64encode(pass_to_be_encoded.encode())
-    pass_decoded = pass_encoded.decode('utf_8')
-    return pass_decoded
+    def generate_access_token(self):
+        response = requests.get(self.access_token_url, auth=HTTPBasicAuth(self.consumer_key, self.consumer_secret))
+        res_json = response.json()
+        filtered_access_token = res_json['access_token']
+        return filtered_access_token
 
-def generate_access_token():
-    response = requests.get(access_token_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
-    res_json = response.json()
-    filtered_access_token = res_json['access_token']
-    return filtered_access_token
+    def initiate_stk(self,phone_number, amount):
+        token = self.generate_access_token()
+        timestamp = self.format_time()
 
-def initiate_stk(phone_number, amount):
-    token = generate_access_token()
-    timestamp = format_time()
-
-    password = decode_password()
-    headers = {
-        "Authorization": "Bearer " + token,
-    }
-    payload = {
-        "BusinessShortCode": bs_shortcode,
-        "Password": password,
-        "Timestamp": timestamp,
-        "TransactionType": "CustomerPayBillOnline",
-        "Amount": amount,
-        "PartyA": phone_number,
-        "PartyB": bs_shortcode,
-        "PhoneNumber": phone_number,
-        "CallBackURL": "https://ba27-41-212-28-227.ngrok-free.app",
-        "AccountReference": "Cancer Support System",
-        "TransactionDesc": "Payment of Appointment",
-    }
-
-    response = requests.post(
-        "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-        json=payload,
-        headers=headers
-    )
-
-    if response.status_code == 200:
-        checkOutId = response.json().get("CheckoutRequestID")
-        return checkOutId
-    else:
-        print(response.text)
-        return None
-
-async def check_stk_push(checkOutId):
-    token = generate_access_token()
-
-    while True:
-        date = datetime.now()
-        timestamp = date.strftime("%Y%m%d%H%M%S")
-
-        shortcode = bs_shortcode
-        passkey = lnm_passkey
-        password = base64.b64encode((shortcode + passkey + timestamp).encode()).decode()
-
-        payload = {
-            "BusinessShortCode": shortcode,
-            "Password": password,
-            "Timestamp": timestamp,
-            "CheckoutRequestID": checkOutId,
-        }
-
+        password = self.decode_password()
         headers = {
             "Authorization": "Bearer " + token,
         }
+        payload = {
+            "BusinessShortCode": self.bs_shortcode,
+            "Password": password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
+            "Amount": amount,
+            "PartyA": phone_number,
+            "PartyB": self.bs_shortcode,
+            "PhoneNumber": phone_number,
+            "CallBackURL": "https://ba27-41-212-28-227.ngrok-free.app",
+            "AccountReference": "Cancer Support System",
+            "TransactionDesc": "Payment of Appointment",
+        }
 
         response = requests.post(
-            "https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query",
+            "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
             json=payload,
             headers=headers
         )
 
         if response.status_code == 200:
-            if response.json().get("ResultDesc") == "The service request is processed successfully.":
-                # if payment successful
-                print("Success")
-                break
-            else:
-                # if payment not successful
-                print("Payment not successful")
+            checkOutId = response.json().get("CheckoutRequestID")
+            return checkOutId
+        else:
+            print(response.text)
+            return None
 
-            # Check if the response indicates user cancellation or payment
-            # You can access response data here and handle user actions accordingly
+    async def check_stk_push(self,checkOutId):
+        token = self.generate_access_token()
 
-        await asyncio.sleep(5)
+        while True:
+            date = datetime.now()
+            timestamp = date.strftime("%Y%m%d%H%M%S")
 
-async def main():
-    checkOutId = initiate_stk(phone_number, amount)
-    if checkOutId:
-        await check_stk_push(checkOutId)
+            shortcode = self.bs_shortcode
+            passkey = self.lnm_passkey
+            password = base64.b64encode((shortcode + passkey + timestamp).encode()).decode()
 
-# Run the event loop
-asyncio.run(main())
+            payload = {
+                "BusinessShortCode": shortcode,
+                "Password": password,
+                "Timestamp": timestamp,
+                "CheckoutRequestID": checkOutId,
+            }
+
+            headers = {
+                "Authorization": "Bearer " + token,
+            }
+
+            response = requests.post(
+                "https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query",
+                json=payload,
+                headers=headers
+            )
+
+            if response.status_code == 200:
+                if response.json().get("ResultDesc") == "The service request is processed successfully.":
+                    # if payment successful
+                    success_message = "Success"
+                    receipt_number = f"Receipt Number: {checkOutId}"
+
+                    # store data in DB or perform other executions
+                    return success_message, receipt_number
+                    
+                    #store data in DB or perform other executions
+                    
+                elif response.json().get("ResultDesc") != "The service request is being processed.":
+                    # if payment not successful
+                   success_message = "Payment not successful"
+                   receipt_number = ""
+
+                   return success_message, receipt_number
+
+                # Check if the response indicates user cancellation or payment
+                # You can access response data here and handle user actions accordingly
+
+            await asyncio.sleep(5)
+
+    def main(self, phone_number, amount):
+        async def inner_main():
+            checkOutId = self.initiate_stk(phone_number, amount)
+            if checkOutId:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                result = await self.check_stk_push(checkOutId)
+                return result
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return loop.run_until_complete(inner_main())
+
+if __name__ == "__main__":
+    obj=MpesaClient()
+    result=obj.main("254796892684",1)
+    print(result)
