@@ -47,9 +47,13 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
         self.order_table()
         self.logged_in()
 
-    def logged_in(self):
-        
+    def logged_in(self): 
         text=f"Logged in"
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I:%M:%S %p')
+        self.insert_item_to_database(text,date,time)
+    def log_out(self):  
+        text=f"Logged Out"
         date=dt.datetime.now().strftime('%d-%m-%Y')
         time=dt.datetime.now().strftime('%I:%M:%S %p')
         self.insert_item_to_database(text,date,time)

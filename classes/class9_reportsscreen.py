@@ -31,6 +31,8 @@ class ReportScreen(Screen,Database):
     dialog4=None
     dialog5=None
     dialog6=None
+    pdf_filename_customers = None
+    pdf_filename_catalogue=None
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -102,7 +104,7 @@ class ReportScreen(Screen,Database):
             reports_dir = os.path.join(root_dir, "reports")
             os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
 
-            self.pdf_filename = os.path.join(reports_dir, f"Report on {self.date} at {self.time}.pdf")  # Save the report in the "reports" directory
+            self.pdf_filename = os.path.join(reports_dir, f"MAJI MAZURI Sales Report on {self.date} at {self.time}.pdf")  # Save the report in the "reports" directory
 
             doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
             elements=[] #to store all elements in the report
@@ -280,6 +282,8 @@ class ReportScreen(Screen,Database):
 
     def on_cancel(self, instance, value):
         '''Events called when the "CANCEL" dialog box button is clicked.'''
+        self.ids.start_date_field.text=""
+        self.ids.end_date_field.text=""
 
     
 
@@ -446,35 +450,36 @@ class ReportScreen(Screen,Database):
       snackbar.open()
     
     def download_catalogue(self):
-        self.headers=["PRODUCT","QUANTITY SOLD","AMOUNT GENERATED"]
-        self.cursor.execute("SELECT size,remaining,quantity FROM maji_mazuri.catalogue")
-        myresult = self.cursor.fetchall()
-        self.rows = [] 
-        for row in myresult:
-            self.rows.append(row)
-
+        start_date=self.ids.start_date_field.text.strip()
+        end_date=self.ids.end_date_field.text.strip()
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I-%M-%S %p')
+        
+        
         app_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(app_dir)
         reports_dir = os.path.join(root_dir, "reports")
         os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
 
-        self.pdf_filename = os.path.join(reports_dir, f"Report on {self.date} at {self.time}.pdf")  # Save the report in the "reports" directory
+        self.pdf_filename_catalogue = os.path.join(reports_dir, f"Catalogue Report on {date} at {time}.pdf")  # Save the report in the "reports" directory
 
-        doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
+        doc = SimpleDocTemplate(self.pdf_filename_catalogue, pagesize=letter)
         elements=[] #to store all elements in the report
 
-        report_heading = Paragraph(f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u>", getSampleStyleSheet()["Heading2"])
+        report_heading = Paragraph(f"<u><b>MAJI MAZURI Catalogue Report generated on {date}</b></u>", getSampleStyleSheet()["Heading2"])
         elements.append(report_heading)
 
-        table_heading = Paragraph(f"<b>MAJI MAZURI Sasles Report showng total sales between {self.start_date} and {self.end_date} </b>", getSampleStyleSheet()["Heading2"])
+        table_heading = Paragraph(f"<b>MAJI MAZURI Catalogue Report showing total sales of bottles. </b>", getSampleStyleSheet()["Heading2"])
         elements.append(table_heading)
-        rows=[]
-        headers = ["Cash Sales", "Online Sales","Total sales"]
-        total_cash_sales=self.grab_total_cash_sales()
-        total_online_sales=self.grab_online_sales()
-        rows.append([total_cash_sales, total_online_sales, total_cash_sales + total_online_sales])
 
-        table = Table([self.headers] + self.rows)
+        self.headers=["PRODUCT","QUANTITY SOLD","AMOUNT GENERATED"]
+       
+        bottle_totals, total_amount_generated = self.online_bottles_sold()
+        rows=[]
+        for bottle_data in bottle_totals:
+            rows.append(bottle_data)
+
+        table = Table([self.headers] + rows)
         table.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), colors.gray),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
@@ -493,9 +498,7 @@ class ReportScreen(Screen,Database):
         elements.append(additional_heading)
 
         highlighted_points = [
-            f"Your total sales in the period entered were .",
-            f"The toatal number of new customers gained during that same period is 50.",
-            f"Additional point 3",
+            f"Your total sales for bottles are {total_amount_generated} .",
         ]
 
         styles = getSampleStyleSheet()
@@ -515,11 +518,108 @@ class ReportScreen(Screen,Database):
 
         self.download_dialog()
         doc=None
+    def catalogue_email(self):
+        if not self.pdf_filename_catalogue:
+            self.email_dialog2()
+            return
+        
+        
+        # Email configuration
+        self.cursor.execute(f"SELECT seller_email FROM maji_mazuri.seller WHERE seller_id={LoginScreen.main_seller_id};")
+        receiver_email = self.cursor.fetchone()  # Fetch the first (and presumably the only) email address
+        if receiver_email:
+            receiver_email = receiver_email[0]  # Extract the email address from the tuple
+
+            sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
+            subject = "MAJI AMZURI Customer Report"
+            body = "Please find the attached PDF report. From MAJI MAZURI, Regards."
+
+            # Create a multipart message and set the email headers
+            message = MIMEMultipart()
+            message["From"] = sender_email
+            message["To"] = receiver_email
+            message["Subject"] = subject
+
+            # Add the email body
+            message.attach(MIMEText(body, "plain"))
+
+            # Open the PDF file in binary mode
+            with open(self.pdf_filename_catalogue, "rb") as attachment:
+                # Add the PDF file as an attachment
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(attachment.read())
+
+            # Encode the file in ASCII characters to send by email
+            encoders.encode_base64(part)
+            part.add_header("Content-Disposition", f"attachment; filename= {self.pdf_filename_catalogue}")
+
+            # Add the attachment to the message
+            message.attach(part)
+
+            # Convert the message to a string and send the email
+            text = message.as_string()
+
+            # SMTP configuration
+            smtp_server = "smtp.gmail.com"
+            smtp_port = 587  # Use 465 for SSL/TLS connection
+
+            # Start the SMTP session
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()  # Enable TLS encryption
+                server.login(sender_email, "nmrfycjjqjjgbihw")  # Replace with your Gmail password or APP password
+                server.sendmail(sender_email, receiver_email, text)
+                self.email_dialog()
+        else:
+            self.no_email_dialog()
+  
+
+
+    def online_bottles_sold(self):
+        bottle_prices = {
+        "1L Bottle": 40,
+        "5L Bottle": 100,
+        "10L Bottle": 150,
+        "18.9L Bottle": 250,
+        "20L Bottle": 300,
+        "20L Hard Bottle": 1300
+        }
+
+        self.cursor.execute(f"SELECT ordered_item, amount FROM maji_mazuri.order where seller_id={LoginScreen.main_seller_id}")
+        myresult = self.cursor.fetchall()
+
+        bottle_totals = []  # Initialize as an empty list
+        total_amount_generated = 0
+
+        for row in myresult:
+            ordered_item, amount = row[0], row[1]
+            if ordered_item.startswith("WATER ORDER"):
+                continue
+
+            bottle_name = ordered_item.split(":")[0].strip()
+            amount = float(amount)
+            quantity = round(amount / bottle_prices[bottle_name])
+            total_amount_generated += amount
+
+            # Check if the bottle already exists in the list
+            for bottle_data in bottle_totals:
+                if bottle_data[0] == bottle_name:
+                    # Bottle already exists, update the quantity and amount
+                    bottle_data[1] += quantity
+                    bottle_data[2] += amount
+                    break
+            else:
+                # Bottle doesn't exist in the list, add a new entry
+                bottle_totals.append([bottle_name, quantity, amount])
+
+        return bottle_totals, total_amount_generated
     def download_customers(self):
         date=dt.datetime.now().strftime('%d-%m-%Y')
         time=dt.datetime.now().strftime('%I-%M-%S %p')
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
+        if not start_date or not end_date:
+            self.enter_dates()
+            return
 
         app_dir = os.path.dirname(os.path.abspath(__file__))
         root_dir = os.path.dirname(app_dir)
@@ -623,10 +723,11 @@ class ReportScreen(Screen,Database):
         if not start_date or not end_date:
             self.enter_dates()
             return
+        
         if not self.pdf_filename_customers:
             self.email_dialog2()
             return
-
+        
         if start_date and end_date:
             # Email configuration
             self.cursor.execute(f"SELECT seller_email FROM maji_mazuri.seller WHERE seller_id={LoginScreen.main_seller_id};")
