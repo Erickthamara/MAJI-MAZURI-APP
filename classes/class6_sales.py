@@ -9,31 +9,35 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 
 from .class8_transactions import Transactions
+from .class2_login import LoginScreen
 
 class SalesScreen(Transactions):
     dialog3=None
+
     def sales_table(self):
          
-         headers=["AMOUNT","DATE","TIME"]
-         self.cursor.execute("SELECT amount,entry_date,entry_time FROM maji_mazuri.cash_sales ORDER BY id DESC")
-         result = self.cursor.fetchall()
-         row_data = [] 
-         for row in result:
-            row_data.append(row)
-        
-         self.mytable_catalogue=MDDataTable(
-            size_hint=(.9,.6),
-            pos_hint= {'center_x':0.5, 'center_y':0.42},
-            #check=True,
-            use_pagination=True,
-            pagination_menu_height="240dp",
+        headers=["AMOUNT","DATE","TIME"]
+        if LoginScreen.main_seller_id:
+            self.cursor.execute(f"SELECT amount,entry_date,entry_time FROM maji_mazuri.cash_sales WHERE seller_id={LoginScreen.main_seller_id} ORDER BY id DESC")
+            result = self.cursor.fetchall()
+            row_data = [] 
+            for row in result:
+                row_data.append(row)
+            
+            self.mytable_catalogue=MDDataTable(
+                size_hint=(.9,.6),
+                pos_hint= {'center_x':0.5, 'center_y':0.42},
+                #check=True,
+                use_pagination=True,
+                pagination_menu_height="240dp",
 
-            column_data=[(header, dp(30)) for header in headers],
-            row_data=row_data
-        )
-         layout=self.ids.sales_layout
-         self.mytable_catalogue.bind(on_check_press=self.on_check_press2)
-         layout.add_widget(self.mytable_catalogue)
+                column_data=[(header, dp(30)) for header in headers],
+                row_data=row_data
+            )
+            layout=self.ids.sales_layout
+            self.mytable_catalogue.bind(on_check_press=self.on_check_press2)
+            layout.add_widget(self.mytable_catalogue)
+        
 
     def input_sales(self):
         #sale is the value entered by the seller
@@ -43,8 +47,8 @@ class SalesScreen(Transactions):
         if not sale:
             self.ids.submit.disabled=True
         else:
-             exexute1="INSERT INTO maji_mazuri.cash_sales(amount,entry_date,entry_time) VALUES(%s,%s,%s);"
-             value=(sale,date,time)
+             exexute1="INSERT INTO maji_mazuri.cash_sales(amount,entry_date,entry_time,seller_id) VALUES(%s,%s,%s,%s);"
+             value=(sale,date,time,LoginScreen.main_seller_id)
              self.cursor.execute(exexute1,value)
              self.connection.commit()
 

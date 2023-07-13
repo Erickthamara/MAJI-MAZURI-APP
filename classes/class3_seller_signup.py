@@ -222,7 +222,11 @@ class SignupScreen(Screen,Database):
 
                 unique_id = self.cursor.lastrowid
 
+                #create catalogue tables
+                self.seller_catalogue(unique_id)
+
                 self.send_registration_email(email, unique_id)
+
                 return True
              else:
                     self.show_failed_message()
@@ -328,6 +332,23 @@ class SignupScreen(Screen,Database):
     def dismiss_email_dialog3(self, instance):
         self.dialog4.dismiss()
         self.transition1()
+
+    def seller_catalogue(self,seller_id):
+        #initiates a catalogue for each seller
+        bottle_data = [
+        {"name": "1L Bottle", "price": "40"},
+        {"name": "5L Bottle", "price": "100"},
+        {"name": "10L Bottle", "price": "150"},
+        {"name": "18.9L Bottle", "price": "250"},
+        {"name": "20L Bottle", "price": "300"},
+        {"name": "20L Hard Bottle", "price": "1300"},
+        {"name": "Water", "price": "0"}
+        ]
+
+        for bottle in bottle_data:
+            self.cursor.execute(f"INSERT INTO maji_mazuri.catalogue (seller_id, name, price, number) VALUES ({seller_id}, '{bottle['name']}', '{bottle['price']}', 0);")
+
+        self.connection.commit()
     
    
         

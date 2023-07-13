@@ -221,20 +221,29 @@ class CustomerWater(SalesScreen):
      def update_total(self):
         size=self.ids.field2.text.strip()
         new_amount=self.ids.amount_field.text.strip()
+        string = self.ids.water_price.text
+
+        # Extract the price substring
+        start_index = string.index("Ksh.") + len("Ksh.")
+        end_index = string.index(" per litre")
+        price_str = string[start_index:end_index]
+
+        # Convert the price to a float
+        price_float = float(price_str)
         if new_amount and size:
             amount = int(new_amount)
             if size == "1L":
                 new = amount * 1
             elif size == "5L":
-                new = amount * 50
+                new = amount * price_float
             elif size == "10L":
-                new = amount * 100
+                new = amount * price_float
             elif size == "18.9L":
-                new = amount * 190
+                new = amount * price_float
             elif size == "20L":
-                new = amount * 200
+                new = amount * price_float
             elif size == "20L Hard":
-                new = amount * 200
+                new = amount * price_float
             else:
                 new = 0
         else:

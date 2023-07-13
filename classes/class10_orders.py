@@ -9,6 +9,8 @@ from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.menu import MDDropdownMenu
 
+from .class2_login import LoginScreen
+
 class OrdersScreen(Screen,Database):
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -21,37 +23,35 @@ class OrdersScreen(Screen,Database):
     def order2(self):
         float_layout = self.ids.my_float_layout
 
-    def order_table(self):
-         
-         
+    def order_table(self): 
         # ORDERS TABLE
-         headers=["Item","Amount","Street Address","House Number","Date"]
-         self.cursor.execute("SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order ORDER BY order_id DESC")
-         myresult = self.cursor.fetchall()
-         rows = [] 
-         for row in myresult:
-            rows.append(row)
- 
-         self.mytable_order=MDDataTable(
-            size_hint=(.9,.7),
-            pos_hint= {'center_x':0.5, 'center_y':0.55},
-            check=True,
-            use_pagination=True,
-            pagination_menu_height="240dp",
-            background_color_header="#65275d",
-            background_color_selected_cell="#c7a7db",
+        headers=["Item","Amount","Street Address","House Number","Date"]
+        if LoginScreen.main_seller_id:
+            self.cursor.execute(f"SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order WHERE seller_id={LoginScreen.main_seller_id} ORDER BY order_id DESC")
+            myresult = self.cursor.fetchall()
+            rows = [] 
+            for row in myresult:
+                rows.append(row)
 
-            column_data=[(header, dp(30)) for header in headers],
-            row_data=rows
+            self.mytable_order=MDDataTable(
+                size_hint=(.9,.7),
+                pos_hint= {'center_x':0.5, 'center_y':0.55},
+                check=True,
+                use_pagination=True,
+                pagination_menu_height="240dp",
+                background_color_header="#65275d",
+                background_color_selected_cell="#c7a7db",
 
-        )
-        
-        
-         float_layout = self.ids.my_float_layout
-         #Here we bind the oncheck press to this table
-         self.mytable_order.bind(on_check_press=self.on_check_press)
-        # self.mytable.bind(on_row_press=self.on_row_press)
-         float_layout.add_widget(self.mytable_order)
+                column_data=[(header, dp(30)) for header in headers],
+                row_data=rows
+
+            )
+            float_layout = self.ids.my_float_layout
+            #Here we bind the oncheck press to this table
+            self.mytable_order.bind(on_check_press=self.on_check_press)
+            # self.mytable.bind(on_row_press=self.on_row_press)
+            float_layout.add_widget(self.mytable_order)
+       
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''

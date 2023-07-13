@@ -28,6 +28,7 @@ import datetime as dt
 
 
 
+
 class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
     dialog=None
     dialog2=None
@@ -39,7 +40,25 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
 
         self.widget_list = []
         
-   
+    def on_enter(self, *args):
+        self.catalogue_table()
+        self.sales_table()
+        self.retrieve_exixting_reports()
+        self.order_table()
+        self.logged_in()
+
+    def logged_in(self):
+        
+        text=f"Logged in"
+        date=dt.datetime.now().strftime('%d-%m-%Y')
+        time=dt.datetime.now().strftime('%I:%M:%S %p')
+        self.insert_item_to_database(text,date,time)
+        
+
+    def onmycall(self,*args):
+        pass
+        
+        
         
     def topbar_close(self):   
         if self.dialog2 is None:
@@ -70,6 +89,7 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
 
         
         #transaction details
+        #logged out
         text=f"Logged out"
         date=dt.datetime.now().strftime('%d-%m-%Y')
         time=dt.datetime.now().strftime('%I:%M:%S %p')
@@ -77,12 +97,7 @@ class SellerScreen(SalesScreen,CatalogueScreen,OrdersScreen,Transactions):
 
         self.dismiss2(self)
     
-   
-    def onmycall(self,*args):
-        self.catalogue_table()  
-        self.order_table()
-        self.sales_table()
-        self.retrieve_exixting_reports()
+    
          
     
     def set_list(self, text=" "): 

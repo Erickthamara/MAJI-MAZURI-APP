@@ -1,17 +1,20 @@
 from kivy.uix.screenmanager import Screen
 
 from .zdatabase import Database
-from .class8_transactions import Transactions
+
 from .zids_manager import CustomerIds,SellerIds
+from .zshareddata import main_seller_id2
 
 import datetime as dt
 import re
 
 
 
-class LoginScreen(Transactions): 
+class LoginScreen(Screen,Database): 
     customer_id=None
     seller_id=None
+    main_seller_id=None
+    main_seller_id2=None
     def __init__(self, **kw):
         super().__init__(**kw)
         
@@ -100,11 +103,14 @@ class LoginScreen(Transactions):
            
             #check if email is present
             if email in email_seller_list:
-                self.cursor.execute(f"SELECT seller_pswd FROM maji_mazuri.seller WHERE seller_email='{email}';")
+                self.cursor.execute(f"SELECT seller_id,seller_pswd FROM maji_mazuri.seller WHERE seller_email='{email}';")
                 seller_pswd=self.cursor.fetchall()
                 for j in seller_pswd:
-                    if password1==j[0]:
+                    if password1==j[1]:
                         self.seller_screen2()
+                        LoginScreen.main_seller_id=j[0]
+                        #this is for transactions screen
+                        self.update_main_seller_id=j[0]
                         return True
                     else:
                         self.ids.pswd1_error.text="Incorrect Password"

@@ -9,6 +9,8 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.menu import MDDropdownMenu
 
+from .class2_login import LoginScreen
+
 class CatalogueScreen(Screen,Database):
      def __init__(self, **kw):
          super().__init__(**kw)
@@ -19,28 +21,28 @@ class CatalogueScreen(Screen,Database):
 
 
      def catalogue_table(self):
-         
-         headers=["ID","SIZE","PRICE (Ksh)","Quantity"]
-         self.cursor.execute("SELECT * FROM maji_mazuri.catalogue")
-         result = self.cursor.fetchall()
-         row_data = [] 
-         for row in result:
-            row_data.append(row)
-        
-         self.mytable_catalogue=MDDataTable(
-            size_hint=(.9,.5),
-            pos_hint= {'center_x':0.5, 'center_y':0.63},
-            check=True,
-            use_pagination=True,
-            pagination_menu_height="240dp",
+         if LoginScreen.main_seller_id:
+            headers=["ITEM ID","NAME","PRICE (Ksh)","QUANTITY"]
+            self.cursor.execute(f"SELECT item_id,name,price,number FROM maji_mazuri.catalogue WHERE seller_id={LoginScreen.main_seller_id}")
+            result = self.cursor.fetchall()
+            row_data = [] 
+            for row in result:
+                row_data.append(row)
             
+            self.mytable_catalogue=MDDataTable(
+                size_hint=(.9,.5),
+                pos_hint= {'center_x':0.5, 'center_y':0.63},
+                check=True,
+                use_pagination=True,
+                pagination_menu_height="240dp",
+                
 
-            column_data=[(header, dp(30)) for header in headers],
-            row_data=row_data
-        )
-         layout=self.ids.catalogue_layout
-         self.mytable_catalogue.bind(on_check_press=self.on_check_press2)
-         layout.add_widget(self.mytable_catalogue)
+                column_data=[(header, dp(30)) for header in headers],
+                row_data=row_data
+            )
+            layout=self.ids.catalogue_layout
+            self.mytable_catalogue.bind(on_check_press=self.on_check_press2)
+            layout.add_widget(self.mytable_catalogue)
 
      def on_check_press2(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
@@ -106,7 +108,7 @@ class CatalogueScreen(Screen,Database):
                     row=self.selected_rows2[0]
                     row_id=row[0]
                     
-                    self.cursor.execute(f"UPDATE maji_mazuri.catalogue SET price = {new_amount} WHERE id ={row_id}")
+                    self.cursor.execute(f"UPDATE maji_mazuri.catalogue SET price = {new_amount} WHERE item_id ={row_id}")
                     self.connection.commit() 
 
                     # remove then recall the catalogue table
@@ -116,7 +118,10 @@ class CatalogueScreen(Screen,Database):
 
                     # Catalogue TABLE
                     self.catalogue_table()
-
+                    self.selected_rows2.clear()  # Clear the selected rows list after updating
+                    if row_id==7:
+                        text = self.manager.get_screen("customerbrowse").ids.water_price.text
+                        text=f"Water is priced at only Ksh.{new_amount} per litre."
                 else:
                     print("Select only a single row")
 
@@ -125,8 +130,10 @@ class CatalogueScreen(Screen,Database):
                 if len(self.selected_rows2)==1:
                     row=self.selected_rows2[0]
                     row_id=row[0]
-                    
-                    self.cursor.execute(f"UPDATE maji_mazuri.catalogue SET remaining = {new_amount} WHERE id ={row_id}")
+                    query = f"UPDATE maji_mazuri.catalogue SET number = '{str(new_amount)}' WHERE item_id = {row_id};"
+                    #print("Update Query:", query)  # Print the query for debugging purposes
+
+                    self.cursor.execute(query)
                     self.connection.commit()
 
                     # remove then recall the catalogue table
@@ -136,7 +143,7 @@ class CatalogueScreen(Screen,Database):
 
                     # Catalogue TABLE
                     self.catalogue_table()
-                            
+                    self.selected_rows2.clear()  # Clear the selected rows list after updating
                 else:
                     print("Select only a single row")
             

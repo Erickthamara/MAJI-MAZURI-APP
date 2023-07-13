@@ -229,9 +229,16 @@ class CustomerBrowse(CustomerWater):
                 self.ids.shop_name.text =shop_name
                 self.ids.seller_phn_number.text =f"Phone: {seller_phone_number}"
                 self.ids.seller_id.text=f"Unique Seller ID:{id}"
+            
+            self.cursor.execute(f"SELECT price FROM maji_mazuri.catalogue WHERE item_id=7;")
+            seller_pswd=self.cursor.fetchone()
+            for value in seller_pswd:
+                self.ids.water_price.text=f"Water is priced at only Ksh.{value} per litre."
+                
     
         PaymentScreen.load_customer_container(self)
 
+        
     
 
        
