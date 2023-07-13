@@ -188,4 +188,4 @@ def mpesa_call(phone_number,pay_amount):
 
 
 
-mpesa_call("254796892684",1)
+#mpesa_call("254796892684",1)

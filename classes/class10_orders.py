@@ -26,7 +26,7 @@ class OrdersScreen(Screen,Database):
          
         # ORDERS TABLE
          headers=["Item","Amount","Street Address","House Number","Date"]
-         self.cursor.execute("SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order")
+         self.cursor.execute("SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order ORDER BY order_id DESC")
          myresult = self.cursor.fetchall()
          rows = [] 
          for row in myresult:

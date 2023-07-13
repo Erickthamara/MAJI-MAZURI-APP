@@ -20,16 +20,19 @@ from kivymd.uix.screen import MDScreen
 from .class6_sales import SalesScreen
 from .class11_checkout import CheckoutScreen
 from .class12_customerwater import CustomerWater
-from .zmpesa import mpesa_call
+from .zmpesa_failed import mpesa_call
 from .zids_manager import CustomerIds
 from .class2_login import LoginScreen
 from.zdatabase import Database
 from .class10_orders import OrdersScreen
+from .zmpesa3 import MpesaClient
+
+from kivymd.uix.list import ThreeLineIconListItem,IconLeftWidget
 
 import re
 import datetime as dt
 
-class PaymentScreen(OrdersScreen):
+class PaymentScreen(CustomerWater):
     def __init__(self, **kw):
         super().__init__(**kw)
        # Clock.schedule_once(self.on, 0)
@@ -108,21 +111,12 @@ class PaymentScreen(OrdersScreen):
         else:   
             self.ids.mpesa_button.disabled=False
 
-            result_code,data=mpesa_call(phone_no,amount)
+            obj=MpesaClient()
 
-            if result_code == 0:
-                print("SUCCESS")
-                print(data)
-                
-                
+            result=obj.main(phone_no,amount)
+            print(result[0])
 
-                
-
-            elif result_code==1032:
-                # If the result code is not 0, set all the results to None
-                print("REQUEST HAS BEEN CANCELLED")
-            elif result_code==1037:
-                print("REQUEST TIMED OUT")
+            
     def mpesa_payment2(self):
         street_name=self.ids.street_name.text.strip()
         phone_no=self.ids.pay_num.text.strip()
@@ -163,15 +157,57 @@ class PaymentScreen(OrdersScreen):
                 values = (LoginScreen.customer_id, LoginScreen.seller_id, item, amount, street_name, hs_num, order_date)
                 self.cursor.execute(execute_query, values)
                 self.connection.commit()
-                
+
+                #adding the item to the order list
+                item = ThreeLineIconListItem(
+                    IconLeftWidget(icon="order-bool-descending-variant"),
+                    text=item,
+                    secondary_text="Ksh: " + amount,
+                    tertiary_text=order_date
+                )
+                self.widget_list.append(item)
+                #self.widget_list.reverse()
+                container = self.manager.get_screen("customerbrowse").ids.order_container
+                container.clear_widgets()
+                for widget in self.widget_list:
+                    container.add_widget(widget)
+
+
             
 
-    def items(self):
-        container=self.manager.get_screen("checkout").ids.container2
-        items=[]
-        for item in container.children:
-            items.append(item.text)
-        print(items)
+                
+    def load_customer_container(self):
+        #this loads up all transactions alareday in the database
+        #called from seller.py LINE 76 by 
+        self.widget_list=[]
+
+        if LoginScreen.customer_id:
+
+            self.cursor.execute(f"SELECT ordered_item,amount,order_date FROM maji_mazuri.order WHERE customer_id={LoginScreen.customer_id} ORDER BY order_id DESC")
+            reports=self.cursor.fetchall()
+
+            for row in reports:
+                item = ThreeLineIconListItem(
+                    IconLeftWidget(icon="order-bool-descending-variant"),
+                    text=row[0],
+                    secondary_text="Ksh: " + str(row[1]),
+                    tertiary_text=row[2]
+                )
+                self.widget_list.append(item)
+            #self.widget_list.reverse()
+            container = self.manager.get_screen("customerbrowse").ids.order_container
+            container.clear_widgets()
+            for widget in self.widget_list:
+                container.add_widget(widget)
+
+    def update_customer_container(self):
+        container = self.manager.get_screen("customerbrowse").ids.order_container
+        container.clear_widgets()
+        for widget in self.widget_list:
+            container.add_widget(widget)
+
+
+   
 
 
 

@@ -129,8 +129,9 @@ class MpesaClient():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         return loop.run_until_complete(inner_main())
-
+"""
 if __name__ == "__main__":
     obj=MpesaClient()
     result=obj.main("254796892684",1)
-    print(result)
+    print(result[0])
+"""

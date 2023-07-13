@@ -17,6 +17,7 @@ import re
 
 from .class12_customerwater import CustomerWater
 from .class2_login import LoginScreen
+from .class13_paymentscreen import PaymentScreen
 
 
 
@@ -229,8 +230,8 @@ class CustomerBrowse(CustomerWater):
                 self.ids.seller_phn_number.text =f"Phone: {seller_phone_number}"
                 self.ids.seller_id.text=f"Unique Seller ID:{id}"
     
+        PaymentScreen.load_customer_container(self)
 
-    
     
 
        
