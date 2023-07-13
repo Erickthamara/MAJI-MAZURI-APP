@@ -72,7 +72,7 @@ ScreenManager:
                 size_hint_x: 1
                 pos_hint: {"center_x": .5, "center_y": .5}
                 font_size:"18dp"
-                on_press:root.download_report()
+                on_press:root.download_sales_report()
 
             MDRaisedButton:
                 id:email_report
@@ -81,7 +81,7 @@ ScreenManager:
                 size_hint_x: 1
                 pos_hint: {"center_x": .5, "center_y": .5}
                 font_size:"18dp"
-                on_press:root.send_email()
+                on_press:root.send_sales_email()
         MDLabel:
             text:"Customer Report"
             font_style:"H5"
@@ -103,7 +103,7 @@ ScreenManager:
                 size_hint_x: 1
                 pos_hint: {"center_x": .5, "center_y": .5}
                 font_size:"18dp"
-                on_press:root.customers()
+                on_press:root.download_customers()
 
             MDRaisedButton:
                 id:email_report
@@ -112,7 +112,7 @@ ScreenManager:
                 size_hint_x: 1
                 pos_hint: {"center_x": .5, "center_y": .5}
                 font_size:"18dp"
-                on_press:root.send_email()
+                on_press:root.email_customers()
         MDLabel:
             text:"Catalogue Report"
             font_style:"H5"

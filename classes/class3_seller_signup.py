@@ -10,7 +10,7 @@ from kivymd.uix.button import MDFlatButton,MDRaisedButton
 from kivymd.uix.dialog import MDDialog
 
 from .zdatabase import Database
-
+import datetime as dt
 
 
 class SignupScreen(Screen,Database):
@@ -212,11 +212,11 @@ class SignupScreen(Screen,Database):
              self.ids.submit_button2.disabled=False
              
             #Once all info is filled,ensure the email does not already exist then add it
-             
+             date=dt.datetime.now().strftime('%d-%m-%Y')
             #If the email is not already in the seller.databse then you can add the info
              if email not in email_seller_list:
-                exexute1="INSERT INTO maji_mazuri.seller(seller_email ,seller_phone_number ,seller_first_name ,seller_last_name ,seller_pswd ,seller_pswd_confirm,seller_national_id,seller_shop_name) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"
-                value=(email,phone_no,first_name,last_name,password2,password3,national_id,shop_name)
+                exexute1="INSERT INTO maji_mazuri.seller(seller_email ,seller_phone_number ,seller_first_name ,seller_last_name ,seller_pswd ,seller_pswd_confirm,seller_national_id,seller_shop_name,signup_dates) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+                value=(email,phone_no,first_name,last_name,password2,password3,national_id,shop_name,date)
                 self.cursor.execute(exexute1,value)
                 self.connection.commit()
 

@@ -11,10 +11,10 @@ from kivymd.uix.dialog import MDDialog
 
 from .zdatabase import Database
 from .zids_manager import CustomerIds
+import datetime as dt
 
 
-
-class CustomerSignupScreen(Screen,Database,CustomerIds):
+class CustomerSignupScreen(Screen,Database):
      #This are all the methods used in the signup screen backend
     dialog6=None
     def validate_email_re(self,email):
@@ -208,10 +208,10 @@ class CustomerSignupScreen(Screen,Database,CustomerIds):
              self.ids.submit_button3.disabled=False
              
             #Once all info is filled,ensure the email does not already exist then add it
-             
+             date=dt.datetime.now().strftime('%d-%m-%Y')
              if email not in email_customer_list:
-                exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm,seller_id) VALUES(%s,%s,%s,%s,%s,%s,%s);"
-                value=(email,phone_no,first_name,last_name,password2,password3,seller_id)
+                exexute1="INSERT INTO maji_mazuri.customer(customer_email ,customer_phone_number ,customer_first_name ,customer_last_name ,customer_pswd ,customer_pswd_confirm,seller_id,signup_dates) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"
+                value=(email,phone_no,first_name,last_name,password2,password3,seller_id,date)
                 self.cursor.execute(exexute1,value)
                 self.connection.commit()
                 self.send_registration_email(email,seller_id)

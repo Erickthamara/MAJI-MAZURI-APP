@@ -33,6 +33,8 @@ import re
 import datetime as dt
 
 class PaymentScreen(CustomerWater):
+    dialog21=None
+    dialog20=None
     def __init__(self, **kw):
         super().__init__(**kw)
        # Clock.schedule_once(self.on, 0)
@@ -114,7 +116,41 @@ class PaymentScreen(CustomerWater):
             obj=MpesaClient()
 
             result=obj.main(phone_no,amount)
-            print(result[0])
+            message,receipt_number=result
+            if message=="Success":
+                order_date=dt.datetime.now().strftime('%d-%m-%Y')
+                #get the items
+                container=self.manager.get_screen("checkout").ids.container2
+                items=[]
+                amounts=[]
+                for item in container.children:
+                    items.append(item.text)
+                    amounts.append(item.secondary_text.split(" ")[-1])
+
+                # Insert items and amounts into the database
+                for item, amount in zip(items, amounts):
+                    execute_query = "INSERT INTO maji_mazuri.order(customer_id, seller_id, ordered_item, amount, street_name, house_number, order_date) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+                    values = (LoginScreen.customer_id, LoginScreen.seller_id, item, amount, street_name, hs_num, order_date)
+                    self.cursor.execute(execute_query, values)
+                    self.connection.commit()
+
+                    #adding the item to the order list
+                    item = ThreeLineIconListItem(
+                        IconLeftWidget(icon="order-bool-descending-variant"),
+                        text=item,
+                        secondary_text="Ksh: " + amount,
+                        tertiary_text=order_date
+                    )
+                    self.widget_list.append(item)
+                    #self.widget_list.reverse()
+                    container = self.manager.get_screen("customerbrowse").ids.order_container
+                    container.clear_widgets()
+                    for widget in self.widget_list:
+                        container.add_widget(widget)
+                self.alert_dialog_order()
+            elif message=="Payment not successful":
+                self.alert_dialog_order_failed()
+    
 
             
     def mpesa_payment2(self):
@@ -141,8 +177,6 @@ class PaymentScreen(CustomerWater):
             self.ids.mpesa_button.disabled=False
 
             order_date=dt.datetime.now().strftime('%d-%m-%Y')
-            
-            
             #get the items
             container=self.manager.get_screen("checkout").ids.container2
             items=[]
@@ -205,6 +239,43 @@ class PaymentScreen(CustomerWater):
         container.clear_widgets()
         for widget in self.widget_list:
             container.add_widget(widget)
+    
+    def alert_dialog_order(self):
+          
+          if not self.dialog21:
+                self.dialog21 = MDDialog(
+                    title="ORDER SUCCESS",
+                    text="You will receive the receipt in the mail.",
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDFlatButton(
+                            text="OK",
+                            on_press=self.dismiss_dialog21,   
+                        ),
+                    ],
+                )
+          self.dialog21.open()
+
+    def dismiss_dialog21(self, instance):
+        self.dialog21.dismiss()
+    def alert_dialog_order_failed(self):
+          
+          if not self.dialog20:
+                self.dialog20 = MDDialog(
+                    title="FAILED.Request cancelled",
+                    
+                    radius=[20,7,20,7],
+                    buttons=[
+                        MDFlatButton(
+                            text="OK",
+                            on_press=self.dismiss_dialog20,   
+                        ),
+                    ],
+                )
+          self.dialog20.open()
+
+    def dismiss_dialog20(self, instance):
+        self.dialog20.dismiss()
 
 
    

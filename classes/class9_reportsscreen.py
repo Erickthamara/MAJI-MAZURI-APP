@@ -23,6 +23,8 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 
+from .class2_login import LoginScreen
+
 class ReportScreen(Screen,Database):
     start_date = None
     end_date = None
@@ -85,7 +87,7 @@ class ReportScreen(Screen,Database):
 
 
     
-    def download_report(self):
+    def download_sales_report(self):
         self.start_date=self.ids.start_date_field.text.strip()
         self.end_date=self.ids.end_date_field.text.strip()
 
@@ -93,7 +95,7 @@ class ReportScreen(Screen,Database):
         
             self.date=dt.datetime.now().strftime('%d-%m-%Y')
             self.time=dt.datetime.now().strftime('%I-%M-%S %p')
-            total_sales=self.grab_total_sales()
+            
 
             app_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(app_dir)
@@ -105,16 +107,20 @@ class ReportScreen(Screen,Database):
             doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
             elements=[] #to store all elements in the report
 
-            report_heading = Paragraph(f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u>", getSampleStyleSheet()["Heading2"])
+            phone_number = "0796892684"
+            email_address = "allantham897@gmail.com"
+            heading_text = f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u><br/><br/>Phone Number: {phone_number}<br/>Email Address: {email_address}"
+            report_heading = Paragraph(heading_text, getSampleStyleSheet()["Heading2"])
             elements.append(report_heading)
 
-            table_heading = Paragraph(f"<b>MAJI MAZURI Sasles Report showng total sales between {self.start_date} and {self.end_date} </b>", getSampleStyleSheet()["Heading2"])
+            table_heading = Paragraph(f"<b>MAJI MAZURI Sales Report showng all sales between {self.start_date} and {self.end_date} </b>", getSampleStyleSheet()["Heading2"])
             elements.append(table_heading)
             rows=[]
             headers = ["Cash Sales", "Online Sales","Total sales"]
-            total_cash_sales=self.grab_total_sales()
+            total_cash_sales=self.grab_total_cash_sales()
             total_online_sales=self.grab_online_sales()
-            rows.append([total_cash_sales, total_online_sales, total_cash_sales + total_online_sales])
+            total_sales=total_online_sales+total_cash_sales
+            rows.append([total_cash_sales, total_online_sales, total_sales])
 
             table = Table([headers] + rows)
             table.setStyle(TableStyle([
@@ -136,8 +142,7 @@ class ReportScreen(Screen,Database):
 
             highlighted_points = [
                 f"Your total sales in the period entered were {total_sales}.",
-                f"The toatal number of new customers gained during that same period is 50.",
-                f"Additional point 3",
+                
             ]
 
             styles = getSampleStyleSheet()
@@ -160,7 +165,7 @@ class ReportScreen(Screen,Database):
         else:
             self.enter_dates()
 
-    def send_email(self):
+    def send_sales_email(self):
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
         if not start_date or not end_date:
@@ -172,9 +177,12 @@ class ReportScreen(Screen,Database):
         
         if start_date and end_date:
             # Email configuration
+            self.cursor.execute(f"SELECT seller_email FROM maji_mazuri.seller where seller_id={LoginScreen.main_seller_id};")
+            email=self.cursor.fetchone()
+            receiver_email=email[0]
             sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
-            receiver_email = "erickthamara9@gmail.com"  # Replace with the recipient's email address
-            subject = "PDF Report"
+              
+            subject = "MAJI AMZURI Sales Report"
             body = "Please find the attached PDF report. From MAJI MAZURI, Regards."
 
             # Create a multipart message and set the email headers
@@ -266,8 +274,8 @@ class ReportScreen(Screen,Database):
         text_field.text = str(formatted_date)
         #print(instance, value, date_range)
 
-        if text_field_id == 'end_date_field':
-         self.table_update()
+        #if text_field_id == 'end_date_field':
+         #self.table_update()
         
 
     def on_cancel(self, instance, value):
@@ -275,42 +283,52 @@ class ReportScreen(Screen,Database):
 
     
 
-    def grab_total_sales(self):
+    def grab_total_cash_sales(self):
        
         #collect start and end dates
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
+         # Create a query for selecting all data from the start_date till end_date
+        query = f"SELECT amount FROM maji_mazuri.cash_sales WHERE entry_date BETWEEN '{start_date}' AND '{end_date}' AND seller_id = {LoginScreen.main_seller_id};"
+        self.cursor.execute(query)
+        data_rows = self.cursor.fetchall()
 
-         #create a query for selecting all data from the START_DATE till END_DATE
-        query="SELECT amount FROM maji_mazuri.cash_sales WHERE entry_date BETWEEN %s AND %s;"
-        self.cursor.execute(query,(start_date,end_date))
-        data_rows=self.cursor.fetchall()
+        # Check if any rows are returned
+        if data_rows:
+            # Find the sales total
+            total_cash_sales = 0
+            for row in data_rows:
+                sale = float(row[0])  # Convert the string data into float
+                total_cash_sales += sale
 
-        #find sales total
-        sales_total=0
-        for row in data_rows:
-            sale=float(row[0]) #convert the string data into float
-            #print(sale)
-            sales_total+=sale
-        
-        #print(sales_total)
-        return sales_total
+            return total_cash_sales
+        else:
+            return 0
+    
     def grab_online_sales(self):
-       
         #collect start and end dates
         start_date=self.ids.start_date_field.text.strip()
         end_date=self.ids.end_date_field.text.strip()
 
-        self.cursor.execute("SELECT amount FROM maji_mazuri.order")
-        rows = self.cursor.fetchall()
+        if start_date and end_date:
+            # Calculate total amount of online sales for the dates entered
+            query = f"SELECT amount FROM maji_mazuri.order WHERE order_date BETWEEN '{start_date}' AND '{end_date}' AND seller_id = {LoginScreen.main_seller_id};"
+            self.cursor.execute(query)
+            data_rows = self.cursor.fetchall()
 
-        # Calculate the total amount
-        total_amount = 0
-        for row in rows:
-            amount = float(row[0])  # Convert the amount to a float
-            total_amount += amount
+            # Check if any rows are returned
+            if data_rows:
+                # Calculate the total amount
+                total_amount = 0
+                for row in data_rows:
+                    amount = float(row[0])  # Convert the amount to a float
+                    total_amount += amount
 
-        return total_amount
+                return total_amount
+            else:
+                return 0
+        else:
+            return 0
     
     def download_dialog(self):
           
@@ -452,7 +470,7 @@ class ReportScreen(Screen,Database):
         elements.append(table_heading)
         rows=[]
         headers = ["Cash Sales", "Online Sales","Total sales"]
-        total_cash_sales=self.grab_total_sales()
+        total_cash_sales=self.grab_total_cash_sales()
         total_online_sales=self.grab_online_sales()
         rows.append([total_cash_sales, total_online_sales, total_cash_sales + total_online_sales])
 
@@ -497,7 +515,7 @@ class ReportScreen(Screen,Database):
 
         self.download_dialog()
         doc=None
-    def customers(self):
+    def download_customers(self):
         date=dt.datetime.now().strftime('%d-%m-%Y')
         time=dt.datetime.now().strftime('%I-%M-%S %p')
         start_date=self.ids.start_date_field.text.strip()
@@ -508,20 +526,23 @@ class ReportScreen(Screen,Database):
         reports_dir = os.path.join(root_dir, "reports")
         os.makedirs(reports_dir, exist_ok=True)  # Create the "reports" directory if it doesn't exist
 
-        self.pdf_filename = os.path.join(reports_dir, f"MAJI MAZURI Customer Report on {date} at {time}.pdf")  # Save the report in the "reports" directory
+        self.pdf_filename_customers = os.path.join(reports_dir, f"MAJI MAZURI Customer Report on {date} at {time}.pdf")  # Save the report in the "reports" directory
 
-        doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
+        doc = SimpleDocTemplate(self.pdf_filename_customers, pagesize=letter)
         elements=[] #to store all elements in the report
 
-        report_heading = Paragraph(f"<u><b>MAJI MAZURI Customers Report generated on {date}</b></u>", getSampleStyleSheet()["Heading2"])
+        phone_number = "0796892684"
+        email_address = "allantham897@gmail.com"
+        heading_text = f"<u><b>MAJI MAZURI CUSTOMER Report generated on {date}</b></u><br/><br/>Phone Number: {phone_number}<br/>Email Address: {email_address}"
+        report_heading = Paragraph(heading_text, getSampleStyleSheet()["Heading2"])
         elements.append(report_heading)
 
-        table_heading = Paragraph(f"<b>MAJI MAZURI Customers Report showng total number of customers between {start_date} and {end_date} </b>", getSampleStyleSheet()["Heading2"])
+        table_heading = Paragraph(f"<u><b>MAJI MAZURI Customers Report showng total number of customers.</b></u>", getSampleStyleSheet()["Heading2"])
         elements.append(table_heading)
         rows=[]
         headers = ["New Customers", "Total Customers",]
-        total_customers="170"
-        new_customers="20"
+        new_customers,total_customers=self.get_customers()
+        
         rows.append([new_customers,total_customers])
 
         table = Table([headers] + rows)
@@ -544,8 +565,8 @@ class ReportScreen(Screen,Database):
 
         highlighted_points = [
             f"Your total number of new customers gained in the period entered were {new_customers}.",
-            f"The toatal number of customers registered to your account are {total_customers}.",
-            f"Additional point 3",
+            f"Your total number of registered customers on maji mazuri is {total_customers}.",
+           
         ]
 
         styles = getSampleStyleSheet()
@@ -565,3 +586,94 @@ class ReportScreen(Screen,Database):
 
         self.download_dialog()
         doc=None
+
+    def get_customers(self):
+         # Collect start and end dates
+        # Collect start and end dates
+        start_date = self.ids.start_date_field.text.strip()
+        end_date = self.ids.end_date_field.text.strip()
+        if start_date and end_date:
+            # Create a query for selecting the customer IDs from the start_date till end_date
+            query = f"SELECT customer_id FROM maji_mazuri.customer WHERE signup_dates BETWEEN '{start_date}' AND '{end_date}' AND seller_id = {LoginScreen.main_seller_id};"
+            self.cursor.execute(query)
+            data_rows = self.cursor.fetchall()
+
+            # Check if any customers are found
+            if data_rows:
+                customer_ids = [row[0] for row in data_rows]
+                total_customers_in_dates = len(customer_ids)
+            else:
+                total_customers_in_dates = 0
+        else:
+            total_customers_in_dates = 0
+
+        # Create a query to count the total number of customers for the seller
+        query = f"SELECT COUNT(*) FROM maji_mazuri.customer WHERE seller_id = {LoginScreen.main_seller_id};"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+
+        # Extract the total count from the result
+        total_customers = result[0]
+
+        return total_customers_in_dates, total_customers
+    
+    def email_customers(self):
+        start_date=self.ids.start_date_field.text.strip()
+        end_date=self.ids.end_date_field.text.strip()
+        if not start_date or not end_date:
+            self.enter_dates()
+            return
+        if not self.pdf_filename_customers:
+            self.email_dialog2()
+            return
+
+        if start_date and end_date:
+            # Email configuration
+            self.cursor.execute(f"SELECT seller_email FROM maji_mazuri.seller WHERE seller_id={LoginScreen.main_seller_id};")
+            receiver_email = self.cursor.fetchone()  # Fetch the first (and presumably the only) email address
+            if receiver_email:
+                receiver_email = receiver_email[0]  # Extract the email address from the tuple
+
+                sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
+                subject = "MAJI AMZURI Customer Report"
+                body = "Please find the attached PDF report. From MAJI MAZURI, Regards."
+
+                # Create a multipart message and set the email headers
+                message = MIMEMultipart()
+                message["From"] = sender_email
+                message["To"] = receiver_email
+                message["Subject"] = subject
+
+                # Add the email body
+                message.attach(MIMEText(body, "plain"))
+
+                # Open the PDF file in binary mode
+                with open(self.pdf_filename_customers, "rb") as attachment:
+                    # Add the PDF file as an attachment
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(attachment.read())
+
+                # Encode the file in ASCII characters to send by email
+                encoders.encode_base64(part)
+                part.add_header("Content-Disposition", f"attachment; filename= {self.pdf_filename_customers}")
+
+                # Add the attachment to the message
+                message.attach(part)
+
+                # Convert the message to a string and send the email
+                text = message.as_string()
+
+                # SMTP configuration
+                smtp_server = "smtp.gmail.com"
+                smtp_port = 587  # Use 465 for SSL/TLS connection
+
+                # Start the SMTP session
+                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                    server.starttls()  # Enable TLS encryption
+                    server.login(sender_email, "nmrfycjjqjjgbihw")  # Replace with your Gmail password or APP password
+                    server.sendmail(sender_email, receiver_email, text)
+                    self.email_dialog()
+            else:
+                self.no_email_dialog()
+        else:
+            self.enter_dates()
