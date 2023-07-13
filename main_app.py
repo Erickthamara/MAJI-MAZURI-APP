@@ -72,28 +72,3 @@ class MyApp(MDApp):
          
 if __name__=="__main__":
     MyApp().run()
-        
-"""
-class Star(MDIconButton):
-    def on_touch_down(self, touch):
-        return True
-
-
-class SmartTileWithStar(SmartTileWithLabel):
-    stars = NumericProperty(1)
-    
-    Tile stars.
-    :attr:`stars` is a :class:`~kivy.properties.NumericProperty`
-    and defaults to `1`.
-    
-
-    def on_stars(self, *args):
-        for star in range(self.stars):
-            self.ids.box.add_widget(
-                Star(
-                    icon="star-outline",
-                    theme_text_color="Custom",
-                    text_color=[1, 1, 1, 1],
-                )
-            )
-"""
