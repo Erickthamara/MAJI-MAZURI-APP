@@ -10,8 +10,9 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.menu import MDDropdownMenu
 
 from .class2_login import LoginScreen
+from .class8_transactions import Transactions
 
-class OrdersScreen(Screen,Database):
+class OrdersScreen(Transactions):
     def __init__(self, **kw):
         super().__init__(**kw)
 
@@ -25,9 +26,9 @@ class OrdersScreen(Screen,Database):
 
     def order_table(self): 
         # ORDERS TABLE
-        headers=["Item","Amount","Street Address","House Number","Date"]
+        headers=["Order Status","Item","Amount","Street Address","House Number","Date","Order_ID"]
         if LoginScreen.main_seller_id:
-            self.cursor.execute(f"SELECT ordered_item,amount,street_name,house_number,order_date FROM maji_mazuri.order WHERE seller_id={LoginScreen.main_seller_id} ORDER BY order_id DESC")
+            self.cursor.execute(f"SELECT order_status,ordered_item,amount,street_name,house_number,order_date,order_id FROM maji_mazuri.order WHERE seller_id={LoginScreen.main_seller_id} ORDER BY order_id DESC")
             myresult = self.cursor.fetchall()
             rows = [] 
             for row in myresult:
@@ -63,47 +64,41 @@ class OrdersScreen(Screen,Database):
             self.selected_rows.append(current_row)  # Select the row if not selected
  
  
-    def delete_selected_rows(self, *args):
-       if self.selected_rows:
+    def update_selected_rows(self, *args):
+        if self.selected_rows:
+            for row in self.selected_rows:
+                update_query = f"UPDATE maji_mazuri.order SET order_status = 'COMPLETE' WHERE order_id = {row[-1]}"
+                self.cursor.execute(update_query)
+                self.connection.commit()
 
-        for row in self.selected_rows:
-            delete_query = f"DELETE FROM maji_mazuri.order WHERE order_id = {row[0]}"
-            self.cursor.execute(delete_query)
-            self.connection.commit()
+            self.selected_rows = []
 
-        self.selected_rows=[]
+            float_layout = self.ids.my_float_layout
+            float_layout.remove_widget(self.mytable_order)
+            self.success_update_dialog()
 
-        float_layout = self.ids.my_float_layout
-        float_layout.remove_widget(self.mytable_order)
+            # ORDERS TABLE
+            self.order_table()
 
-         # ORDERS TABLE
-        self.order_table()
+            # Update the records
+            text = "Order Completed"
+            date = dt.datetime.now().strftime('%d-%m-%Y')
+            time = dt.datetime.now().strftime('%I:%M:%S %p')
+            self.insert_item_to_database(text, date, time)
+            self.retrieve_exixting_reports()
 
-        #update the records
-        text=f"Order record Deleted"
-        date=dt.datetime.now().strftime('%d-%m-%Y')
-        time=dt.datetime.now().strftime('%I:%M:%S %p')
-        self.insert_item_to_database(text,date,time)
-        self.retrieve_exixting_reports()
+        else:
+            print("Select a row")
 
-
-       elif not self.selected_rows:
-          print("select a row")
-
-    def show_dialog_delete(self):
+    def success_update_dialog(self):
             
             if self.dialog is None:
                 self.dialog = MDDialog(
-                    text="Are you sure you want to delete a record?",
+                    title="Order status updated",
                     buttons=[
-                        MDFlatButton(
-                            text="CANCEL",
-                            on_press=self.dismiss_dialog1,
-                            
-                        ),
                         MDRaisedButton(
                             text="CONFIRM",
-                            on_press=self.delete_row,
+                            on_press=self.dismiss_dialog1,
                             
                         ),
                     ],
@@ -113,7 +108,4 @@ class OrdersScreen(Screen,Database):
     def dismiss_dialog1(self, instance):
         self.dialog.dismiss()
 
-    def delete_row(self,instance):
-        self.delete_selected_rows()
-        self.dialog.dismiss()
-
+    

@@ -35,6 +35,7 @@ ScreenManager:
                     text:"ORDER WATER"
                     theme_text_color:"Custom"
                     text_color: 21/255,39/255,112/255,1
+                    
                     pos_hint: {"center_x": .5, "center_y": .95} 
                     halign:"center"
                     font_size:"45sp"
@@ -75,6 +76,7 @@ ScreenManager:
                         size_hint_x: 1
                         width: "160dp"
                         hint_text: "Bottle size"
+                        hint_text_color_normal: 0, 0, 0, 1
                         color_mode:"accent"
                         on_focus: if self.focus: root.dropdown2()
 
@@ -102,6 +104,7 @@ ScreenManager:
                         size_hint_x: 1
                         width: "160dp"
                         hint_text: "Bottle Amount"
+                        hint_text_color_normal: 0, 0, 0, 1
                         color_mode:"accent"
                         on_text:root.entry_warning()
 
@@ -291,8 +294,8 @@ ScreenManager:
                     
             MDBottomNavigationItem:
                 name: 'help'
-                text: 'Contact'
-                icon: 'help-circle'
+                text: 'Account'
+                icon: 'account-box'
                 icon_size: "36dp"
 
                 MDFloatLayout:

@@ -128,11 +128,12 @@ class PaymentScreen(CustomerWater):
                 for item in container.children:
                     items.append(item.text)
                     amounts.append(item.secondary_text.split(" ")[-1])
-
+                
                 # Insert items and amounts into the database
                 for item, amount in zip(items, amounts):
-                    execute_query = "INSERT INTO maji_mazuri.order(customer_id, seller_id, ordered_item, amount, street_name, house_number, order_date) VALUES (%s, %s, %s, %s, %s, %s, %s);"
-                    values = (LoginScreen.customer_id, LoginScreen.seller_id, item, amount, street_name, hs_num, order_date)
+                    order_status="Live"
+                    execute_query = "INSERT INTO maji_mazuri.order(customer_id, seller_id, ordered_item, amount, street_name, house_number, order_date,order_status) VALUES (%s, %s,%s, %s, %s, %s, %s, %s);"
+                    values = (LoginScreen.customer_id, LoginScreen.seller_id, item, amount, street_name, hs_num, order_date,order_status)
                     self.cursor.execute(execute_query, values)
                     self.connection.commit()
 
@@ -179,7 +180,7 @@ class PaymentScreen(CustomerWater):
                     smtp_obj.login(sender_email, sender_password)
                     smtp_obj.sendmail(sender_email, receiver_email, message.as_string())
                     smtp_obj.quit()
-                    print("Receipt sent successfully!")
+                    #print("Receipt sent successfully!")
                 except smtplib.SMTPException:
                     print("Failed to send receipt.")
 
