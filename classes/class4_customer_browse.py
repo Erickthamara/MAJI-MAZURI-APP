@@ -18,10 +18,11 @@ import re
 from .class12_customerwater import CustomerWater
 from .class2_login import LoginScreen
 from .class13_paymentscreen import PaymentScreen
+from .class14_customerupdate import CustomerDetailUpdate
 
 
 
-class CustomerBrowse(CustomerWater): 
+class CustomerBrowse(CustomerWater,CustomerDetailUpdate): 
     num = StringProperty(0)
     dialog9=None
     cart_count = NumericProperty(0)

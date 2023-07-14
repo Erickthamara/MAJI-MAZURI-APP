@@ -16,6 +16,8 @@ from kivymd.uix.button import MDIconButton
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty,NumericProperty
 from kivymd.uix.screen import MDScreen
+import smtplib
+from email.mime.text import MIMEText
 
 from .class6_sales import SalesScreen
 from .class11_checkout import CheckoutScreen
@@ -148,6 +150,39 @@ class PaymentScreen(CustomerWater):
                     for widget in self.widget_list:
                         container.add_widget(widget)
                 self.alert_dialog_order()
+                    # Generate receipt content
+                receipt_content = f"Receipt Number: {receipt_number}\n"
+                receipt_content += f"Order Date: {order_date}\n"
+                receipt_content += f"Street Name: {street_name}\n"
+                receipt_content += f"House Number: {hs_num}\n\n"
+                receipt_content += "Items:\n"
+                for item, amount in zip(items, amounts):
+                    receipt_content += f"- {item} - Ksh: {amount}\n"
+                receipt_content += "\nTotal Amount: Ksh " + amount
+                self.cursor.execute(f"SELECT customer_email FROM maji_mazuri.customer WHERE customer_id={LoginScreen.customer_id};")
+                email=self.cursor.fetchone()
+                
+                # Send receipt via email
+                sender_email = 'allantham897@gmail.com'  # Replace with your email address
+                sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
+                receiver_email = email[0]
+                subject = "MAJI MAZURI Receipt for Order completed."
+                message = MIMEText(receipt_content)
+                message["Subject"] = subject
+                message["From"] = sender_email
+                message["To"] = receiver_email
+
+                try:
+                    smtp_obj = smtplib.SMTP('smtp.gmail.com', 587)
+                    smtp_obj.ehlo()
+                    smtp_obj.starttls()
+                    smtp_obj.login(sender_email, sender_password)
+                    smtp_obj.sendmail(sender_email, receiver_email, message.as_string())
+                    smtp_obj.quit()
+                    print("Receipt sent successfully!")
+                except smtplib.SMTPException:
+                    print("Failed to send receipt.")
+
             elif message=="Payment not successful":
                 self.alert_dialog_order_failed()
     

@@ -295,6 +295,146 @@ ScreenManager:
                 icon: 'help-circle'
                 icon_size: "36dp"
 
+                MDFloatLayout:
+                    id:my_layout3
+                        
+                    MDLabel:
+                        text:"UPDATE DETAILS"
+                        font_style:"H4"
+                        halign:"center"
+                        pos_hint:{'center_y':0.94}
+                        theme_text_color:"Custom"
+                        text_color: 0,0,1,1
+                    
+                    MDTextField:
+                        id: email_customer_signup
+                        hint_text: 'Enter your email'
+                        hint_text_color_normal: 0, 0, 0, 1  
+                        icon_right:"email"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .82}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_customer_email2()
+                    MDLabel:
+                        id: email_customer_signup_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.77}
+                        theme_text_color: 'Error'
+                        text: ''
+
+                    MDTextField:
+                        id: customer_phone_no
+                        hint_text: 'Phone Number'
+                        hint_text_color_normal: 0, 0, 0, 1 
+                        icon_right:"cellphone-check"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .72}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_phone_no()
+                    MDLabel:
+                        id: customer_phone_no_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.67}
+                        theme_text_color: 'Error'
+                        text: ''
+
+                    MDTextField:
+                        id: customer_first_name
+                        hint_text: 'First Name'
+                        hint_text_color_normal: 0, 0, 0, 1 
+                        icon_right:"account"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .62}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_first_name()
+                    MDLabel:
+                        id: customer_first_name_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.52}
+                        theme_text_color: 'Error'
+                        text: ''
+
+                    MDTextField:
+                        id: customer_last_name
+                        hint_text: 'Last Name'
+                        hint_text_color_normal: 0, 0, 0, 1 
+                        icon_right:"account"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .52}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_last_name()
+                    MDLabel:
+                        id: customer_last_name_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.47}
+                        theme_text_color: 'Error'
+                        text: ''
+
+                    MDTextField:
+                        id: customer_pswd_signup
+                        hint_text: "Password"
+                        hint_text_color_normal: 0, 0, 0, 1 
+                        helper_text: "Minimum of 4 characters"
+                        helper_text_mode: "on_focus"
+                        password:True
+                        icon_right:"eye-off"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .4}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_password2()
+                    MDLabel:
+                        id: customer_pswd_signup_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.35}
+                        theme_text_color: 'Error'
+                        text: ''
+                    
+                    MDTextField:
+                        id: customer_pswd_confirm
+                        hint_text: "Confirm Password"
+                        hint_text_color_normal: 0, 0, 0, 1 
+                        helper_text: "Minimum of 4 characters"
+                        helper_text_mode: "on_focus"
+                        password:True
+                        icon_right:"eye-off"
+                        font_size:"16dp"
+                        size_hint_x: .85
+                        pos_hint: {"center_x": .5, "center_y": .28}
+                        on_text:self.text=self.text.replace(" ","")
+                        write_tab:False
+                        on_text:root.validate_password3()
+                    MDLabel:
+                        id: customer_pswd_confirm_error
+                        halign: 'center'
+                        pos_hint:{'center_y':0.22}
+                        theme_text_color: 'Error'
+                        text: ''
+
+
+                    MDRaisedButton:
+                        size_hint: .5,.01
+                        id:submit_button3
+                        disabled:False
+                        text:"UPDATE"
+                        theme_text_color:"Custom"
+                        text_color: 0,0,0,1
+                        pos_hint:{'center_x':0.5, 'center_y':0.1}
+                        on_press:if root.update_validate():root.email_dialog()
+                    
+
+
+
+
 
 <ContentCustomSheet@BoxLayout>:
     orientation: "vertical"
