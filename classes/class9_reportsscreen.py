@@ -109,8 +109,8 @@ class ReportScreen(Screen,Database):
             doc = SimpleDocTemplate(self.pdf_filename, pagesize=letter)
             elements=[] #to store all elements in the report
 
-            phone_number = "0796892684"
-            email_address = "allantham897@gmail.com"
+            phone_number = ""
+            email_address = ""
             heading_text = f"<u><b>MAJI MAZURI SALES Report generated on {self.date}</b></u><br/><br/>Phone Number: {phone_number}<br/>Email Address: {email_address}"
             report_heading = Paragraph(heading_text, getSampleStyleSheet()["Heading2"])
             elements.append(report_heading)
@@ -530,7 +530,7 @@ class ReportScreen(Screen,Database):
         if receiver_email:
             receiver_email = receiver_email[0]  # Extract the email address from the tuple
 
-            sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
+            sender_email = ""  # Replace with your Gmail email address
             subject = "MAJI AMZURI Customer Report"
             body = "Please find the attached PDF report. From MAJI MAZURI, Regards."
 
@@ -566,7 +566,7 @@ class ReportScreen(Screen,Database):
             # Start the SMTP session
             with smtplib.SMTP(smtp_server, smtp_port) as server:
                 server.starttls()  # Enable TLS encryption
-                server.login(sender_email, "nmrfycjjqjjgbihw")  # Replace with your Gmail password or APP password
+                server.login(sender_email, "")  # Replace with your Gmail password or APP password
                 server.sendmail(sender_email, receiver_email, text)
                 self.email_dialog()
         else:
@@ -631,8 +631,8 @@ class ReportScreen(Screen,Database):
         doc = SimpleDocTemplate(self.pdf_filename_customers, pagesize=letter)
         elements=[] #to store all elements in the report
 
-        phone_number = "0796892684"
-        email_address = "allantham897@gmail.com"
+        phone_number = ""
+        email_address = ""
         heading_text = f"<u><b>MAJI MAZURI CUSTOMER Report generated on {date}</b></u><br/><br/>Phone Number: {phone_number}<br/>Email Address: {email_address}"
         report_heading = Paragraph(heading_text, getSampleStyleSheet()["Heading2"])
         elements.append(report_heading)
@@ -735,7 +735,7 @@ class ReportScreen(Screen,Database):
             if receiver_email:
                 receiver_email = receiver_email[0]  # Extract the email address from the tuple
 
-                sender_email = "allantham897@gmail.com"  # Replace with your Gmail email address
+                sender_email = ""  # Replace with your Gmail email address
                 subject = "MAJI AMZURI Customer Report"
                 body = "Please find the attached PDF report. From MAJI MAZURI, Regards."
 
