@@ -9,9 +9,9 @@ import asyncio
 class MpesaClient():
     def __init__(self):
         self.bs_shortcode = "174379"  # paybill number
-        self.lnm_passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-        self.consumer_key = 'U3uZndIeO10CSUAyjahb6uHTTnTTA9Tx'
-        self.consumer_secret = 'lgJH0xs5hGoz5JE7'
+        self.lnm_passkey = ""
+        self.consumer_key = ''
+        self.consumer_secret = ''
         self.access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
     def format_time(self):
@@ -132,6 +132,6 @@ class MpesaClient():
 """
 if __name__ == "__main__":
     obj=MpesaClient()
-    result=obj.main("254796892684",1)
+    result=obj.main("",1)
     print(result[0])
 """
