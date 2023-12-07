@@ -222,8 +222,8 @@ class CustomerSignupScreen(Screen,Database):
                 
     def send_registration_email(self,email, seller_id):
         # Email details
-        sender_email = 'allantham897@gmail.com'  # Replace with your email address
-        sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
+        sender_email = ''  # Replace with your email address
+        sender_password = ''  # Replace with your email password
         subject = 'MAJI MAZURI Customer Registration Successful'
         message = f'''
         Dear Customer,
