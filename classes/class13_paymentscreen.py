@@ -164,8 +164,8 @@ class PaymentScreen(CustomerWater):
                 email=self.cursor.fetchone()
                 
                 # Send receipt via email
-                sender_email = 'allantham897@gmail.com'  # Replace with your email address
-                sender_password = 'nmrfycjjqjjgbihw'  # Replace with your email password
+                sender_email = ''  # Replace with your email address
+                sender_password = ''  # Replace with your email password
                 receiver_email = email[0]
                 subject = "MAJI MAZURI Receipt for Order completed."
                 message = MIMEText(receipt_content)
